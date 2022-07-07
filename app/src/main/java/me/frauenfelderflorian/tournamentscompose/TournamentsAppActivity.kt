@@ -41,19 +41,24 @@ class TournamentsAppActivity : ComponentActivity() {
     }
 }
 
+const val ROUTE_TOURNAMENT_LIST = "tl"
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TournamentsApp() {
     val navController = rememberAnimatedNavController()
-    val width: Int = ((LocalConfiguration.current.densityDpi / 160f)
+    val width = ((LocalConfiguration.current.densityDpi / 160f)
             * LocalConfiguration.current.screenWidthDp).roundToInt()
-    AnimatedNavHost(navController = navController, startDestination = "tournament_list") {
-        composable("tournament_list") { TournamentList(navController) }
+    AnimatedNavHost(
+        navController = navController,
+        startDestination = ROUTE_TOURNAMENT_LIST
+    ) {
+        composable(ROUTE_TOURNAMENT_LIST) { TournamentList(navController) }
         composable(
-            "tournament_editor",
+            ROUTE_TOURNAMENT_EDITOR,
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { width }) },
-        ) { TournamentEditor() }
+        ) { TournamentEditor(navController) }
     }
 }
 
@@ -85,7 +90,7 @@ fun TournamentList(navController: NavHostController) {
                         "This will add a new tournament",
                         Toast.LENGTH_SHORT,
                     ).show()
-                    navController.navigate("tournament_editor")
+                    navController.navigate(ROUTE_TOURNAMENT_EDITOR)
                 }) {
                     Icon(Icons.Default.Add, stringResource(R.string.add_new_tournament))
                 }
