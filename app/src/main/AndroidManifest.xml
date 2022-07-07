@@ -14,7 +14,7 @@
         android:theme="@style/Theme.TournamentsCompose"
         tools:targetApi="31">
         <activity
-            android:name=".TournamentListActivity"
+            android:name=".TournamentsAppActivity"
             android:exported="true"
             android:theme="@style/Theme.TournamentsCompose">
             <intent-filter>

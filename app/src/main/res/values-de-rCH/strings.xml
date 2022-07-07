@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Über</string>
+    <string name="add_new_tournament">Füge ein neues Turnier hinzu</string>
+</resources>

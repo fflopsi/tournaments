@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">TournamentsCompose</string>
+    <string name="app_name" translatable="false">TournamentsCompose</string>
+    <string name="app_title" translatable="false">Tournaments</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="add_new_tournament">Add a new tournament</string>
 </resources>
