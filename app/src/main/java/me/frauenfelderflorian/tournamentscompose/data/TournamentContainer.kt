@@ -1,13 +1,13 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.ViewModel
+
 //TODO: Consider packing TournamentContainer, Tournament and Game all in one file
 //TODO: ViewModel or rememberSaveable (notifyListeners alternative)
 
-class TournamentContainer {
+class TournamentContainer : ViewModel() {
     var current = -1
-    val tournaments = mutableListOf<Tournament>()
-    val size get() = tournaments.size
-    val tournamentsByDate get() = tournaments.sortedByDescending { it.start }
-    val currentTournament get() = tournaments[current]
-    val currentGame get() = currentTournament.currentGame
+    val tournaments = mutableStateListOf<Tournament>()
+    //val tournamentsByDate get() = tournaments.sortedByDescending { it.start }
 }

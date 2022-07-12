@@ -18,12 +18,12 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -31,7 +31,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
-import java.util.*
 import kotlin.math.roundToInt
 
 class TournamentsAppActivity : ComponentActivity() {
@@ -46,6 +45,7 @@ const val ROUTE_TOURNAMENT_LIST = "tl"
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TournamentsApp() {
+    val model: TournamentContainer = viewModel()
     val navController = rememberAnimatedNavController()
     val width = ((LocalConfiguration.current.densityDpi / 160f)
             * LocalConfiguration.current.screenWidthDp).roundToInt()
@@ -53,19 +53,18 @@ fun TournamentsApp() {
         navController = navController,
         startDestination = ROUTE_TOURNAMENT_LIST
     ) {
-        composable(ROUTE_TOURNAMENT_LIST) { TournamentList(navController) }
+        composable(ROUTE_TOURNAMENT_LIST) { TournamentList(navController, model.tournaments) }
         composable(
             ROUTE_TOURNAMENT_EDITOR,
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { width }) },
-        ) { TournamentEditor(navController) }
+        ) { TournamentEditor(navController, model.tournaments) }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TournamentList(navController: NavHostController) {
-    val container = remember { TournamentContainer() }
+fun TournamentList(navController: NavHostController, tournaments: MutableList<Tournament>) {
     TournamentsComposeTheme {
         Scaffold(
             topBar = {
@@ -96,18 +95,15 @@ fun TournamentList(navController: NavHostController) {
                 }
             }
         ) { paddingValues: PaddingValues ->
-            TournamentList(container, Modifier.padding(paddingValues))
+            TournamentList(tournaments, Modifier.padding(paddingValues))
         }
     }
 }
 
 @Composable
-fun TournamentList(container: TournamentContainer, modifier: Modifier) {
-    val t = Tournament(Date(), Date(), mutableListOf(), true)
-    t.name = "test"
-    container.tournaments.add(t)
+fun TournamentList(tournaments: MutableList<Tournament>, modifier: Modifier) {
     LazyColumn(modifier.fillMaxHeight()) {
-        items(items = container.tournaments, itemContent = { item ->
+        items(items = tournaments, itemContent = { item ->
             Text(text = item.name, modifier = Modifier.padding(8.dp))
         })
     }
