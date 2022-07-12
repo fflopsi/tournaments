@@ -2,4 +2,5 @@
 <resources>
 
     <style name="Theme.TournamentsCompose" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.TournamentsCompose.Dialog" parent="android:Theme.Material.Dialog"/>
 </resources>
