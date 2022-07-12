@@ -89,9 +89,8 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                         start.get(Calendar.MONTH),
                                         start.get(Calendar.DAY_OF_MONTH)
                                     ).show()
-                                }, modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
+                                },
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text(
                                     text = "Start Date: ${start.get(Calendar.YEAR)}" +
@@ -108,9 +107,8 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                         end.get(Calendar.MONTH),
                                         end.get(Calendar.DAY_OF_MONTH)
                                     ).show()
-                                }, modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
+                                },
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text(
                                     text = "End Date: ${end.get(Calendar.YEAR)}" +
