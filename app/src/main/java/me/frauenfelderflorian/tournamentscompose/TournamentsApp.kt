@@ -23,6 +23,7 @@ class TournamentsAppActivity : ComponentActivity() {
 }
 
 const val ROUTE_TOURNAMENT_LIST = "tl"
+const val ROUTE_TOURNAMENT_EDITOR = "te"
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

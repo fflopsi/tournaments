@@ -27,8 +27,6 @@ import me.frauenfelderflorian.tournamentscompose.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
 import java.util.*
 
-const val ROUTE_TOURNAMENT_EDITOR = "te"
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentEditor(navController: NavController, tournaments: MutableList<Tournament>) {
