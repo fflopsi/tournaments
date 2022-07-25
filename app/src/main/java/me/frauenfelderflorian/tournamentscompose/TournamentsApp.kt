@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -29,6 +28,7 @@ class TournamentsAppActivity : ComponentActivity() {
 enum class Routes(val route: String) {
     TOURNAMENT_LIST("tl"),
     TOURNAMENT_EDITOR("te"),
+    TOURNAMENT_VIEWER("tv"),
     PLAYERS_EDITOR("pe")
 }
 
@@ -61,6 +61,19 @@ fun TournamentsApp() {
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }
         ) { TournamentEditor(navController, model.tournaments) }
+        composable(
+            route = Routes.TOURNAMENT_VIEWER.route,
+            enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }
+        ) {
+            TournamentViewer(
+                navController = navController,
+                tournaments = model.tournaments,
+                current = model.current
+            )
+        }
         composable(
             route = Routes.PLAYERS_EDITOR.route + "?players={players}",
             arguments = listOf(navArgument("players") { defaultValue = "Default Player" }),
