@@ -47,7 +47,7 @@ fun TournamentListScreen(navController: NavHostController, tournaments: MutableL
                         "This will add a new tournament",
                         Toast.LENGTH_SHORT,
                     ).show()
-                    navController.navigate(ROUTE_TOURNAMENT_EDITOR)
+                    navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                 }) {
                     Icon(Icons.Default.Add, stringResource(R.string.add_new_tournament))
                 }

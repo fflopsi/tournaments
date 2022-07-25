@@ -1,6 +1,9 @@
 package me.frauenfelderflorian.tournamentscompose
 
 import android.app.DatePickerDialog
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +15,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,10 +42,20 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
     var name by rememberSaveable { mutableStateOf("") }
     var start by rememberSaveable { mutableStateOf(GregorianCalendar()) }
     var end by rememberSaveable { mutableStateOf(GregorianCalendar()) }
-    if (start.after(end)) end = start.clone() as GregorianCalendar //better after "OK" in date picker, with SnackBar
+    if (start.after(end)) end =
+        start.clone() as GregorianCalendar //better after "OK" in date picker, with SnackBar
     var useDefaults by rememberSaveable { mutableStateOf(true) }
+    val players = rememberMutableStateListOf<String>()
     var adaptivePoints by rememberSaveable { mutableStateOf(true) }
     var firstPointsString by rememberSaveable { mutableStateOf("") }
+
+    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Map<UUID, String>>("players")
+        ?.observeAsState()?.value?.let {
+            players.clear()
+            for (player in it.toList().sortedBy { (_, value) -> value.lowercase() }.toMap())
+                players.add(player.value)
+            navController.currentBackStackEntry?.savedStateHandle?.remove<Map<UUID, String>>("players")
+        }
 
     TournamentsComposeTheme {
         Scaffold(
@@ -63,7 +79,8 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                         }
                     }
                 )
-            }
+            },
+            snackbarHost = { SnackbarHost(hostState = hostState) }
         ) { paddingValues: PaddingValues ->
             Box(
                 modifier = Modifier
@@ -138,21 +155,38 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                             Switch(checked = useDefaults, onCheckedChange = { useDefaults = it })
                         }
                     }
-                    if (!useDefaults) {
-                        item {
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
                             Row {
                                 Text(
-                                    text = "Players: ",
+                                    text = "Players: ${players.joinToString(", ")}",
                                     modifier = Modifier
                                         .weight(2f)
                                         .align(Alignment.CenterVertically)
                                 )
-                                IconButton(onClick = { /*TODO*/ }) {
+                                IconButton(onClick = {
+                                    navController.navigate(
+                                        route = Routes.PLAYERS_EDITOR.route +
+                                                if (players.isNotEmpty())
+                                                    "?players=" + players.joinToString(";")
+                                                else ""
+                                    )
+                                }) {
                                     Icon(Icons.Default.Edit, "Edit players")
                                 }
                             }
                         }
-                        item {
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
                             Row(modifier = Modifier.clickable {
                                 adaptivePoints = !adaptivePoints
                             }) {
@@ -180,7 +214,13 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                 )
                             }
                         }
-                        if (adaptivePoints) item {
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults && adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
                             Text(
                                 text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
                                 fontStyle = FontStyle.Italic,
@@ -188,7 +228,13 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                 fontWeight = FontWeight.Light
                             )
                         }
-                        else item {
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults && !adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
                             Column {
                                 TextField(
                                     value = firstPointsString,
@@ -198,7 +244,6 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                             firstPointsString = it.trim()
                                         } catch (e: NumberFormatException) {
                                             scope.launch {
-                                                hostState.currentSnackbarData?.dismiss()
                                                 hostState.showSnackbar(
                                                     "Input a valid number",
                                                     duration = SnackbarDuration.Short
@@ -222,11 +267,27 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                         }
                     }
                 }
-                SnackbarHost(
-                    hostState = hostState,
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                )
             }
         }
+    }
+}
+
+@Composable
+private fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+    return rememberSaveable(
+        saver = listSaver(
+            save = { stateList ->
+                if (stateList.isNotEmpty()) {
+                    val first = stateList.first()
+                    if (!canBeSaved(first)) {
+                        throw IllegalStateException("${first::class} cannot be saved. By default only types which can be stored in the Bundle class can be saved.")
+                    }
+                }
+                stateList.toList()
+            },
+            restore = { it.toMutableStateList() }
+        )
+    ) {
+        elements.toList().toMutableStateList()
     }
 }
