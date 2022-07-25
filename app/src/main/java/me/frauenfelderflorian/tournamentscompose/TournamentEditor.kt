@@ -70,7 +70,13 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                     },
                     actions = {
                         IconButton(onClick = {
-                            val t = Tournament(Date(), Date(), mutableListOf(""), true)
+                            val t = Tournament(
+                                start = start,
+                                end = end,
+                                players = players,
+                                useAdaptivePoints = adaptivePoints,
+                                firstPoints = firstPointsString.toInt()
+                            )
                             t.name = name
                             tournaments.add(t)
                             navController.popBackStack()

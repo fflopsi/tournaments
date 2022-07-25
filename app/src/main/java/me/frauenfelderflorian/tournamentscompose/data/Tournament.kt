@@ -4,8 +4,8 @@ import java.text.DateFormat
 import java.util.*
 
 class Tournament(
-    var start: Date,
-    var end: Date,
+    var start: GregorianCalendar,
+    var end: GregorianCalendar,
     val players: MutableList<String>,
     val useAdaptivePoints: Boolean,
     val firstPoints: Int = 10

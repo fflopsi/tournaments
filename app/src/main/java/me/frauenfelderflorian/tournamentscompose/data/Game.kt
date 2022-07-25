@@ -3,7 +3,7 @@ package me.frauenfelderflorian.tournamentscompose.data
 import java.text.DateFormat
 import java.util.*
 
-class Game(var date: Date, var hoops: Int, var hoopReached: Int) {
+class Game(var date: GregorianCalendar, var hoops: Int, var hoopReached: Int) {
     var difficulty = "not set"
         set(value) {
             field = value.trim()
