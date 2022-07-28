@@ -2,6 +2,7 @@ package me.frauenfelderflorian.tournamentscompose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -74,35 +75,33 @@ fun PlayersEditor(navController: NavController, formerPlayers: String?) {
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    for (player in players) {
-                        item {
-                            Row {
-                                TextField(
-                                    value = player.value,
-                                    onValueChange = {
-                                        if (it.contains(";"))
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    "No semicolon allowed in name",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            }
-                                        else players[player.key] = it
-                                    },
-                                    singleLine = true,
-                                    label = { Text("Name") },
-                                    placeholder = { Text(text = "Name of the player must be unique") },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(2f)
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                IconButton(onClick = { players.remove(player.key) }) {
-                                    Icon(Icons.Default.Delete, "Delete player")
-                                }
+                    items(items = players.entries.toList(), itemContent = { item ->
+                        Row {
+                            TextField(
+                                value = item.value,
+                                onValueChange = {
+                                    if (it.contains(";"))
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                "No semicolon allowed in name",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    else players[item.key] = it
+                                },
+                                singleLine = true,
+                                label = { Text("Name") },
+                                placeholder = { Text(text = "Name of the player must be unique") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(2f)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            IconButton(onClick = { players.remove(item.key) }) {
+                                Icon(Icons.Default.Delete, "Delete player")
                             }
                         }
-                    }
+                    })
                 }
             }
         }
