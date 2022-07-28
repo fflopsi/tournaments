@@ -2,7 +2,6 @@ package me.frauenfelderflorian.tournamentscompose.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import android.view.Window
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -10,7 +9,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
@@ -54,7 +52,8 @@ fun TournamentsComposeTheme(
     if (!view.isInEditMode) {
         SideEffect {
             (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController((view.context as Activity).window, view)
+                .isAppearanceLightStatusBars = darkTheme
         }
     }
 
