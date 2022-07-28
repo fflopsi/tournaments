@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -35,13 +32,17 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TournamentEditor(navController: NavController, tournaments: MutableList<Tournament>) {
+fun TournamentEditor(
+    navController: NavController,
+    tournaments: MutableList<Tournament>,
+    current: Int
+) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
 
-    var name by rememberSaveable { mutableStateOf("") }
-    var start by rememberSaveable { mutableStateOf(GregorianCalendar()) }
-    var end by rememberSaveable { mutableStateOf(GregorianCalendar()) }
+    var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
+    var start by rememberSaveable { mutableStateOf(if (current == -1) GregorianCalendar() else tournaments[current].start) }
+    var end by rememberSaveable { mutableStateOf(if (current == -1) GregorianCalendar() else tournaments[current].end) }
     if (start.after(end)) end =
         start.clone() as GregorianCalendar //better after "OK" in date picker, with SnackBar
     var useDefaults by rememberSaveable { mutableStateOf(true) }
@@ -69,16 +70,29 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                         }
                     },
                     actions = {
+                        if (current != -1)
+                            IconButton(onClick = {
+                                tournaments.remove(tournaments[current])
+                                navController.popBackStack()
+                            }) {
+                                Icon(Icons.Default.Delete, "Delete this tournament")
+                            }
                         IconButton(onClick = {
-                            val t = Tournament(
-                                start = start,
-                                end = end,
-                                players = players,
-                                useAdaptivePoints = adaptivePoints,
-                                firstPoints = firstPointsString.toInt()
-                            )
-                            t.name = name
-                            tournaments.add(t)
+                            if (current == -1) {
+                                val t = Tournament(
+                                    start = start,
+                                    end = end,
+                                    players = players,
+                                    useAdaptivePoints = adaptivePoints,
+                                    firstPoints = firstPointsString.toInt()
+                                )
+                                t.name = name
+                                tournaments.add(t)
+                            } else {
+                                tournaments[current].name = name
+                                tournaments[current].start = start
+                                tournaments[current].end = end
+                            }
                             navController.popBackStack()
                         }) {
                             Icon(Icons.Default.Check, "Save and exit")
@@ -112,7 +126,7 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                     item {
                         val context = LocalContext.current
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            ElevatedButton(
+                            OutlinedButton(
                                 onClick = {
                                     DatePickerDialog(
                                         context, R.style.Theme_TournamentsCompose_Dialog,
@@ -124,13 +138,9 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(
-                                    text = "Start Date: ${start.get(Calendar.YEAR)}" +
-                                            "/${start.get(Calendar.MONTH) + 1}" +
-                                            "/${start.get(Calendar.DAY_OF_MONTH)}"
-                                )
+                                Text(text = "Start Date: ${formatDate(start)}")
                             }
-                            ElevatedButton(
+                            OutlinedButton(
                                 onClick = {
                                     DatePickerDialog(
                                         context, R.style.Theme_TournamentsCompose_Dialog,
@@ -142,133 +152,152 @@ fun TournamentEditor(navController: NavController, tournaments: MutableList<Tour
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(
-                                    text = "End Date: ${end.get(Calendar.YEAR)}" +
-                                            "/${end.get(Calendar.MONTH) + 1}" +
-                                            "/${end.get(Calendar.DAY_OF_MONTH)}"
-                                )
+                                Text(text = "End Date: ${formatDate(end)}")
                             }
                         }
                     }
-                    item {
-                        Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
-                            Text(
-                                text = "Use default values",
-                                modifier = Modifier
-                                    .weight(2f)
-                                    .align(Alignment.CenterVertically)
-                            )
-                            Switch(checked = useDefaults, onCheckedChange = { useDefaults = it })
-                        }
-                    }
-                    item {
-                        AnimatedVisibility(
-                            visible = !useDefaults,
-                            enter = expandVertically(expandFrom = Alignment.Top),
-                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                        ) {
-                            Row {
+                    if (current == -1) {
+                        item {
+                            Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
                                 Text(
-                                    text = "Players: ${players.joinToString(", ")}",
+                                    text = "Use default values",
                                     modifier = Modifier
                                         .weight(2f)
                                         .align(Alignment.CenterVertically)
                                 )
-                                IconButton(onClick = {
-                                    navController.navigate(
-                                        route = Routes.PLAYERS_EDITOR.route +
-                                                if (players.isNotEmpty())
-                                                    "?players=" + players.joinToString(";")
-                                                else ""
-                                    )
-                                }) {
-                                    Icon(Icons.Default.Edit, "Edit players")
-                                }
-                            }
-                        }
-                    }
-                    item {
-                        AnimatedVisibility(
-                            visible = !useDefaults,
-                            enter = expandVertically(expandFrom = Alignment.Top),
-                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                        ) {
-                            Row(modifier = Modifier.clickable {
-                                adaptivePoints = !adaptivePoints
-                            }) {
-                                Column(
-                                    modifier = Modifier
-                                        .weight(2f)
-                                        .align(Alignment.CenterVertically)
-                                ) {
-                                    Text(
-                                        text = "Point system: "
-                                                + (if (adaptivePoints) "Adaptive" else "Classic")
-                                    )
-                                    Text(
-                                        text = if (adaptivePoints)
-                                            "Recommended point system. Switch off for classic system"
-                                        else "Old point system. Switch on for adaptive system",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(16.dp))
                                 Switch(
-                                    checked = adaptivePoints,
-                                    onCheckedChange = { adaptivePoints = it }
-                                )
+                                    checked = useDefaults,
+                                    onCheckedChange = { useDefaults = it })
                             }
                         }
-                    }
-                    item {
-                        AnimatedVisibility(
-                            visible = !useDefaults && adaptivePoints,
-                            enter = expandVertically(expandFrom = Alignment.Top),
-                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                        ) {
-                            Text(
-                                text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
-                                fontStyle = FontStyle.Italic,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
-                            )
+                        item {
+                            AnimatedVisibility(
+                                visible = !useDefaults,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                            ) {
+                                Row {
+                                    Text(
+                                        text = "Players: ${players.joinToString(", ")}",
+                                        modifier = Modifier
+                                            .weight(2f)
+                                            .align(Alignment.CenterVertically)
+                                    )
+                                    IconButton(onClick = {
+                                        navController.navigate(
+                                            route = Routes.PLAYERS_EDITOR.route +
+                                                    if (players.isNotEmpty())
+                                                        "?players=" + players.joinToString(";")
+                                                    else ""
+                                        )
+                                    }) {
+                                        Icon(Icons.Default.Edit, "Edit players")
+                                    }
+                                }
+                            }
                         }
-                    }
-                    item {
-                        AnimatedVisibility(
-                            visible = !useDefaults && !adaptivePoints,
-                            enter = expandVertically(expandFrom = Alignment.Top),
-                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                        ) {
-                            Column {
-                                TextField(
-                                    value = firstPointsString,
-                                    onValueChange = {
-                                        try {
-                                            it.toDouble()
-                                            firstPointsString = it.trim()
-                                        } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    "Input a valid number",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            }
-                                        }
-                                    },
-                                    singleLine = true,
-                                    label = { Text("Points for first place") },
-                                    trailingIcon = { Icon(Icons.Default.Star, "Edit this") },
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+                        item {
+                            AnimatedVisibility(
+                                visible = !useDefaults,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                            ) {
+                                Row(modifier = Modifier.clickable {
+                                    adaptivePoints = !adaptivePoints
+                                }) {
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(2f)
+                                            .align(Alignment.CenterVertically)
+                                    ) {
+                                        Text(
+                                            text = "Point system: "
+                                                    + (if (adaptivePoints) "Adaptive" else "Classic")
+                                        )
+                                        Text(
+                                            text = if (adaptivePoints)
+                                                "Recommended point system. Switch off for classic system"
+                                            else "Old point system. Switch on for adaptive system",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Light
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(16.dp))
+                                    Switch(
+                                        checked = adaptivePoints,
+                                        onCheckedChange = { adaptivePoints = it }
+                                    )
+                                }
+                            }
+                        }
+                        item {
+                            AnimatedVisibility(
+                                visible = !useDefaults && adaptivePoints,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                            ) {
                                 Text(
-                                    text = "Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.",
+                                    text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
                                     fontStyle = FontStyle.Italic,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Light
                                 )
+                            }
+                        }
+                        item {
+                            AnimatedVisibility(
+                                visible = !useDefaults && !adaptivePoints,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                            ) {
+                                Column {
+                                    TextField(
+                                        value = firstPointsString,
+                                        onValueChange = {
+                                            try {
+                                                it.toDouble()
+                                                firstPointsString = it.trim()
+                                            } catch (e: NumberFormatException) {
+                                                scope.launch {
+                                                    hostState.showSnackbar(
+                                                        "Input a valid number",
+                                                        duration = SnackbarDuration.Short
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        singleLine = true,
+                                        label = { Text("Points for first place") },
+                                        trailingIcon = { Icon(Icons.Default.Star, "Edit this") },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Text(
+                                        text = "Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.",
+                                        fontStyle = FontStyle.Italic,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        item {
+                            Divider(thickness = 1.dp)
+                        }
+                        item {
+                            Button(
+                                onClick = {
+                                    tournaments.remove(tournaments[current])
+                                    navController.popBackStack()
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(text = "Delete this tournament")
                             }
                         }
                     }

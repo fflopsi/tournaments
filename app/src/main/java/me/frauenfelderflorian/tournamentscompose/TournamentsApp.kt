@@ -16,6 +16,8 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
+import java.text.DateFormat
+import java.util.*
 import kotlin.math.roundToInt
 
 class TournamentsAppActivity : ComponentActivity() {
@@ -50,7 +52,13 @@ fun TournamentsApp() {
                 else slideOutHorizontally(targetOffsetX = { -width })
             },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
-        ) { TournamentListScreen(navController, model.tournaments) }
+        ) {
+            TournamentList(
+                navController = navController,
+                tournaments = model.tournaments,
+                setCurrent = model::updateCurrent
+            )
+        }
         composable(
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
@@ -60,7 +68,13 @@ fun TournamentsApp() {
             exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }
-        ) { TournamentEditor(navController, model.tournaments) }
+        ) {
+            TournamentEditor(
+                navController = navController,
+                tournaments = model.tournaments,
+                current = model.current
+            )
+        }
         composable(
             route = Routes.TOURNAMENT_VIEWER.route,
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
@@ -80,7 +94,13 @@ fun TournamentsApp() {
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) },
         ) { backStackEntry ->
-            PlayersEditor(navController, backStackEntry.arguments?.getString("players"))
+            PlayersEditor(
+                navController = navController,
+                formerPlayers = backStackEntry.arguments?.getString("players")
+            )
         }
     }
 }
+
+fun formatDate(cal: GregorianCalendar): String =
+    DateFormat.getDateInstance(DateFormat.SHORT).format(cal.time)
