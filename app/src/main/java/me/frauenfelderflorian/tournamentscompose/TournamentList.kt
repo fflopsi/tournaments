@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
@@ -24,7 +26,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun TournamentList(
     navController: NavHostController,
     tournaments: MutableList<Tournament>,
-    setCurrent: (Int) -> Unit
+    setCurrent: (Int) -> Unit,
 ) {
     TournamentsComposeTheme {
         Scaffold(
@@ -60,7 +62,7 @@ fun TournamentList(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(items = tournaments) { item ->
+                    if (tournaments.isNotEmpty()) items(items = tournaments) { item ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable { /*TournamentViewer*/ }
@@ -80,6 +82,13 @@ fun TournamentList(
                                 Icon(Icons.Default.Edit, "Edit tournament")
                             }
                         }
+                    }
+                    else item {
+                        Text(
+                            text = "Tap  +  in the lower right corner to add your first tournament",
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.ExtraLight
+                        )
                     }
                 }
             }
