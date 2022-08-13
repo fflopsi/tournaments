@@ -22,7 +22,7 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayersEditor(navController: NavController, formerPlayers: String?) {
+fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: String?) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
 
@@ -34,7 +34,7 @@ fun PlayersEditor(navController: NavController, formerPlayers: String?) {
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
 
-    TournamentsComposeTheme {
+    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(

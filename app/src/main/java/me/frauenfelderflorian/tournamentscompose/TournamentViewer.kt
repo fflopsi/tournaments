@@ -17,10 +17,11 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 @Composable
 fun TournamentViewer(
     navController: NavController,
+    theme: Int,
     tournaments: MutableList<Tournament>,
     current: Int
 ) {
-    TournamentsComposeTheme {
+    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(

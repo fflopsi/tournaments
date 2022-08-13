@@ -34,6 +34,7 @@ import java.util.*
 @Composable
 fun TournamentEditor(
     navController: NavController,
+    theme: Int,
     tournaments: MutableList<Tournament>,
     current: Int
 ) {
@@ -58,7 +59,7 @@ fun TournamentEditor(
             navController.currentBackStackEntry?.savedStateHandle?.remove<Map<UUID, String>>("players")
         }
 
-    TournamentsComposeTheme {
+    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(

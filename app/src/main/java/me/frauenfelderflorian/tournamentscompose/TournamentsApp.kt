@@ -7,14 +7,19 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import me.frauenfelderflorian.tournamentscompose.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
 import java.text.DateFormat
 import java.util.*
@@ -31,16 +36,21 @@ enum class Routes(val route: String) {
     TOURNAMENT_LIST("tl"),
     TOURNAMENT_EDITOR("te"),
     TOURNAMENT_VIEWER("tv"),
-    PLAYERS_EDITOR("pe")
+    PLAYERS_EDITOR("pe"),
+    SETTINGS_EDITOR("se"),
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TournamentsApp() {
-    val model: TournamentContainer = viewModel()
+    val container: TournamentContainer = viewModel()
+    val prefs: Prefs = viewModel(factory = PrefsFactory(LocalContext.current))
+    LaunchedEffect(Unit) {
+        prefs.themeFlow.collect { value -> prefs.updateTheme(value) }
+    }
     val navController = rememberAnimatedNavController()
     val width = ((LocalConfiguration.current.densityDpi / 160f)
-            * LocalConfiguration.current.screenWidthDp).roundToInt()
+            * LocalConfiguration.current.screenWidthDp).roundToInt() //check if necessary
     AnimatedNavHost(
         navController = navController,
         startDestination = Routes.TOURNAMENT_LIST.route
@@ -48,21 +58,22 @@ fun TournamentsApp() {
         composable(
             route = Routes.TOURNAMENT_LIST.route,
             exitTransition = {
-                if (model.current == -1) null
+                if (container.current == -1) null
                 else slideOutHorizontally(targetOffsetX = { -width })
             },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
         ) {
             TournamentList(
                 navController = navController,
-                tournaments = model.tournaments,
-                setCurrent = model::updateCurrent
+                theme = prefs.theme,
+                tournaments = container.tournaments,
+                setCurrent = container::updateCurrent
             )
         }
         composable(
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
-                if (model.current == -1) scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
+                if (container.current == -1) scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
                 else slideInHorizontally(initialOffsetX = { width })
             },
             exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
@@ -71,8 +82,9 @@ fun TournamentsApp() {
         ) {
             TournamentEditor(
                 navController = navController,
-                tournaments = model.tournaments,
-                current = model.current
+                theme = prefs.theme,
+                tournaments = container.tournaments,
+                current = container.current
             )
         }
         composable(
@@ -84,8 +96,9 @@ fun TournamentsApp() {
         ) {
             TournamentViewer(
                 navController = navController,
-                tournaments = model.tournaments,
-                current = model.current
+                theme = prefs.theme,
+                tournaments = container.tournaments,
+                current = container.current
             )
         }
         composable(
@@ -96,7 +109,19 @@ fun TournamentsApp() {
         ) { backStackEntry ->
             PlayersEditor(
                 navController = navController,
+                theme = prefs.theme,
                 formerPlayers = backStackEntry.arguments?.getString("players")
+            )
+        }
+        composable(
+            route = Routes.SETTINGS_EDITOR.route,
+            enterTransition = { slideInHorizontally(initialOffsetX = { width }) }, //TODO
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }, //TODO
+        ) {
+            SettingsEditor(
+                navController = navController,
+                theme = prefs.theme,
+                updateTheme = prefs::updateTheme,
             )
         }
     }
@@ -104,3 +129,14 @@ fun TournamentsApp() {
 
 fun formatDate(cal: GregorianCalendar): String =
     DateFormat.getDateInstance(DateFormat.SHORT).format(cal.time)
+
+@Composable
+fun getTheme(theme: Int): Boolean {
+    return when (theme) {
+        1 -> false
+        2 -> true
+        else -> {
+            isSystemInDarkTheme()
+        }
+    }
+}

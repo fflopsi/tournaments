@@ -25,16 +25,19 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 @Composable
 fun TournamentList(
     navController: NavHostController,
+    theme: Int,
     tournaments: MutableList<Tournament>,
     setCurrent: (Int) -> Unit,
 ) {
-    TournamentsComposeTheme {
+    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(
                     title = { Text(text = stringResource(R.string.app_title)) },
                     actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                        }) {
                             Icon(Icons.Default.Settings, stringResource(R.string.settings))
                         }
                         IconButton(onClick = { /*TODO*/ }) {
