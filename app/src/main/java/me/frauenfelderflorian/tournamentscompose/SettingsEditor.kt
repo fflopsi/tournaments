@@ -82,17 +82,15 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                                     DropdownMenuItem(
                                         text = { Text(text = "Light") },
                                         onClick = { updateTheme(1) },
-                                        leadingIcon = { Icon(Icons.Default.LightMode, "Auto") },
+                                        leadingIcon = { Icon(Icons.Default.LightMode, "Light") },
                                         trailingIcon = {
                                             if (theme == 1) Icon(Icons.Default.Check, "Active")
                                         }
                                     )
                                     DropdownMenuItem(
                                         text = { Text(text = "Dark") },
-                                        onClick = {
-                                            updateTheme(2)
-                                        },
-                                        leadingIcon = { Icon(Icons.Default.DarkMode, "Auto") },
+                                        onClick = { updateTheme(2) },
+                                        leadingIcon = { Icon(Icons.Default.DarkMode, "Dark") },
                                         trailingIcon = {
                                             if (theme == 2) Icon(Icons.Default.Check, "Active")
                                         }
