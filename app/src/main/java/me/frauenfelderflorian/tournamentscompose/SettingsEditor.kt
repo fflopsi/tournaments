@@ -24,14 +24,12 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                 SmallTopAppBar(
                     title = { Text(text = "Settings") },
                     navigationIcon = {
-                        IconButton(
-                            onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, "Back")
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { /*TODO*/ }) {
                             Icon(Icons.Default.Check, "Save and exit")
                         }
                     }
