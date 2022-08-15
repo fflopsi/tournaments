@@ -116,6 +116,8 @@ fun TournamentsApp() {
         composable(
             route = Routes.SETTINGS_EDITOR.route,
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) }, //TODO
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }, //TODO
         ) {
             SettingsEditor(
