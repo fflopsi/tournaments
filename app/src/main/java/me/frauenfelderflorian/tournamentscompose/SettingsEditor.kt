@@ -78,7 +78,7 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                                             if (theme == 0) Icon(Icons.Default.Check, "Active")
                                         }
                                     )
-                                    MenuDefaults.Divider()
+                                    Divider()
                                     DropdownMenuItem(
                                         text = { Text(text = "Light") },
                                         onClick = { updateTheme(1) },
