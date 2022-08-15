@@ -54,8 +54,8 @@ fun TournamentEditor(
     navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Map<UUID, String>>("players")
         ?.observeAsState()?.value?.let {
             players.clear()
-            for (player in it.toList().sortedBy { (_, value) -> value.lowercase() }.toMap())
-                players.add(player.value)
+            for (player in it.toList().sortedBy { (_, value) -> value.lowercase() })
+                players.add(player.second)
             navController.currentBackStackEntry?.savedStateHandle?.remove<Map<UUID, String>>("players")
         }
 
@@ -309,7 +309,7 @@ fun TournamentEditor(
 }
 
 @Composable
-private fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
     return rememberSaveable(
         saver = listSaver(
             save = { stateList ->
