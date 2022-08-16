@@ -260,10 +260,7 @@ fun TournamentEditor(
                                                 firstPointsString = it.trim()
                                             } catch (e: NumberFormatException) {
                                                 scope.launch {
-                                                    hostState.showSnackbar(
-                                                        "Input a valid number",
-                                                        duration = SnackbarDuration.Short
-                                                    )
+                                                    hostState.showSnackbar("Input a valid number")
                                                 }
                                             }
                                         },
