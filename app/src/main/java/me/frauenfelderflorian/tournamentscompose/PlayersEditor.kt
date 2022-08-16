@@ -47,6 +47,24 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                     },
                     actions = {
                         IconButton(onClick = {
+                            for (player1 in players) {
+                                if (player1.value.isBlank()) {
+                                    scope.launch {
+                                        hostState.showSnackbar("Nameless players not allowed")
+                                    }
+                                    return@IconButton
+                                }
+                                for (player2 in players) {
+                                    if (player1.key != player2.key
+                                        && player1.value.trim() == player2.value.trim()
+                                    ) {
+                                        scope.launch {
+                                            hostState.showSnackbar("Two players cannot have the same name: ${player1.value}")
+                                        }
+                                        return@IconButton
+                                    }
+                                }
+                            }
                             navController.previousBackStackEntry?.savedStateHandle?.set(
                                 "players",
                                 players.toMap()
@@ -82,10 +100,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                                 onValueChange = {
                                     if (it.contains(";"))
                                         scope.launch {
-                                            hostState.showSnackbar(
-                                                "No semicolon allowed in name",
-                                                duration = SnackbarDuration.Short
-                                            )
+                                            hostState.showSnackbar("No semicolon allowed in name")
                                         }
                                     else players[item.key] = it
                                 },
