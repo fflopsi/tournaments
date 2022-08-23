@@ -15,8 +15,25 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) -> Unit) {
+fun SettingsEditor(
+    navController: NavController,
+    theme: Int,
+    formerPlayers: List<String>,
+    updateTheme: (Int) -> Unit,
+    savePlayers: (List<String>) -> Unit,
+) {
     var themeSelectorExpanded by remember { mutableStateOf(false) }
+    val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
+
+    LaunchedEffect(Unit) {
+        val newPlayers =
+            navController.currentBackStackEntry?.savedStateHandle?.get<String>("players")
+        if (newPlayers != null) {
+            players.clear()
+            newPlayers.split(";").forEach { players.add(it) }
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
+        }
+    }
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
@@ -29,7 +46,10 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                         }
                     },
                     actions = {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+                            savePlayers(players)
+                            navController.popBackStack()
+                        }) {
                             Icon(Icons.Default.Check, "Save and exit")
                         }
                     }
@@ -52,7 +72,13 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                             modifier = Modifier.clickable { themeSelectorExpanded = true }
                         ) {
                             Text(
-                                text = "Choose Theme...",
+                                text = "Choose Theme: ${
+                                    when (theme) {
+                                        1 -> "Light"
+                                        2 -> "Dark"
+                                        else -> "Auto"
+                                    }
+                                }",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)
@@ -94,6 +120,29 @@ fun SettingsEditor(navController: NavController, theme: Int, updateTheme: (Int) 
                                         }
                                     )
                                 }
+                            }
+                        }
+                    }
+                    item {
+                        Divider()
+                    }
+                    item {
+                        Row {
+                            Text(
+                                text = "Default players: ${players.joinToString(", ")}",
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .align(Alignment.CenterVertically)
+                            )
+                            IconButton(onClick = {
+                                navController.navigate(
+                                    route = Routes.PLAYERS_EDITOR.route +
+                                            if (players.isNotEmpty())
+                                                "?players=" + players.joinToString(";")
+                                            else ""
+                                )
+                            }) {
+                                Icon(Icons.Default.Edit, "Edit players")
                             }
                         }
                     }

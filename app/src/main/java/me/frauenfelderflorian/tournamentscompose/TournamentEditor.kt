@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -51,13 +50,15 @@ fun TournamentEditor(
     var adaptivePoints by rememberSaveable { mutableStateOf(true) }
     var firstPointsString by rememberSaveable { mutableStateOf("") }
 
-    navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Map<UUID, String>>("players")
-        ?.observeAsState()?.value?.let {
+    LaunchedEffect(Unit) {
+        val newPlayers =
+            navController.currentBackStackEntry?.savedStateHandle?.get<String>("players")
+        if (newPlayers != null) {
             players.clear()
-            for (player in it.toList().sortedBy { (_, value) -> value.lowercase() })
-                players.add(player.second)
-            navController.currentBackStackEntry?.savedStateHandle?.remove<Map<UUID, String>>("players")
+            newPlayers.split(";").forEach { players.add(it) }
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
         }
+    }
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(

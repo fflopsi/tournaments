@@ -67,7 +67,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                             }
                             navController.previousBackStackEntry?.savedStateHandle?.set(
                                 "players",
-                                players.toMap()
+                                players.values.joinToString(";")
                             )
                             navController.popBackStack()
                         }) {

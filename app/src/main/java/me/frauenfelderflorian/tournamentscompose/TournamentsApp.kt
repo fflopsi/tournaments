@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
@@ -46,7 +47,12 @@ fun TournamentsApp() {
     val container: TournamentContainer = viewModel()
     val prefs: Prefs = viewModel(factory = PrefsFactory(LocalContext.current))
     LaunchedEffect(Unit) {
-        prefs.themeFlow.collect { value -> prefs.updateTheme(value) }
+        launch {
+            prefs.themeFlow.collect { prefs.updateTheme(it) }
+        }
+        launch {
+            prefs.playersFlow.collect { prefs.savePlayers(it.split(";")) }
+        }
     }
     val navController = rememberAnimatedNavController()
     val width = ((LocalConfiguration.current.densityDpi / 160f)
@@ -123,7 +129,9 @@ fun TournamentsApp() {
             SettingsEditor(
                 navController = navController,
                 theme = prefs.theme,
+                formerPlayers = prefs.players,
                 updateTheme = prefs::updateTheme,
+                savePlayers = prefs::savePlayers,
             )
         }
     }
