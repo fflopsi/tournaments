@@ -103,7 +103,7 @@ fun TournamentEditor(
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) }
-        ) { paddingValues: PaddingValues ->
+        ) { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -310,14 +310,14 @@ fun TournamentEditor(
 fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
     return rememberSaveable(
         saver = listSaver(
-            save = { stateList ->
-                if (stateList.isNotEmpty()) {
-                    val first = stateList.first()
+            save = {
+                if (it.isNotEmpty()) {
+                    val first = it.first()
                     if (!canBeSaved(first)) {
                         throw IllegalStateException("${first::class} cannot be saved. By default only types which can be stored in the Bundle class can be saved.")
                     }
                 }
-                stateList.toList()
+                it.toList()
             },
             restore = { it.toMutableStateList() }
         )

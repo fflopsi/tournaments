@@ -22,10 +22,10 @@ class Prefs(private val context: Context) : ViewModel() {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     var theme by mutableStateOf(0); private set
-    val themeFlow = context.dataStore.data.map { prefs -> prefs[THEME_KEY] ?: 0 }
+    val themeFlow = context.dataStore.data.map { it[THEME_KEY] ?: 0 }
 
     var players = mutableStateListOf<String>(); private set
-    val playersFlow = context.dataStore.data.map { prefs -> prefs[PLAYERS_KEY] ?: "" }
+    val playersFlow = context.dataStore.data.map { it[PLAYERS_KEY] ?: "" }
 
     fun updateTheme(newTheme: Int) = runBlocking {
         if (newTheme < 0 || newTheme > 2) throw IllegalArgumentException("Theme ID must be 0, 1, or 2")

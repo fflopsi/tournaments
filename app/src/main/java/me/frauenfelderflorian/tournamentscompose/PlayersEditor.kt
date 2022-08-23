@@ -93,16 +93,16 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(items = players.entries.toList(), itemContent = { item ->
+                    items(items = players.entries.toList(), itemContent = {
                         Row {
                             TextField(
-                                value = item.value,
-                                onValueChange = {
-                                    if (it.contains(";"))
+                                value = it.value,
+                                onValueChange = { value ->
+                                    if (value.contains(";"))
                                         scope.launch {
                                             hostState.showSnackbar("No semicolon allowed in name")
                                         }
-                                    else players[item.key] = it
+                                    else players[it.key] = value
                                 },
                                 singleLine = true,
                                 label = { Text("Name") },
@@ -112,7 +112,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                                     .weight(2f)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
-                            IconButton(onClick = { players.remove(item.key) }) {
+                            IconButton(onClick = { players.remove(it.key) }) {
                                 Icon(Icons.Default.Delete, "Delete player")
                             }
                         }
@@ -127,9 +127,9 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
 private fun rememberMutableStateMapOf(vararg elements: Pair<UUID, String>): SnapshotStateMap<UUID, String> {
     return rememberSaveable(
         saver = listSaver(
-            save = { stateMap -> stateMap.toList().map { "${it.first},${it.second}" } },
-            restore = { it ->
-                it.map { UUID.fromString(it.substringBefore(",")) to it.substringAfter(",") }
+            save = { map -> map.toList().map { "${it.first},${it.second}" } },
+            restore = { list ->
+                list.map { UUID.fromString(it.substringBefore(",")) to it.substringAfter(",") }
                     .toMutableStateMap()
             }
         )

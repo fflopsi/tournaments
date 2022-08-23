@@ -72,21 +72,21 @@ fun TournamentList(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    if (tournaments.isNotEmpty()) items(items = tournaments) { item ->
+                    if (tournaments.isNotEmpty()) items(items = tournaments) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable { /*TournamentViewer*/ }
                         ) {
                             Text(
-                                text = "\"${item.name}\" " +
-                                        "from ${formatDate(item.start)} to ${formatDate(item.end)}",
+                                text = "\"${it.name}\" " +
+                                        "from ${formatDate(it.start)} to ${formatDate(it.end)}",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             IconButton(onClick = {
-                                setCurrent(tournaments.indexOf(item))
+                                setCurrent(tournaments.indexOf(it))
                                 navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                             }) {
                                 Icon(Icons.Default.Edit, "Edit tournament")

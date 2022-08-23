@@ -112,11 +112,11 @@ fun TournamentsApp() {
             arguments = listOf(navArgument("players") { defaultValue = "Default Player" }),
             enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) },
-        ) { backStackEntry ->
+        ) {
             PlayersEditor(
                 navController = navController,
                 theme = prefs.theme,
-                formerPlayers = backStackEntry.arguments?.getString("players")
+                formerPlayers = it.arguments?.getString("players")
             )
         }
         composable(
