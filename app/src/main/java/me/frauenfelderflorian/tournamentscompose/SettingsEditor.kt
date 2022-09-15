@@ -1,16 +1,26 @@
 package me.frauenfelderflorian.tournamentscompose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,12 +28,19 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun SettingsEditor(
     navController: NavController,
     theme: Int,
-    formerPlayers: List<String>,
     updateTheme: (Int) -> Unit,
-    savePlayers: (List<String>) -> Unit,
+    formerPlayers: List<String>,
+    formerAdaptivePoints: Boolean,
+    formerFirstPoints: Int,
+    savePrefs: (List<String>, Boolean, Int) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
     var themeSelectorExpanded by remember { mutableStateOf(false) }
+
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
+    var adaptivePoints by rememberSaveable { mutableStateOf(formerAdaptivePoints) }
+    var firstPointsString by rememberSaveable { mutableStateOf(formerFirstPoints.toString()) }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -47,14 +64,26 @@ fun SettingsEditor(
                     },
                     actions = {
                         IconButton(onClick = {
-                            savePlayers(players)
-                            navController.popBackStack()
+                            if (firstPointsString == "") {
+                                if (!adaptivePoints)
+                                    scope.launch {
+                                        hostState.showSnackbar("Input a number for points for first place")
+                                    }
+                                else {
+                                    savePrefs(players, adaptivePoints, 10)
+                                    navController.popBackStack()
+                                }
+                            } else {
+                                savePrefs(players, adaptivePoints, firstPointsString.toInt())
+                                navController.popBackStack()
+                            }
                         }) {
                             Icon(Icons.Default.Check, "Save and exit")
                         }
                     }
                 )
-            }
+            },
+            snackbarHost = { SnackbarHost(hostState = hostState) }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -143,6 +172,81 @@ fun SettingsEditor(
                                 )
                             }) {
                                 Icon(Icons.Default.Edit, "Edit players")
+                            }
+                        }
+                    }
+                    item {
+                        Row(modifier = Modifier.clickable { adaptivePoints = !adaptivePoints }) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .align(Alignment.CenterVertically)
+                            ) {
+                                Text(
+                                    text = "Default point system: "
+                                            + (if (adaptivePoints) "Adaptive" else "Classic")
+                                )
+                                Text(
+                                    text = if (adaptivePoints)
+                                        "Recommended point system. Switch off for classic system"
+                                    else "Old point system. Switch on for adaptive system",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Switch(
+                                checked = adaptivePoints,
+                                onCheckedChange = { adaptivePoints = it }
+                            )
+                        }
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Text(
+                                text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Column {
+                                TextField(
+                                    value = firstPointsString,
+                                    onValueChange = {
+                                        try {
+                                            if (it != "")
+                                                it.toInt()
+                                            firstPointsString = it.trim()
+                                        } catch (e: NumberFormatException) {
+                                            scope.launch {
+                                                hostState.showSnackbar("Input a valid integer")
+                                            }
+                                        }
+                                    },
+                                    singleLine = true,
+                                    label = { Text("Points for first place") },
+                                    trailingIcon = { Icon(Icons.Default.Star, "Edit this") },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Text(
+                                    text = "Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.",
+                                    fontStyle = FontStyle.Italic,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Light
+                                )
                             }
                         }
                     }

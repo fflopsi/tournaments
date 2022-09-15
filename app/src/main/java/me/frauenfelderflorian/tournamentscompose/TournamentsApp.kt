@@ -51,7 +51,13 @@ fun TournamentsApp() {
             prefs.themeFlow.collect { prefs.updateTheme(it) }
         }
         launch {
-            prefs.playersFlow.collect { prefs.savePlayers(it.split(";")) }
+            prefs.playersFlow.collect { prefs.save(newPlayers = it.split(";")) }
+        }
+        launch {
+            prefs.adaptivePointsFlow.collect { prefs.save(newAdaptivePoints = it) }
+        }
+        launch {
+            prefs.firstPointsFlow.collect { prefs.save(newFirstPoints = it) }
         }
     }
     val navController = rememberAnimatedNavController()
@@ -129,9 +135,11 @@ fun TournamentsApp() {
             SettingsEditor(
                 navController = navController,
                 theme = prefs.theme,
-                formerPlayers = prefs.players,
                 updateTheme = prefs::updateTheme,
-                savePlayers = prefs::savePlayers,
+                formerPlayers = prefs.players,
+                formerAdaptivePoints = prefs.adaptivePoints,
+                formerFirstPoints = prefs.firstPoints,
+                savePrefs = prefs::save,
             )
         }
     }
