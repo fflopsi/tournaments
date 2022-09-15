@@ -257,11 +257,11 @@ fun TournamentEditor(
                                         value = firstPointsString,
                                         onValueChange = {
                                             try {
-                                                it.toDouble()
+                                                it.toInt()
                                                 firstPointsString = it.trim()
                                             } catch (e: NumberFormatException) {
                                                 scope.launch {
-                                                    hostState.showSnackbar("Input a valid number")
+                                                    hostState.showSnackbar("Input a valid integer")
                                                 }
                                             }
                                         },
