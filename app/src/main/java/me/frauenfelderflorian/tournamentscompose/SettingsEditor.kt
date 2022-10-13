@@ -55,7 +55,7 @@ fun SettingsEditor(
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text(text = "Settings") },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {

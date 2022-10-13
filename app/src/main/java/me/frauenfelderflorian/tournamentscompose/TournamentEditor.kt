@@ -63,7 +63,7 @@ fun TournamentEditor(
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text(text = "Edit Tournament") },
                     navigationIcon = {
                         IconButton(

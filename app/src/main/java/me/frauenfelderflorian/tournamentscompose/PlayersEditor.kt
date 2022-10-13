@@ -37,7 +37,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text(text = "Edit Players") },
                     navigationIcon = {
                         IconButton(

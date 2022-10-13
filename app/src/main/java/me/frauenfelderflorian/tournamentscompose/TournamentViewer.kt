@@ -23,7 +23,7 @@ fun TournamentViewer(
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text(text = "Tournament \"${tournaments[current].name}\"") },
                     navigationIcon = {
                         IconButton(

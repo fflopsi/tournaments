@@ -39,7 +39,7 @@ fun TournamentList(
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text(text = stringResource(R.string.app_title)) },
                     actions = {
                         IconButton(
