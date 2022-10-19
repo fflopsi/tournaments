@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -38,19 +40,19 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Edit Players") },
+                    title = { Text(text = stringResource(R.string.player_editor_title)) },
                     navigationIcon = {
-                        IconButton(
-                            onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, "Back")
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
+                        val context = LocalContext.current
                         IconButton(onClick = {
                             for (player1 in players) {
                                 if (player1.value.isBlank()) {
                                     scope.launch {
-                                        hostState.showSnackbar("Nameless players not allowed")
+                                        hostState.showSnackbar(context.resources.getString(R.string.no_nameless_players))
                                     }
                                     return@IconButton
                                 }
@@ -59,7 +61,12 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                                         && player1.value.trim() == player2.value.trim()
                                     ) {
                                         scope.launch {
-                                            hostState.showSnackbar("Two players cannot have the same name: ${player1.value}")
+                                            hostState.showSnackbar(
+                                                context.resources.getString(
+                                                    R.string.no_same_name_players,
+                                                    player1.value
+                                                )
+                                            )
                                         }
                                         return@IconButton
                                     }
@@ -71,14 +78,14 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                             )
                             navController.popBackStack()
                         }) {
-                            Icon(Icons.Default.Check, "Save and exit")
+                            Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
                     }
                 )
             },
             floatingActionButton = {
                 FloatingActionButton(onClick = { players[UUID.randomUUID()] = "" }) {
-                    Icon(Icons.Default.Add, "Add a new player")
+                    Icon(Icons.Default.Add, stringResource(R.string.add_new_player))
                 }
             },
             snackbarHost = { SnackbarHost(hostState = hostState) }
@@ -95,25 +102,26 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 ) {
                     items(items = players.entries.toList(), itemContent = {
                         Row {
+                            val context = LocalContext.current
                             TextField(
                                 value = it.value,
                                 onValueChange = { value ->
                                     if (value.contains(";"))
                                         scope.launch {
-                                            hostState.showSnackbar("No semicolon allowed in name")
+                                            hostState.showSnackbar(context.resources.getString(R.string.no_semicolon_players))
                                         }
                                     else players[it.key] = value
                                 },
                                 singleLine = true,
-                                label = { Text("Name") },
-                                placeholder = { Text(text = "Name of the player must be unique") },
+                                label = { Text(stringResource(R.string.name)) },
+                                placeholder = { Text(stringResource(R.string.name_unique)) },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             IconButton(onClick = { players.remove(it.key) }) {
-                                Icon(Icons.Default.Delete, "Delete player")
+                                Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
                             }
                         }
                     })

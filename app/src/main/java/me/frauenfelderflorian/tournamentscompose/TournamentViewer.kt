@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
@@ -24,11 +25,12 @@ fun TournamentViewer(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Tournament \"${tournaments[current].name}\"") },
+                    title = {
+                        Text(stringResource(R.string.tournament_title, tournaments[current].name))
+                    },
                     navigationIcon = {
-                        IconButton(
-                            onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, "Back")
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     }
                 )

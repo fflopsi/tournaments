@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,18 +58,19 @@ fun SettingsEditor(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Settings") },
+                    title = { Text(stringResource(R.string.settings)) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, "Back")
+                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
+                        val context = LocalContext.current
                         IconButton(onClick = {
                             if (firstPointsString == "") {
                                 if (!adaptivePoints)
                                     scope.launch {
-                                        hostState.showSnackbar("Input a number for points for first place")
+                                        hostState.showSnackbar(context.resources.getString(R.string.input_first_points))
                                     }
                                 else {
                                     savePrefs(players, adaptivePoints, 10)
@@ -78,7 +81,7 @@ fun SettingsEditor(
                                 navController.popBackStack()
                             }
                         }) {
-                            Icon(Icons.Default.Check, "Save and exit")
+                            Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
                     }
                 )
@@ -101,11 +104,11 @@ fun SettingsEditor(
                             modifier = Modifier.clickable { themeSelectorExpanded = true }
                         ) {
                             Text(
-                                text = "Choose Theme: ${
+                                text = "${stringResource(R.string.choose_theme)}: ${
                                     when (theme) {
-                                        1 -> "Light"
-                                        2 -> "Dark"
-                                        else -> "Auto"
+                                        1 -> stringResource(R.string.light)
+                                        2 -> stringResource(R.string.dark)
+                                        else -> stringResource(R.string.auto)
                                     }
                                 }",
                                 modifier = Modifier
@@ -115,37 +118,64 @@ fun SettingsEditor(
                             Spacer(modifier = Modifier.width(16.dp))
                             Box {
                                 IconButton(onClick = { themeSelectorExpanded = true }) {
-                                    Icon(Icons.Default.MoreVert, "Choose Theme")
+                                    Icon(
+                                        Icons.Default.MoreVert,
+                                        stringResource(R.string.choose_theme)
+                                    )
                                 }
                                 DropdownMenu(
                                     expanded = themeSelectorExpanded,
                                     onDismissRequest = { themeSelectorExpanded = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text(text = "Auto") },
+                                        text = { Text(stringResource(R.string.auto)) },
                                         onClick = { updateTheme(0) },
                                         leadingIcon = {
-                                            Icon(Icons.Default.BrightnessAuto, "Auto")
+                                            Icon(
+                                                Icons.Default.BrightnessAuto,
+                                                stringResource(R.string.auto)
+                                            )
                                         },
                                         trailingIcon = {
-                                            if (theme == 0) Icon(Icons.Default.Check, "Active")
+                                            if (theme == 0) Icon(
+                                                Icons.Default.Check,
+                                                stringResource(R.string.active)
+                                            )
                                         }
                                     )
                                     Divider()
                                     DropdownMenuItem(
-                                        text = { Text(text = "Light") },
+                                        text = { Text(text = stringResource(R.string.light)) },
                                         onClick = { updateTheme(1) },
-                                        leadingIcon = { Icon(Icons.Default.LightMode, "Light") },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.LightMode,
+                                                stringResource(R.string.light)
+                                            )
+                                        },
                                         trailingIcon = {
-                                            if (theme == 1) Icon(Icons.Default.Check, "Active")
+                                            if (theme == 1)
+                                                Icon(
+                                                    Icons.Default.Check,
+                                                    stringResource(R.string.active)
+                                                )
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text(text = "Dark") },
+                                        text = { Text(text = stringResource(R.string.dark)) },
                                         onClick = { updateTheme(2) },
-                                        leadingIcon = { Icon(Icons.Default.DarkMode, "Dark") },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Default.DarkMode,
+                                                stringResource(R.string.dark)
+                                            )
+                                        },
                                         trailingIcon = {
-                                            if (theme == 2) Icon(Icons.Default.Check, "Active")
+                                            if (theme == 2)
+                                                Icon(
+                                                    Icons.Default.Check,
+                                                    stringResource(R.string.active)
+                                                )
                                         }
                                     )
                                 }
@@ -158,7 +188,8 @@ fun SettingsEditor(
                     item {
                         Row {
                             Text(
-                                text = "Default players: ${players.joinToString(", ")}",
+                                text = stringResource(R.string.default_players) + ": " +
+                                        players.joinToString(", "),
                                 modifier = Modifier
                                     .weight(2f)
                                     .align(Alignment.CenterVertically)
@@ -171,7 +202,7 @@ fun SettingsEditor(
                                             else ""
                                 )
                             }) {
-                                Icon(Icons.Default.Edit, "Edit players")
+                                Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
                             }
                         }
                     }
@@ -183,13 +214,16 @@ fun SettingsEditor(
                                     .align(Alignment.CenterVertically)
                             ) {
                                 Text(
-                                    text = "Default point system: "
-                                            + (if (adaptivePoints) "Adaptive" else "Classic")
+                                    text = stringResource(R.string.default_point_system)
+                                            + ": " +
+                                            if (adaptivePoints) stringResource(R.string.adaptive)
+                                            else stringResource(R.string.classic)
+
                                 )
                                 Text(
                                     text = if (adaptivePoints)
-                                        "Recommended point system. Switch off for classic system"
-                                    else "Old point system. Switch on for adaptive system",
+                                        stringResource(R.string.point_system_adaptive)
+                                    else stringResource(R.string.point_system_classic),
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Light
                                 )
@@ -208,7 +242,7 @@ fun SettingsEditor(
                             exit = shrinkVertically(shrinkTowards = Alignment.Top)
                         ) {
                             Text(
-                                text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
+                                text = stringResource(R.string.point_system_adaptive_desc),
                                 fontStyle = FontStyle.Italic,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light
@@ -222,6 +256,7 @@ fun SettingsEditor(
                             exit = shrinkVertically(shrinkTowards = Alignment.Top)
                         ) {
                             Column {
+                                val context = LocalContext.current
                                 TextField(
                                     value = firstPointsString,
                                     onValueChange = {
@@ -231,18 +266,18 @@ fun SettingsEditor(
                                             firstPointsString = it.trim()
                                         } catch (e: NumberFormatException) {
                                             scope.launch {
-                                                hostState.showSnackbar("Input a valid integer")
+                                                hostState.showSnackbar(context.resources.getString(R.string.no_invalid_integer))
                                             }
                                         }
                                     },
                                     singleLine = true,
-                                    label = { Text("Points for first place") },
-                                    trailingIcon = { Icon(Icons.Default.Star, "Edit this") },
+                                    label = { Text(stringResource(R.string.first_points)) },
+                                    trailingIcon = { Icon(Icons.Default.Star, null) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Text(
-                                    text = "Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.",
+                                    text = stringResource(R.string.point_system_classic_desc),
                                     fontStyle = FontStyle.Italic,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Light

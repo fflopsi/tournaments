@@ -18,6 +18,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,11 +65,11 @@ fun TournamentEditor(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text(text = "Edit Tournament") },
+                    title = { Text(stringResource(R.string.edit_tournament)) },
                     navigationIcon = {
                         IconButton(
                             onClick = { navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, "Back")
+                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
@@ -77,7 +78,10 @@ fun TournamentEditor(
                                 tournaments.remove(tournaments[current])
                                 navController.popBackStack()
                             }) {
-                                Icon(Icons.Default.Delete, "Delete this tournament")
+                                Icon(
+                                    Icons.Default.Delete,
+                                    stringResource(R.string.delete_tournament)
+                                )
                             }
                         IconButton(onClick = {
                             if (current == -1) {
@@ -97,7 +101,7 @@ fun TournamentEditor(
                             }
                             navController.popBackStack()
                         }) {
-                            Icon(Icons.Default.Check, "Save and exit")
+                            Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
                     }
                 )
@@ -119,9 +123,9 @@ fun TournamentEditor(
                             value = name,
                             onValueChange = { if (it.length < 50) name = it },
                             singleLine = true,
-                            label = { Text("Name") },
-                            placeholder = { Text(text = "Give it a meaningful name") },
-                            trailingIcon = { Icon(Icons.Default.Edit, "Edit this") },
+                            label = { Text(stringResource(R.string.name)) },
+                            placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
+                            trailingIcon = { Icon(Icons.Default.Edit, null) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -140,7 +144,10 @@ fun TournamentEditor(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "Start Date: ${formatDate(start)}")
+                                Text(
+                                    text = stringResource(R.string.start_date) + ": " +
+                                            formatDate(start)
+                                )
                             }
                             OutlinedButton(
                                 onClick = {
@@ -154,7 +161,10 @@ fun TournamentEditor(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "End Date: ${formatDate(end)}")
+                                Text(
+                                    text = stringResource(R.string.end_date) + ": " +
+                                            formatDate(end)
+                                )
                             }
                         }
                     }
@@ -162,7 +172,7 @@ fun TournamentEditor(
                         item {
                             Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
                                 Text(
-                                    text = "Use default values",
+                                    text = stringResource(R.string.use_defaults),
                                     modifier = Modifier
                                         .weight(2f)
                                         .align(Alignment.CenterVertically)
@@ -180,7 +190,8 @@ fun TournamentEditor(
                             ) {
                                 Row {
                                     Text(
-                                        text = "Players: ${players.joinToString(", ")}",
+                                        text = stringResource(R.string.players) + ": "
+                                                + players.joinToString(", "),
                                         modifier = Modifier
                                             .weight(2f)
                                             .align(Alignment.CenterVertically)
@@ -193,7 +204,10 @@ fun TournamentEditor(
                                                     else ""
                                         )
                                     }) {
-                                        Icon(Icons.Default.Edit, "Edit players")
+                                        Icon(
+                                            Icons.Default.Edit,
+                                            stringResource(R.string.edit_players)
+                                        )
                                     }
                                 }
                             }
@@ -213,13 +227,15 @@ fun TournamentEditor(
                                             .align(Alignment.CenterVertically)
                                     ) {
                                         Text(
-                                            text = "Point system: "
-                                                    + (if (adaptivePoints) "Adaptive" else "Classic")
+                                            text = stringResource(R.string.point_system) + ": " +
+                                                    if (adaptivePoints)
+                                                        stringResource(R.string.adaptive)
+                                                    else stringResource(R.string.classic)
                                         )
                                         Text(
                                             text = if (adaptivePoints)
-                                                "Recommended point system. Switch off for classic system"
-                                            else "Old point system. Switch on for adaptive system",
+                                                stringResource(R.string.point_system_adaptive)
+                                            else stringResource(R.string.point_system_classic),
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Light
                                         )
@@ -239,7 +255,7 @@ fun TournamentEditor(
                                 exit = shrinkVertically(shrinkTowards = Alignment.Top)
                             ) {
                                 Text(
-                                    text = "In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/... place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).",
+                                    text = stringResource(R.string.point_system_adaptive_desc),
                                     fontStyle = FontStyle.Italic,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Light
@@ -253,6 +269,7 @@ fun TournamentEditor(
                                 exit = shrinkVertically(shrinkTowards = Alignment.Top)
                             ) {
                                 Column {
+                                    val context = LocalContext.current
                                     TextField(
                                         value = firstPointsString,
                                         onValueChange = {
@@ -261,18 +278,22 @@ fun TournamentEditor(
                                                 firstPointsString = it.trim()
                                             } catch (e: NumberFormatException) {
                                                 scope.launch {
-                                                    hostState.showSnackbar("Input a valid integer")
+                                                    hostState.showSnackbar(
+                                                        context.resources.getString(
+                                                            R.string.no_invalid_integer
+                                                        )
+                                                    )
                                                 }
                                             }
                                         },
                                         singleLine = true,
-                                        label = { Text("Points for first place") },
-                                        trailingIcon = { Icon(Icons.Default.Star, "Edit this") },
+                                        label = { Text(stringResource(R.string.first_points)) },
+                                        trailingIcon = { Icon(Icons.Default.Star, null) },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                     Text(
-                                        text = "Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.",
+                                        text = stringResource(R.string.point_system_classic_desc),
                                         fontStyle = FontStyle.Italic,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Light
@@ -296,7 +317,7 @@ fun TournamentEditor(
                                 ),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(text = "Delete this tournament")
+                                Text(stringResource(R.string.delete_tournament))
                             }
                         }
                     }
@@ -314,7 +335,10 @@ fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<
                 if (it.isNotEmpty()) {
                     val first = it.first()
                     if (!canBeSaved(first)) {
-                        throw IllegalStateException("${first::class} cannot be saved. By default only types which can be stored in the Bundle class can be saved.")
+                        throw IllegalStateException(
+                            "${first::class} cannot be saved. By default only types which can be " +
+                                    "stored in the Bundle class can be saved."
+                        )
                     }
                 }
                 it.toList()

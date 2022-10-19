@@ -78,8 +78,12 @@ fun TournamentList(
                             modifier = Modifier.clickable { /*TournamentViewer*/ }
                         ) {
                             Text(
-                                text = "\"${it.name}\" " +
-                                        "from ${formatDate(it.start)} to ${formatDate(it.end)}",
+                                text = stringResource(
+                                    R.string.tournament_list_title,
+                                    it.name,
+                                    formatDate(it.start),
+                                    formatDate(it.end)
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)
@@ -89,13 +93,13 @@ fun TournamentList(
                                 setCurrent(tournaments.indexOf(it))
                                 navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                             }) {
-                                Icon(Icons.Default.Edit, "Edit tournament")
+                                Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
                             }
                         }
                     }
                     else item {
                         Text(
-                            text = "Tap  +  in the lower right corner to add your first tournament",
+                            text = stringResource(R.string.add_first_tournament_hint),
                             fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.ExtraLight
                         )
@@ -105,10 +109,12 @@ fun TournamentList(
                     AlertDialog(
                         onDismissRequest = { showInfo = false },
                         icon = { Icon(Icons.Default.Info, null) },
-                        title = { Text("About Tournaments") },
-                        text = { Text("Built by Florian Frauenfelder with Jetpack Compose") },
+                        title = { Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}") },
+                        text = { Text(stringResource(R.string.built_by_info)) },
                         confirmButton = {
-                            TextButton(onClick = { showInfo = false }) { Text("OK") }
+                            TextButton(onClick = { showInfo = false }) {
+                                Text(stringResource(R.string.ok))
+                            }
                         },
                     )
             }
