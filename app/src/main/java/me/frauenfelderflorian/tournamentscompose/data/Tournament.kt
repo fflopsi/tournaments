@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
-import java.text.DateFormat
 import java.util.*
 
 class Tournament(
@@ -42,8 +41,4 @@ class Tournament(
         }
         return points
     }
-
-    override fun toString() = "Tournament \"$name\" " +
-            "from ${DateFormat.getDateInstance(DateFormat.MEDIUM).format(start)} " +
-            "to ${DateFormat.getDateInstance(DateFormat.MEDIUM).format(end)}"
 }

@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
-import java.text.DateFormat
 import java.util.*
 
 class Game(var date: GregorianCalendar, var hoops: Int, var hoopReached: Int) {
@@ -17,8 +16,4 @@ class Game(var date: GregorianCalendar, var hoops: Int, var hoopReached: Int) {
                 players.add(ranking.filterValues { it == i + 1 }.keys.first())
             return players.toList()
         }
-
-    override fun toString() =
-        "Game from ${DateFormat.getDateInstance(DateFormat.MEDIUM).format(date)}, " +
-                "\"$difficulty\" ($hoopReached/$hoops)"
 }
