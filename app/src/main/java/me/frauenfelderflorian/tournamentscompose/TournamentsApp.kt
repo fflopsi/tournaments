@@ -48,16 +48,16 @@ fun TournamentsApp() {
     val prefs: Prefs = viewModel(factory = PrefsFactory(LocalContext.current))
     LaunchedEffect(Unit) {
         launch {
-            prefs.themeFlow.collect { prefs.updateTheme(it) }
+            prefs.themeFlow.collect { prefs.useTheme(it) }
         }
         launch {
-            prefs.playersFlow.collect { prefs.save(newPlayers = it.split(";")) }
+            prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) }
         }
         launch {
-            prefs.adaptivePointsFlow.collect { prefs.save(newAdaptivePoints = it) }
+            prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) }
         }
         launch {
-            prefs.firstPointsFlow.collect { prefs.save(newFirstPoints = it) }
+            prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) }
         }
     }
     val navController = rememberAnimatedNavController()
@@ -135,11 +135,11 @@ fun TournamentsApp() {
             SettingsEditor(
                 navController = navController,
                 theme = prefs.theme,
-                updateTheme = prefs::updateTheme,
+                updateTheme = prefs::saveTheme,
                 formerPlayers = prefs.players,
                 formerAdaptivePoints = prefs.adaptivePoints,
                 formerFirstPoints = prefs.firstPoints,
-                savePrefs = prefs::save,
+                savePrefs = prefs::saveSettings,
             )
         }
     }

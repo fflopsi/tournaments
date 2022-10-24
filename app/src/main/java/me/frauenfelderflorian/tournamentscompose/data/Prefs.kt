@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.frauenfelderflorian.tournamentscompose.TournamentsApp
 
 private val THEME_KEY = intPreferencesKey("theme")
 private val PLAYERS_KEY = stringPreferencesKey("players")
@@ -34,41 +36,61 @@ class Prefs(private val context: Context) : ViewModel() {
     var firstPoints by mutableStateOf(10); private set
     val firstPointsFlow = context.dataStore.data.map { it[FIRST_POINTS_KEY] ?: 10 }
 
-    fun updateTheme(newTheme: Int) = runBlocking {
+    /**
+     * Update the theme stored in the settings  to [newTheme]
+     *
+     * This will automatically also call [useTheme], if [TournamentsApp] was initialized correctly
+     */
+    fun saveTheme(newTheme: Int) = runBlocking {
         if (newTheme < 0 || newTheme > 2) throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
-        theme = newTheme
         launch {
             context.dataStore.edit { it[THEME_KEY] = newTheme }
         }
     }
 
-    fun save(
+    /**
+     * Use [newTheme] in the app, without changing the value stored in the settings
+     */
+    fun useTheme(newTheme: Int) {
+        if (newTheme < 0 || newTheme > 2) throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
+        theme = newTheme
+    }
+
+    /**
+     * Update the values stored in the settings to [newPlayers], [newAdaptivePoints],
+     * [newFirstPoints]
+     *
+     * This will automatically also call [useSettings], if [TournamentsApp] was initialized
+     * correctly
+     */
+    fun saveSettings(
+        newPlayers: List<String> = players,
+        newAdaptivePoints: Boolean = adaptivePoints,
+        newFirstPoints: Int = firstPoints
+    ) = runBlocking {
+        if (newPlayers != players) launch {
+            context.dataStore.edit { it[PLAYERS_KEY] = newPlayers.joinToString(";") }
+        }
+        if (newAdaptivePoints != adaptivePoints) launch {
+            context.dataStore.edit { it[ADAPTIVE_POINTS_KEY] = newAdaptivePoints }
+        }
+        if (newFirstPoints != firstPoints) launch {
+            context.dataStore.edit { it[FIRST_POINTS_KEY] = newFirstPoints }
+        }
+    }
+
+    /**
+     * Use [newPlayers], [newAdaptivePoints], [newFirstPoints] in the app, without changing the
+     * value stored in the settings
+     */
+    fun useSettings(
         newPlayers: List<String> = players,
         newAdaptivePoints: Boolean = adaptivePoints,
         newFirstPoints: Int = firstPoints
     ) {
-        if (newPlayers != players)
-            runBlocking {
-                players.clear()
-                newPlayers.forEach(players::add)
-                launch {
-                    context.dataStore.edit { it[PLAYERS_KEY] = newPlayers.joinToString(";") }
-                }
-            }
-        if (newAdaptivePoints != adaptivePoints)
-            runBlocking {
-                adaptivePoints = newAdaptivePoints
-                launch {
-                    context.dataStore.edit { it[ADAPTIVE_POINTS_KEY] = newAdaptivePoints }
-                }
-            }
-        if (newFirstPoints != firstPoints)
-            runBlocking {
-                firstPoints = newFirstPoints
-                launch {
-                    context.dataStore.edit { it[FIRST_POINTS_KEY] = newFirstPoints }
-                }
-            }
+        if (newPlayers != players) players = newPlayers.toList() as SnapshotStateList<String>
+        if (newAdaptivePoints != adaptivePoints) adaptivePoints = newAdaptivePoints
+        if (newFirstPoints != firstPoints) firstPoints = newFirstPoints
     }
 }
 
