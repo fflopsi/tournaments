@@ -44,4 +44,6 @@
     <string name="use_defaults">Use default settings</string>
     <string name="players">Players</string>
     <string name="point_system">Point system</string>
+    <string name="at_least_two_players">Add at least two players</string>
+    <string name="enter_number_first_points">Enter a valid integer for points for first place</string>
 </resources>

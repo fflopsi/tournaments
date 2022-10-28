@@ -43,4 +43,6 @@
     <string name="use_defaults">Standardeinstellungen verwenden</string>
     <string name="players">Spieler</string>
     <string name="point_system">Punktesystem</string>
+    <string name="at_least_two_players">Füge mindestens zwei Spieler hinzu</string>
+    <string name="enter_number_first_points">Gültige ganze Zahl für Punkte für ersten Platz eingeben</string>
 </resources>

@@ -83,15 +83,45 @@ fun TournamentEditor(
                                     stringResource(R.string.delete_tournament)
                                 )
                             }
+                        val context = LocalContext.current
                         IconButton(onClick = {
                             if (current == -1) {
-                                val t = Tournament(
-                                    start = start,
-                                    end = end,
-                                    players = players,
-                                    useAdaptivePoints = adaptivePoints,
-                                    firstPoints = firstPointsString.toInt()
-                                )
+                                if (players.size < 2) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(
+                                                R.string.at_least_two_players
+                                            )
+                                        )
+                                    }
+                                    return@IconButton
+                                }
+                                val t: Tournament
+                                if (adaptivePoints)
+                                    t = Tournament(
+                                        start = start,
+                                        end = end,
+                                        players = players,
+                                        useAdaptivePoints = true
+                                    )
+                                else if (firstPointsString.toIntOrNull() != null)
+                                    t = Tournament(
+                                        start = start,
+                                        end = end,
+                                        players = players,
+                                        useAdaptivePoints = adaptivePoints,
+                                        firstPoints = firstPointsString.toInt()
+                                    )
+                                else {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(
+                                                R.string.enter_number_first_points
+                                            )
+                                        )
+                                    }
+                                    return@IconButton
+                                }
                                 t.name = name
                                 tournaments.add(t)
                             } else {
