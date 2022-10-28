@@ -73,7 +73,7 @@ fun SettingsEditor(
                                         hostState.showSnackbar(context.resources.getString(R.string.input_first_points))
                                     }
                                 else {
-                                    savePrefs(players, adaptivePoints, 10)
+                                    savePrefs(players, true, 10)
                                     navController.popBackStack()
                                 }
                             } else {
