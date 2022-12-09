@@ -1,5 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -23,6 +24,7 @@ private val PLAYERS_KEY = stringPreferencesKey("players")
 private val ADAPTIVE_POINTS_KEY = booleanPreferencesKey("adaptivePoints")
 private val FIRST_POINTS_KEY = intPreferencesKey("firstPoints")
 
+@SuppressLint("StaticFieldLeak")
 class Prefs(private val context: Context) : ViewModel() {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
@@ -96,5 +98,6 @@ class Prefs(private val context: Context) : ViewModel() {
 
 
 class PrefsFactory(private val context: Context) : ViewModelProvider.NewInstanceFactory() {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T = Prefs(context = context) as T
 }
