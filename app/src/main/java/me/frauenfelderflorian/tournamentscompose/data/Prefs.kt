@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -90,7 +89,7 @@ class Prefs(private val context: Context) : ViewModel() {
         newAdaptivePoints: Boolean = adaptivePoints,
         newFirstPoints: Int = firstPoints
     ) {
-        if (newPlayers != players) players = newPlayers.toList() as SnapshotStateList<String>
+        if (newPlayers != players) players = mutableStateListOf<String>(*newPlayers.toTypedArray())
         if (newAdaptivePoints != adaptivePoints) adaptivePoints = newAdaptivePoints
         if (newFirstPoints != firstPoints) firstPoints = newFirstPoints
     }
