@@ -20,6 +20,11 @@ class Tournament(
     val gamesByDate get() = games.sortedByDescending { it.date }
     val playersByPoints get() = players.sortedByDescending { getPoints(it) }
 
+    fun updateCurrent(new: Int) {
+        if (new < -1 || new >= games.size) throw ArrayIndexOutOfBoundsException()
+        current = new
+    }
+
     fun getPoints(player: String): Int {
         var points = 0
         for (game in games) {
