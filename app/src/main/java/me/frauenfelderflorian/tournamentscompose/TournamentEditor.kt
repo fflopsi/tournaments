@@ -76,7 +76,7 @@ fun TournamentEditor(
                         if (current != -1)
                             IconButton(onClick = {
                                 tournaments.remove(tournaments[current])
-                                navController.popBackStack()
+                                navController.popBackStack() //TODO: fix from TournamentViewer
                             }) {
                                 Icon(
                                     Icons.Default.Delete,
@@ -339,7 +339,7 @@ fun TournamentEditor(
                             Button(
                                 onClick = {
                                     tournaments.remove(tournaments[current])
-                                    navController.popBackStack()
+                                    navController.popBackStack() //TODO: fix from TournamentViewer
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.errorContainer,
