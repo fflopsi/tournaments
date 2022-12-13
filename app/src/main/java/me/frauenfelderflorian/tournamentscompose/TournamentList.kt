@@ -75,7 +75,10 @@ fun TournamentList(
                     if (tournaments.isNotEmpty()) items(items = tournaments) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { /*TournamentViewer*/ }
+                            modifier = Modifier.clickable {
+                                setCurrent(tournaments.indexOf(it))
+                                navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+                            }
                         ) {
                             Text(
                                 text = stringResource(
@@ -105,18 +108,17 @@ fun TournamentList(
                         )
                     }
                 }
-                if (showInfo)
-                    AlertDialog(
-                        onDismissRequest = { showInfo = false },
-                        icon = { Icon(Icons.Default.Info, null) },
-                        title = { Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}") },
-                        text = { Text(stringResource(R.string.built_by_info)) },
-                        confirmButton = {
-                            TextButton(onClick = { showInfo = false }) {
-                                Text(stringResource(R.string.ok))
-                            }
-                        },
-                    )
+                if (showInfo) AlertDialog(
+                    onDismissRequest = { showInfo = false },
+                    icon = { Icon(Icons.Default.Info, null) },
+                    title = { Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}") },
+                    text = { Text(stringResource(R.string.built_by_info)) },
+                    confirmButton = {
+                        TextButton(onClick = { showInfo = false }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                )
             }
         }
     }

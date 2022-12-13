@@ -11,7 +11,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.navArgument
@@ -24,7 +23,6 @@ import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
 import java.text.DateFormat
 import java.util.*
-import kotlin.math.roundToInt
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +59,6 @@ fun TournamentsApp() {
         }
     }
     val navController = rememberAnimatedNavController()
-    val width = ((LocalConfiguration.current.densityDpi / 160f)
-            * LocalConfiguration.current.screenWidthDp).roundToInt() //check if necessary
     AnimatedNavHost(
         navController = navController,
         startDestination = Routes.TOURNAMENT_LIST.route
@@ -71,9 +67,9 @@ fun TournamentsApp() {
             route = Routes.TOURNAMENT_LIST.route,
             exitTransition = {
                 if (container.current == -1) null
-                else slideOutHorizontally(targetOffsetX = { -width })
+                else slideOutHorizontally(targetOffsetX = { width -> -width })
             },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
         ) {
             TournamentList(
                 navController = navController,
@@ -86,11 +82,11 @@ fun TournamentsApp() {
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
                 if (container.current == -1) scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
-                else slideInHorizontally(initialOffsetX = { width })
+                else slideInHorizontally(initialOffsetX = { width -> width })
             },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }
+            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }
         ) {
             TournamentEditor(
                 navController = navController,
@@ -101,23 +97,24 @@ fun TournamentsApp() {
         }
         composable(
             route = Routes.TOURNAMENT_VIEWER.route,
-            enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }
+            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }
         ) {
             TournamentViewer(
                 navController = navController,
                 theme = prefs.theme,
                 tournaments = container.tournaments,
-                current = container.current
+                current = container.current,
+                setCurrent = container.tournaments[container.current]::updateCurrent
             )
         }
         composable(
             route = Routes.PLAYERS_EDITOR.route + "?players={players}",
-            arguments = listOf(navArgument("players") { defaultValue = "Default Player" }),
-            enterTransition = { slideInHorizontally(initialOffsetX = { width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) },
+            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
+            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
         ) {
             PlayersEditor(
                 navController = navController,
@@ -127,10 +124,10 @@ fun TournamentsApp() {
         }
         composable(
             route = Routes.SETTINGS_EDITOR.route,
-            enterTransition = { slideInHorizontally(initialOffsetX = { width }) }, //TODO
-            exitTransition = { slideOutHorizontally(targetOffsetX = { -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width }) }, //TODO
+            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) }, //TODO
+            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }, //TODO
         ) {
             SettingsEditor(
                 navController = navController,

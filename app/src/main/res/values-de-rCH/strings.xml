@@ -34,7 +34,7 @@
     <string name="first_points">Punkte für ersten Platz</string>
     <string name="point_system_adaptive">Empfohlenes Punktesystem. Ausschalten für klassisches System</string>
     <string name="point_system_classic">Altes Punktesystem. Einschalten für adaptives System</string>
-    <string name="point_system_adaptive_desc">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/... Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
+    <string name="point_system_adaptive_desc">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
     <string name="point_system_classic_desc">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="delete_tournament">Turnier löschen</string>
     <string name="give_meaningful_name">Gib ihm einen aussagekräftigen Namen</string>
@@ -45,4 +45,10 @@
     <string name="point_system">Punktesystem</string>
     <string name="at_least_two_players">Füge mindestens zwei Spieler hinzu</string>
     <string name="enter_number_first_points">Gültige ganze Zahl für Punkte für ersten Platz eingeben</string>
+    <string name="games">Spiele</string>
+    <string name="leaderboard">Bestenliste</string>
+    <string name="game_list_title">Spiel vom %1$s</string>
+    <string name="edit_game">Spiel bearbeiten</string>
+    <string name="add_first_game_hint">Tippe auf  +  in der unteren rechten Ecke, um dein erstes Spiel zu erstellen</string>
+    <string name="add_new_game">Neues Spiel hinzufügen</string>
 </resources>
