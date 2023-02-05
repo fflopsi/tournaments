@@ -92,7 +92,10 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 tournaments = container.tournaments,
-                current = container.current
+                current = container.current,
+                defaultPlayers = prefs.players.toList(),
+                defaultAdaptivePoints = prefs.adaptivePoints,
+                defaultFirstPoints = prefs.firstPoints,
             )
         }
         composable(

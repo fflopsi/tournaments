@@ -36,7 +36,10 @@ fun TournamentEditor(
     navController: NavController,
     theme: Int,
     tournaments: MutableList<Tournament>,
-    current: Int
+    current: Int,
+    defaultPlayers: List<String>,
+    defaultAdaptivePoints: Boolean,
+    defaultFirstPoints: Int
 ) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
@@ -86,7 +89,7 @@ fun TournamentEditor(
                         val context = LocalContext.current
                         IconButton(onClick = {
                             if (current == -1) {
-                                if (players.size < 2) {
+                                if (players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                                     scope.launch {
                                         hostState.showSnackbar(
                                             context.resources.getString(
@@ -97,7 +100,15 @@ fun TournamentEditor(
                                     return@IconButton
                                 }
                                 val t: Tournament
-                                if (adaptivePoints)
+                                if (useDefaults)
+                                    t = Tournament(
+                                        start = start,
+                                        end = end,
+                                        players = defaultPlayers.toMutableList(),
+                                        useAdaptivePoints = defaultAdaptivePoints,
+                                        firstPoints = defaultFirstPoints
+                                    )
+                                else if (adaptivePoints)
                                     t = Tournament(
                                         start = start,
                                         end = end,
