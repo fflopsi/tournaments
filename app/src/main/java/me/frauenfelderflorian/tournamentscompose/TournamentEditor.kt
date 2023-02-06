@@ -73,8 +73,7 @@ fun TournamentEditor(
                 MediumTopAppBar(
                     title = { Text(stringResource(R.string.edit_tournament)) },
                     navigationIcon = {
-                        IconButton(
-                            onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
@@ -92,7 +91,9 @@ fun TournamentEditor(
                         val context = LocalContext.current
                         IconButton(onClick = {
                             if (current == -1) {
-                                if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
+                                if (!useDefaults && players.size < 2
+                                    || useDefaults && defaultPlayers.size < 2
+                                ) {
                                     scope.launch {
                                         hostState.showSnackbar(
                                             context.resources.getString(
@@ -281,7 +282,7 @@ fun TournamentEditor(
                                         fontWeight = FontWeight.Light
                                     )
                                 }
-                                Spacer(modifier = Modifier.width(16.dp))
+                                Spacer(modifier = Modifier.width(16.dp)) //TODO: remove those where possible
                                 Switch(
                                     checked = adaptivePoints,
                                     onCheckedChange = { adaptivePoints = it }
@@ -311,7 +312,7 @@ fun TournamentEditor(
                         ) {
                             Column {
                                 val context = LocalContext.current
-                                TextField(
+                                OutlinedTextField(
                                     value = firstPointsString,
                                     onValueChange = {
                                         try {
