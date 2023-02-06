@@ -89,7 +89,7 @@ fun TournamentEditor(
                         val context = LocalContext.current
                         IconButton(onClick = {
                             if (current == -1) {
-                                if (players.size < 2 || useDefaults && defaultPlayers.size < 2) {
+                                if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                                     scope.launch {
                                         hostState.showSnackbar(
                                             context.resources.getString(
