@@ -52,4 +52,6 @@
     <string name="edit_game">Edit game</string>
     <string name="add_first_game_hint">Tap  +  in the lower right corner to add your first game</string>
     <string name="new_game">New game</string>
+    <string name="delete_game">Delete game</string>
+    <string name="date">Date</string>
 </resources>

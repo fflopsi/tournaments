@@ -70,8 +70,8 @@ fun TournamentViewer(
                         text = { Text(stringResource(R.string.new_game)) },
                         expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                         onClick = {
-                            /*setCurrent(-1)
-                            navController.navigate(Routes.GAME_EDITOR.route)*/ //TODO
+                            setCurrent(-1)
+                            navController.navigate(Routes.GAME_EDITOR.route)
                         }
                     )
                 }

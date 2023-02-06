@@ -35,6 +35,7 @@ enum class Routes(val route: String) {
     TOURNAMENT_LIST("tl"),
     TOURNAMENT_EDITOR("te"),
     TOURNAMENT_VIEWER("tv"),
+    GAME_EDITOR("ge"),
     PLAYERS_EDITOR("pe"),
     SETTINGS_EDITOR("se"),
 }
@@ -111,6 +112,16 @@ fun TournamentsApp() {
                 tournaments = container.tournaments,
                 current = container.current,
                 setCurrent = container.tournaments[container.current]::updateCurrent
+            )
+        }
+        composable(
+            route = Routes.GAME_EDITOR.route,
+        ) {
+            GameEditor(
+                navController = navController,
+                theme = prefs.theme,
+                games = container.tournaments[container.current].games,
+                current = container.tournaments[container.current].current
             )
         }
         composable(
