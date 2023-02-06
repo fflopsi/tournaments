@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -43,6 +44,8 @@ fun TournamentEditor(
 ) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
     var start by rememberSaveable { mutableStateOf(if (current == -1) GregorianCalendar() else tournaments[current].start) }
@@ -67,7 +70,7 @@ fun TournamentEditor(
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
                     title = { Text(stringResource(R.string.edit_tournament)) },
                     navigationIcon = {
                         IconButton(
@@ -144,222 +147,218 @@ fun TournamentEditor(
                         }) {
                             Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
-                    }
+                    },
+                    scrollBehavior = scrollBehavior
                 )
             },
-            snackbarHost = { SnackbarHost(hostState = hostState) }
+            snackbarHost = { SnackbarHost(hostState = hostState) },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(paddingValues)
             ) {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        TextField(
-                            value = name,
-                            onValueChange = { if (it.length < 50) name = it },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.name)) },
-                            placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
-                            trailingIcon = { Icon(Icons.Default.Edit, null) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    item {
-                        val context = LocalContext.current
-                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            OutlinedButton(
-                                onClick = {
-                                    DatePickerDialog(
-                                        context, R.style.Theme_TournamentsCompose_Dialog,
-                                        { _, y, m, d -> start = GregorianCalendar(y, m, d) },
-                                        start.get(Calendar.YEAR),
-                                        start.get(Calendar.MONTH),
-                                        start.get(Calendar.DAY_OF_MONTH)
-                                    ).show()
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.start_date) + ": " +
-                                            formatDate(start)
-                                )
-                            }
-                            OutlinedButton(
-                                onClick = {
-                                    DatePickerDialog(
-                                        context, R.style.Theme_TournamentsCompose_Dialog,
-                                        { _, y, m, d -> end = GregorianCalendar(y, m, d) },
-                                        end.get(Calendar.YEAR),
-                                        end.get(Calendar.MONTH),
-                                        end.get(Calendar.DAY_OF_MONTH)
-                                    ).show()
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.end_date) + ": " +
-                                            formatDate(end)
-                                )
-                            }
+                item {
+                    TextField(
+                        value = name,
+                        onValueChange = { if (it.length < 50) name = it },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.name)) },
+                        placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
+                        trailingIcon = { Icon(Icons.Default.Edit, null) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                item {
+                    val context = LocalContext.current
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        OutlinedButton(
+                            onClick = {
+                                DatePickerDialog(
+                                    context, R.style.Theme_TournamentsCompose_Dialog,
+                                    { _, y, m, d -> start = GregorianCalendar(y, m, d) },
+                                    start.get(Calendar.YEAR),
+                                    start.get(Calendar.MONTH),
+                                    start.get(Calendar.DAY_OF_MONTH)
+                                ).show()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.start_date) + ": " +
+                                        formatDate(start)
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                DatePickerDialog(
+                                    context, R.style.Theme_TournamentsCompose_Dialog,
+                                    { _, y, m, d -> end = GregorianCalendar(y, m, d) },
+                                    end.get(Calendar.YEAR),
+                                    end.get(Calendar.MONTH),
+                                    end.get(Calendar.DAY_OF_MONTH)
+                                ).show()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.end_date) + ": " +
+                                        formatDate(end)
+                            )
                         }
                     }
-                    if (current == -1) {
-                        item {
-                            Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
+                }
+                if (current == -1) {
+                    item {
+                        Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
+                            Text(
+                                text = stringResource(R.string.use_defaults),
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .align(Alignment.CenterVertically)
+                            )
+                            Switch(
+                                checked = useDefaults,
+                                onCheckedChange = { useDefaults = it })
+                        }
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Row {
                                 Text(
-                                    text = stringResource(R.string.use_defaults),
+                                    text = stringResource(R.string.players) + ": "
+                                            + players.joinToString(", "),
                                     modifier = Modifier
                                         .weight(2f)
                                         .align(Alignment.CenterVertically)
                                 )
-                                Switch(
-                                    checked = useDefaults,
-                                    onCheckedChange = { useDefaults = it })
-                            }
-                        }
-                        item {
-                            AnimatedVisibility(
-                                visible = !useDefaults,
-                                enter = expandVertically(expandFrom = Alignment.Top),
-                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                            ) {
-                                Row {
-                                    Text(
-                                        text = stringResource(R.string.players) + ": "
-                                                + players.joinToString(", "),
-                                        modifier = Modifier
-                                            .weight(2f)
-                                            .align(Alignment.CenterVertically)
+                                IconButton(onClick = {
+                                    navController.navigate(
+                                        route = Routes.PLAYERS_EDITOR.route +
+                                                if (players.isNotEmpty())
+                                                    "?players=" + players.joinToString(";")
+                                                else ""
                                     )
-                                    IconButton(onClick = {
-                                        navController.navigate(
-                                            route = Routes.PLAYERS_EDITOR.route +
-                                                    if (players.isNotEmpty())
-                                                        "?players=" + players.joinToString(";")
-                                                    else ""
-                                        )
-                                    }) {
-                                        Icon(
-                                            Icons.Default.Edit,
-                                            stringResource(R.string.edit_players)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        item {
-                            AnimatedVisibility(
-                                visible = !useDefaults,
-                                enter = expandVertically(expandFrom = Alignment.Top),
-                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                            ) {
-                                Row(modifier = Modifier.clickable {
-                                    adaptivePoints = !adaptivePoints
                                 }) {
-                                    Column(
-                                        modifier = Modifier
-                                            .weight(2f)
-                                            .align(Alignment.CenterVertically)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.point_system) + ": " +
-                                                    if (adaptivePoints)
-                                                        stringResource(R.string.adaptive)
-                                                    else stringResource(R.string.classic)
-                                        )
-                                        Text(
-                                            text = if (adaptivePoints)
-                                                stringResource(R.string.point_system_adaptive)
-                                            else stringResource(R.string.point_system_classic),
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Light
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Switch(
-                                        checked = adaptivePoints,
-                                        onCheckedChange = { adaptivePoints = it }
+                                    Icon(
+                                        Icons.Default.Edit,
+                                        stringResource(R.string.edit_players)
                                     )
                                 }
                             }
                         }
-                        item {
-                            AnimatedVisibility(
-                                visible = !useDefaults && adaptivePoints,
-                                enter = expandVertically(expandFrom = Alignment.Top),
-                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                            ) {
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Row(modifier = Modifier.clickable {
+                                adaptivePoints = !adaptivePoints
+                            }) {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(2f)
+                                        .align(Alignment.CenterVertically)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.point_system) + ": " +
+                                                if (adaptivePoints)
+                                                    stringResource(R.string.adaptive)
+                                                else stringResource(R.string.classic)
+                                    )
+                                    Text(
+                                        text = if (adaptivePoints)
+                                            stringResource(R.string.point_system_adaptive)
+                                        else stringResource(R.string.point_system_classic),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Switch(
+                                    checked = adaptivePoints,
+                                    onCheckedChange = { adaptivePoints = it }
+                                )
+                            }
+                        }
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults && adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.point_system_adaptive_desc),
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
+                        }
+                    }
+                    item {
+                        AnimatedVisibility(
+                            visible = !useDefaults && !adaptivePoints,
+                            enter = expandVertically(expandFrom = Alignment.Top),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        ) {
+                            Column {
+                                val context = LocalContext.current
+                                TextField(
+                                    value = firstPointsString,
+                                    onValueChange = {
+                                        try {
+                                            it.toInt()
+                                            firstPointsString = it.trim()
+                                        } catch (e: NumberFormatException) {
+                                            scope.launch {
+                                                hostState.showSnackbar(
+                                                    context.resources.getString(
+                                                        R.string.no_invalid_integer
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    },
+                                    singleLine = true,
+                                    label = { Text(stringResource(R.string.first_points)) },
+                                    trailingIcon = { Icon(Icons.Default.Star, null) },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                                 Text(
-                                    text = stringResource(R.string.point_system_adaptive_desc),
+                                    text = stringResource(R.string.point_system_classic_desc),
                                     fontStyle = FontStyle.Italic,
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Light
                                 )
                             }
                         }
-                        item {
-                            AnimatedVisibility(
-                                visible = !useDefaults && !adaptivePoints,
-                                enter = expandVertically(expandFrom = Alignment.Top),
-                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                            ) {
-                                Column {
-                                    val context = LocalContext.current
-                                    TextField(
-                                        value = firstPointsString,
-                                        onValueChange = {
-                                            try {
-                                                it.toInt()
-                                                firstPointsString = it.trim()
-                                            } catch (e: NumberFormatException) {
-                                                scope.launch {
-                                                    hostState.showSnackbar(
-                                                        context.resources.getString(
-                                                            R.string.no_invalid_integer
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        singleLine = true,
-                                        label = { Text(stringResource(R.string.first_points)) },
-                                        trailingIcon = { Icon(Icons.Default.Star, null) },
-                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.point_system_classic_desc),
-                                        fontStyle = FontStyle.Italic,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Light
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        item {
-                            Divider(thickness = 1.dp)
-                        }
-                        item {
-                            Button(
-                                onClick = {
-                                    tournaments.remove(tournaments[current])
-                                    navController.popBackStack() //TODO: fix from TournamentViewer
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                                ),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(stringResource(R.string.delete_tournament))
-                            }
+                    }
+                } else {
+                    item {
+                        Divider(thickness = 1.dp)
+                    }
+                    item {
+                        Button(
+                            onClick = {
+                                tournaments.remove(tournaments[current])
+                                navController.popBackStack() //TODO: fix from TournamentViewer
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(stringResource(R.string.delete_tournament))
                         }
                     }
                 }

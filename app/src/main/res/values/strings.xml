@@ -3,7 +3,7 @@
     <string name="app_title" translatable="false">Tournaments</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
-    <string name="add_new_tournament">Add new tournament</string>
+    <string name="new_tournament">New tournament</string>
     <string name="player_editor_title">Edit Players</string>
     <string name="no_nameless_players">Nameless players not allowed</string>
     <string name="no_same_name_players">Two players cannot have the same name: %1$s</string>
@@ -51,5 +51,5 @@
     <string name="game_list_title">Game from %1$s</string>
     <string name="edit_game">Edit game</string>
     <string name="add_first_game_hint">Tap  +  in the lower right corner to add your first game</string>
-    <string name="add_new_game">Add new game</string>
+    <string name="new_game">New game</string>
 </resources>
