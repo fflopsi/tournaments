@@ -78,6 +78,7 @@ fun TournamentList(
                 if (tournaments.isNotEmpty()) items(items = tournaments) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.clickable {
                             setCurrent(tournaments.indexOf(it))
                             navController.navigate(Routes.TOURNAMENT_VIEWER.route)
@@ -94,7 +95,6 @@ fun TournamentList(
                                 .fillMaxWidth()
                                 .weight(2f)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
                         IconButton(onClick = {
                             setCurrent(tournaments.indexOf(it))
                             navController.navigate(Routes.TOURNAMENT_EDITOR.route)
