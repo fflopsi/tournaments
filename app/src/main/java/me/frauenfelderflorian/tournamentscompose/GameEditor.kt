@@ -2,21 +2,22 @@ package me.frauenfelderflorian.tournamentscompose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Game
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
 import java.util.*
@@ -29,10 +30,15 @@ fun GameEditor(
     games: MutableList<Game>,
     current: Int
 ) {
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     var date by rememberSaveable { mutableStateOf(GregorianCalendar()) }
+    var hoopsString by rememberSaveable { mutableStateOf("") }
+    var hoopReachedString by rememberSaveable { mutableStateOf("") }
+    var difficulty by rememberSaveable { mutableStateOf("") }
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
@@ -59,6 +65,7 @@ fun GameEditor(
                     scrollBehavior = scrollBehavior
                 )
             },
+            snackbarHost = { SnackbarHost(hostState = hostState) },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             LazyColumn(
@@ -79,6 +86,67 @@ fun GameEditor(
                             )
                         }
                     }
+                }
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        val context = LocalContext.current
+                        OutlinedTextField(
+                            value = hoopsString,
+                            onValueChange = {
+                                if (it != "")
+                                    try {
+                                        it.toInt()
+                                        hoopsString = it.trim()
+                                    } catch (e: NumberFormatException) {
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                context.resources.getString(R.string.no_invalid_integer)
+                                            )
+                                        }
+                                    }
+                                else hoopsString = ""
+                            },
+                            singleLine = true,
+                            label = { Text(stringResource(R.string.hoops)) },
+                            supportingText = { Text(stringResource(R.string.hoops_desc)) },
+                            leadingIcon = { Icon(Icons.Default.Flag, null) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f)
+                        )
+                        OutlinedTextField(
+                            value = hoopReachedString,
+                            onValueChange = {
+                                if (it != "") //TODO: copy this if/else where needed
+                                    try {
+                                        it.toInt()
+                                        hoopReachedString = it.trim()
+                                    } catch (e: NumberFormatException) {
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                context.resources.getString(R.string.no_invalid_integer)
+                                            )
+                                        }
+                                    }
+                                else hoopReachedString = ""
+                            },
+                            singleLine = true,
+                            label = { Text(stringResource(R.string.hoop_reached)) },
+                            supportingText = { Text(stringResource(R.string.hoop_reached_desc)) },
+                            trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                item {
+                    OutlinedTextField(
+                        value = difficulty,
+                        onValueChange = { difficulty = it },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.difficulty)) },
+                        placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }

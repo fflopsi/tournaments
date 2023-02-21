@@ -54,4 +54,10 @@
     <string name="new_game">New game</string>
     <string name="delete_game">Delete game</string>
     <string name="date">Date</string>
+    <string name="hoops">Hoops</string>
+    <string name="hoop_reached">Reached hoop</string>
+    <string name="hoops_desc">Total number of hoops</string>
+    <string name="hoop_reached_desc">Hoop reached by best player</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="difficulty_placeholder">Something like: very challenging, quite easy, …</string>
 </resources>
