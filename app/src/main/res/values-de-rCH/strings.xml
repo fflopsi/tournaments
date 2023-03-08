@@ -61,4 +61,5 @@
     <string name="difficulty_placeholder">Etwas wie: sehr anspruchsvoll, ziemlich einfach, …</string>
     <string name="details">Details</string>
     <string name="ranking">Rangliste</string>
+    <string name="cancel">Abbrechen</string>
 </resources>

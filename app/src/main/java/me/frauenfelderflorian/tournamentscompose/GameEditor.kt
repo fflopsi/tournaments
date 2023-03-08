@@ -40,8 +40,9 @@ fun GameEditor(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var selectedTab by rememberSaveable { mutableStateOf(0) }
+    var dateDialogOpen by remember { mutableStateOf(false) }
 
-    var date by rememberSaveable { mutableStateOf(GregorianCalendar()) }
+    val date by rememberSaveable { mutableStateOf(GregorianCalendar()) }
     var hoopsString by rememberSaveable { mutableStateOf("") }
     var hoopReachedString by rememberSaveable { mutableStateOf("") }
     var difficulty by rememberSaveable { mutableStateOf("") }
@@ -115,7 +116,7 @@ fun GameEditor(
                                 ) {
                                     Icon(Icons.Default.Event, null)
                                     OutlinedButton(
-                                        onClick = { /*TODO*/ },
+                                        onClick = { dateDialogOpen = true },
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Text(
@@ -253,6 +254,32 @@ fun GameEditor(
                             }
                         }
                     }
+                }
+            }
+            if (dateDialogOpen) {
+                val datePickerState = rememberDatePickerState()
+                val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
+                DatePickerDialog(
+                    onDismissRequest = { dateDialogOpen = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                dateDialogOpen = false
+                                date.timeInMillis = datePickerState.selectedDateMillis!!
+                                //TODO: store date in millis instead of GregorianCalendar?
+                            },
+                            enabled = confirmEnabled
+                        ) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { dateDialogOpen = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
                 }
             }
         }
