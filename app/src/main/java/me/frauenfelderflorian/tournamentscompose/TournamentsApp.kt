@@ -120,6 +120,7 @@ fun TournamentsApp() {
             GameEditor(
                 navController = navController,
                 theme = prefs.theme,
+                players = container.tournaments[container.current].players,
                 games = container.tournaments[container.current].games,
                 current = container.tournaments[container.current].current
             )

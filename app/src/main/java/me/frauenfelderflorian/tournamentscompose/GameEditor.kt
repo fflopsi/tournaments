@@ -1,7 +1,11 @@
 package me.frauenfelderflorian.tournamentscompose
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -27,6 +31,7 @@ import java.util.*
 fun GameEditor(
     navController: NavController,
     theme: Int,
+    players: List<String>,
     games: MutableList<Game>,
     current: Int
 ) {
@@ -40,6 +45,13 @@ fun GameEditor(
     var hoopsString by rememberSaveable { mutableStateOf("") }
     var hoopReachedString by rememberSaveable { mutableStateOf("") }
     var difficulty by rememberSaveable { mutableStateOf("") }
+    var selectablePlayers by rememberSaveable {
+        mutableStateOf(
+            players.toMutableList().apply { add(0, "---") }.toList()
+        )
+    }
+    var selectedPlayers by rememberSaveable { mutableStateOf(List(players.size) { "---" }) }
+
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
@@ -85,87 +97,161 @@ fun GameEditor(
                         text = { Text(stringResource(R.string.ranking)) }
                     )
                 }
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    item {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                val columnScope = this
+                Box {
+                    columnScope.AnimatedVisibility(
+                        visible = selectedTab == 0,
+                        enter = slideInHorizontally(initialOffsetX = { width -> -width }),
+                        exit = slideOutHorizontally(targetOffsetX = { width -> -width })
+                    ) {
+                        LazyColumn(
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            Icon(Icons.Default.Event, null)
-                            OutlinedButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    stringResource(R.string.date) + ": " + formatDate(date),
-                                    textAlign = TextAlign.Center
+                            item {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(Icons.Default.Event, null)
+                                    OutlinedButton(
+                                        onClick = { /*TODO*/ },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(
+                                            stringResource(R.string.date) + ": " + formatDate(date),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+                            item {
+                                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    val context = LocalContext.current
+                                    OutlinedTextField(
+                                        value = hoopsString,
+                                        onValueChange = {
+                                            if (it != "")
+                                                try {
+                                                    it.toInt()
+                                                    hoopsString = it.trim()
+                                                } catch (e: NumberFormatException) {
+                                                    scope.launch {
+                                                        hostState.showSnackbar(
+                                                            context.resources.getString(R.string.no_invalid_integer)
+                                                        )
+                                                    }
+                                                }
+                                            else hoopsString = ""
+                                        },
+                                        singleLine = true,
+                                        label = { Text(stringResource(R.string.hoops)) },
+                                        supportingText = { Text(stringResource(R.string.hoops_desc)) },
+                                        leadingIcon = { Icon(Icons.Default.Flag, null) },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    OutlinedTextField(
+                                        value = hoopReachedString,
+                                        onValueChange = {
+                                            if (it != "") //TODO: copy this if/else where needed
+                                                try {
+                                                    it.toInt()
+                                                    hoopReachedString = it.trim()
+                                                } catch (e: NumberFormatException) {
+                                                    scope.launch {
+                                                        hostState.showSnackbar(
+                                                            context.resources.getString(R.string.no_invalid_integer)
+                                                        )
+                                                    }
+                                                }
+                                            else hoopReachedString = ""
+                                        },
+                                        singleLine = true,
+                                        label = { Text(stringResource(R.string.hoop_reached)) },
+                                        supportingText = { Text(stringResource(R.string.hoop_reached_desc)) },
+                                        trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                            item {
+                                OutlinedTextField(
+                                    value = difficulty,
+                                    onValueChange = { difficulty = it },
+                                    singleLine = true,
+                                    label = { Text(stringResource(R.string.difficulty)) },
+                                    placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             }
                         }
                     }
-                    item {
-                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            val context = LocalContext.current
-                            OutlinedTextField(
-                                value = hoopsString,
-                                onValueChange = {
-                                    if (it != "")
-                                        try {
-                                            it.toInt()
-                                            hoopsString = it.trim()
-                                        } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    context.resources.getString(R.string.no_invalid_integer)
-                                                )
-                                            }
-                                        }
-                                    else hoopsString = ""
-                                },
-                                singleLine = true,
-                                label = { Text(stringResource(R.string.hoops)) },
-                                supportingText = { Text(stringResource(R.string.hoops_desc)) },
-                                leadingIcon = { Icon(Icons.Default.Flag, null) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.weight(1f)
-                            )
-                            OutlinedTextField(
-                                value = hoopReachedString,
-                                onValueChange = {
-                                    if (it != "") //TODO: copy this if/else where needed
-                                        try {
-                                            it.toInt()
-                                            hoopReachedString = it.trim()
-                                        } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    context.resources.getString(R.string.no_invalid_integer)
-                                                )
-                                            }
-                                        }
-                                    else hoopReachedString = ""
-                                },
-                                singleLine = true,
-                                label = { Text(stringResource(R.string.hoop_reached)) },
-                                supportingText = { Text(stringResource(R.string.hoop_reached_desc)) },
-                                trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-                    }
-                    item {
-                        OutlinedTextField(
-                            value = difficulty,
-                            onValueChange = { difficulty = it },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.difficulty)) },
-                            placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
+                    columnScope.AnimatedVisibility(
+                        visible = selectedTab == 1,
+                        enter = slideInHorizontally(initialOffsetX = { width -> width }),
+                        exit = slideOutHorizontally(targetOffsetX = { width -> width })
+                    ) {
+                        LazyColumn(
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.fillMaxWidth()
-                        )
+                        ) {
+                            items(items = players) {
+                                var expanded by remember { mutableStateOf(false) }
+                                ExposedDropdownMenuBox(
+                                    expanded = expanded,
+                                    onExpandedChange = { expanded = !expanded }
+                                ) {
+                                    OutlinedTextField(
+                                        value = selectedPlayers[players.indexOf(it)],
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        trailingIcon = {
+                                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                                expanded = expanded
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .menuAnchor()
+                                            .fillMaxWidth()
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        selectablePlayers.forEach { selected ->
+                                            DropdownMenuItem(
+                                                text = { Text(selected) },
+                                                onClick = {
+                                                    expanded = false
+                                                    if (selected != "---")
+                                                        selectablePlayers =
+                                                            selectablePlayers.toMutableList()
+                                                                .apply { remove(selected) }.toList()
+                                                    if (selectedPlayers[players.indexOf(it)] != "---")
+                                                        selectablePlayers =
+                                                            selectablePlayers.toMutableList()
+                                                                .apply {
+                                                                    add(
+                                                                        selectedPlayers[
+                                                                                players.indexOf(it)
+                                                                        ]
+                                                                    )
+                                                                }.toList()
+                                                    selectedPlayers =
+                                                        selectedPlayers.toMutableList().apply {
+                                                            set(players.indexOf(it), selected)
+                                                        }.toList()
+                                                },
+                                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
