@@ -77,7 +77,7 @@ fun TournamentViewer(
                 }
             },
             bottomBar = {
-                NavigationBar {
+                NavigationBar { //TODO: change to tabs
                     NavigationBarItem(
                         selected = selectedPage == 0,
                         icon = {
