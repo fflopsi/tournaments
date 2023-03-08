@@ -60,4 +60,6 @@
     <string name="hoop_reached_desc">Hoop reached by best player</string>
     <string name="difficulty">Difficulty</string>
     <string name="difficulty_placeholder">Something like: very challenging, quite easy, …</string>
+    <string name="details">Details</string>
+    <string name="ranking">Ranking</string>
 </resources>
