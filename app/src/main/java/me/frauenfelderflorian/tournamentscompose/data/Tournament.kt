@@ -1,22 +1,19 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
-import java.util.*
-
 class Tournament(
-    var start: GregorianCalendar,
-    var end: GregorianCalendar,
+    var start: Long,
+    var end: Long,
     val players: MutableList<String>,
     val useAdaptivePoints: Boolean,
     val firstPoints: Int = 10
 ) {
     var current = -1
     val games = mutableListOf<Game>()
-    val currentGame get() = games[current]
+//    val currentGame get() = games[current]
     var name = ""
         set(value) {
             field = value.trim()
         }
-    val dateRange get() = start..end
     val gamesByDate get() = games.sortedByDescending { it.date }
     val playersByPoints get() = players.sortedByDescending { getPoints(it) }
 

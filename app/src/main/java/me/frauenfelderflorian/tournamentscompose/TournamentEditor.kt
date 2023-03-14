@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose
 
-import android.app.DatePickerDialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -46,12 +45,12 @@ fun TournamentEditor(
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    var startDialogOpen by remember { mutableStateOf(false) }
+    var endDialogOpen by remember { mutableStateOf(false) } //TODO: use DateRangePicker when fixed
 
     var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
-    var start by rememberSaveable { mutableStateOf(if (current == -1) GregorianCalendar() else tournaments[current].start) }
-    var end by rememberSaveable { mutableStateOf(if (current == -1) GregorianCalendar() else tournaments[current].end) }
-    if (start.after(end)) end =
-        start.clone() as GregorianCalendar //better after "OK" in date picker, with SnackBar
+    var start by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() else tournaments[current].start) }
+    var end by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() + 604800000 else tournaments[current].end) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
     var adaptivePoints by rememberSaveable { mutableStateOf(true) }
@@ -172,41 +171,18 @@ fun TournamentEditor(
                     )
                 }
                 item {
-                    val context = LocalContext.current
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         OutlinedButton(
-                            onClick = {
-                                DatePickerDialog(
-                                    context, R.style.Theme_TournamentsCompose_Dialog,
-                                    { _, y, m, d -> start = GregorianCalendar(y, m, d) },
-                                    start.get(Calendar.YEAR),
-                                    start.get(Calendar.MONTH),
-                                    start.get(Calendar.DAY_OF_MONTH)
-                                ).show()
-                            },
+                            onClick = { startDialogOpen = true },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(
-                                text = stringResource(R.string.start_date) + ": " +
-                                        formatDate(start)
-                            )
+                            Text(stringResource(R.string.start_date) + ": " + formatDate(start))
                         }
                         OutlinedButton(
-                            onClick = {
-                                DatePickerDialog(
-                                    context, R.style.Theme_TournamentsCompose_Dialog,
-                                    { _, y, m, d -> end = GregorianCalendar(y, m, d) },
-                                    end.get(Calendar.YEAR),
-                                    end.get(Calendar.MONTH),
-                                    end.get(Calendar.DAY_OF_MONTH)
-                                ).show()
-                            },
+                            onClick = { endDialogOpen = true },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(
-                                text = stringResource(R.string.end_date) + ": " +
-                                        formatDate(end)
-                            )
+                            Text(stringResource(R.string.end_date) + ": " + formatDate(end))
                         }
                     }
                 }
@@ -362,6 +338,60 @@ fun TournamentEditor(
                             Text(stringResource(R.string.delete_tournament))
                         }
                     }
+                }
+            }
+            if (startDialogOpen) {
+                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = start)
+                val confirmEnabled by remember {
+                    derivedStateOf { datePickerState.selectedDateMillis != null }
+                }
+                DatePickerDialog(
+                    onDismissRequest = { startDialogOpen = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                startDialogOpen = false
+                                start = datePickerState.selectedDateMillis!!
+                            },
+                            enabled = confirmEnabled
+                        ) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { startDialogOpen = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState, dateValidator = { it < end })
+                }
+            }
+            if (endDialogOpen) {
+                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = end)
+                val confirmEnabled by remember {
+                    derivedStateOf { datePickerState.selectedDateMillis != null }
+                }
+                DatePickerDialog(
+                    onDismissRequest = { endDialogOpen = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                endDialogOpen = false
+                                end = datePickerState.selectedDateMillis!!
+                            },
+                            enabled = confirmEnabled
+                        ) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { endDialogOpen = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState, dateValidator = { it > start })
                 }
             }
         }
