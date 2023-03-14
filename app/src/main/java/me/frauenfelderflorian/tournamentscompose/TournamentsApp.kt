@@ -120,6 +120,7 @@ fun TournamentsApp() {
             GameEditor(
                 navController = navController,
                 theme = prefs.theme,
+                tournament = container.tournaments[container.current],
                 players = container.tournaments[container.current].players,
                 games = container.tournaments[container.current].games,
                 current = container.tournaments[container.current].current
@@ -156,9 +157,6 @@ fun TournamentsApp() {
         }
     }
 }
-
-fun formatDate(cal: GregorianCalendar): String =
-    DateFormat.getDateInstance(DateFormat.SHORT).format(cal.time)
 
 fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
 

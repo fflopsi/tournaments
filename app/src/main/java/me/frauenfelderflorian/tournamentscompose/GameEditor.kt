@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Game
+import me.frauenfelderflorian.tournamentscompose.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +31,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun GameEditor(
     navController: NavController,
     theme: Int,
+    tournament: Tournament,
     players: List<String>,
     games: MutableList<Game>,
     current: Int
@@ -358,7 +360,10 @@ fun GameEditor(
                         }
                     }
                 ) {
-                    DatePicker(state = datePickerState)
+                    DatePicker(
+                        state = datePickerState,
+                        dateValidator = { it in tournament.start..tournament.end }
+                    )
                 }
             }
         }
