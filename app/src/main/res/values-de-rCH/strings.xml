@@ -62,4 +62,8 @@
     <string name="details">Details</string>
     <string name="ranking">Rangliste</string>
     <string name="cancel">Abbrechen</string>
+    <string name="number_hoops_too_small">Anzahl Tore zu klein</string>
+    <string name="number_hoops_reached_too_small">Anzahl erreichter Tore zu klein</string>
+    <string name="number_hoops_reached_too_big">Anzahl erreichter Tore zu gross</string>
+    <string name="ranking_invalid">Rangliste ungültig</string>
 </resources>

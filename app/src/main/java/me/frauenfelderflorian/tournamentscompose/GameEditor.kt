@@ -24,7 +24,6 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Game
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +41,7 @@ fun GameEditor(
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var dateDialogOpen by remember { mutableStateOf(false) }
 
-    val date by rememberSaveable { mutableStateOf(GregorianCalendar()) }
+    var date by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
     var hoopsString by rememberSaveable { mutableStateOf("") }
     var hoopReachedString by rememberSaveable { mutableStateOf("") }
     var difficulty by rememberSaveable { mutableStateOf("") }
@@ -72,7 +71,63 @@ fun GameEditor(
                             }) {
                                 Icon(Icons.Default.Delete, stringResource(R.string.delete_game))
                             }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        val context = LocalContext.current
+                        IconButton(onClick = {
+                            try {
+                                if (hoopsString.toInt() < 1) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.number_hoops_too_small)
+                                        )
+                                    }
+                                    return@IconButton
+                                } else if (hoopReachedString.toInt() < 1) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.number_hoops_reached_too_small)
+                                        )
+                                    }
+                                    return@IconButton
+                                } else if (hoopReachedString.toInt() > hoopsString.toInt()) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.number_hoops_reached_too_big)
+                                        )
+                                    }
+                                    return@IconButton
+                                }
+                                val ranks = selectedPlayers.toMutableList()
+                                    .apply { removeAll { it == "---" } }.toList()
+                                if (ranks.size < 2) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.ranking_invalid)
+                                        )
+                                    }
+                                    return@IconButton
+                                }
+                                val absent =
+                                    players.toMutableList().apply { removeAll(ranks) }.toList()
+                                games.add(
+                                    Game(
+                                        date = date,
+                                        hoops = hoopsString.toInt(),
+                                        hoopReached = hoopReachedString.toInt()
+                                    ).apply {
+                                        ranks.forEach { this.ranking[it] = ranks.indexOf(it) + 1 }
+                                        absent.forEach { this.ranking[it] = 0 }
+                                        this.difficulty = difficulty
+                                    }
+                                )
+                                navController.popBackStack()
+                            } catch (e: NumberFormatException) {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(R.string.no_invalid_integer)
+                                    )
+                                }
+                            }
+                        }) {
                             Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
                     },
@@ -218,9 +273,10 @@ fun GameEditor(
                                             .menuAnchor()
                                             .fillMaxWidth()
                                     )
-                                    ExposedDropdownMenu(
+                                    DropdownMenu(
                                         expanded = expanded,
-                                        onDismissRequest = { expanded = false }
+                                        onDismissRequest = { expanded = false },
+                                        modifier = Modifier.exposedDropdownSize() //TODO: remove workaround
                                     ) {
                                         selectablePlayers.forEach { selected ->
                                             DropdownMenuItem(
@@ -257,16 +313,17 @@ fun GameEditor(
                 }
             }
             if (dateDialogOpen) {
-                val datePickerState = rememberDatePickerState()
-                val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
+                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = date)
+                val confirmEnabled by remember {
+                    derivedStateOf { datePickerState.selectedDateMillis != null }
+                }
                 DatePickerDialog(
                     onDismissRequest = { dateDialogOpen = false },
                     confirmButton = {
                         TextButton(
                             onClick = {
                                 dateDialogOpen = false
-                                date.timeInMillis = datePickerState.selectedDateMillis!!
-                                //TODO: store date in millis instead of GregorianCalendar?
+                                date = datePickerState.selectedDateMillis!!
                             },
                             enabled = confirmEnabled
                         ) {

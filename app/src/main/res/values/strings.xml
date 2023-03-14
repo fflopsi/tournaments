@@ -63,4 +63,8 @@
     <string name="details">Details</string>
     <string name="ranking">Ranking</string>
     <string name="cancel">Cancel</string>
+    <string name="number_hoops_too_small">Number of hoops too small</string>
+    <string name="number_hoops_reached_too_small">Number of reached hoops too small</string>
+    <string name="number_hoops_reached_too_big">Number of reached hoops too big</string>
+    <string name="ranking_invalid">Ranking invalid</string>
 </resources>

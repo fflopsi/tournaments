@@ -160,6 +160,8 @@ fun TournamentsApp() {
 fun formatDate(cal: GregorianCalendar): String =
     DateFormat.getDateInstance(DateFormat.SHORT).format(cal.time)
 
+fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
+
 @Composable
 fun getTheme(theme: Int): Boolean {
     return when (theme) {
