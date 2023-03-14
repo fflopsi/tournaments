@@ -50,6 +50,7 @@ fun TournamentEditor(
 
     var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
     var start by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() else tournaments[current].start) }
+    //TODO: fix dates (take only date and not current time)
     var end by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() + 604800000 else tournaments[current].end) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
