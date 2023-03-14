@@ -129,8 +129,8 @@ fun TournamentViewer(
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             IconButton(onClick = {
-                                /*setCurrent(tournaments[current].games.indexOf(it))
-                                navController.navigate(Routes.GAME_EDITOR.route)*/ //TODO
+                                setCurrent(tournaments[current].games.indexOf(it))
+                                navController.navigate(Routes.GAME_EDITOR.route)
                             }) {
                                 Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
                             }

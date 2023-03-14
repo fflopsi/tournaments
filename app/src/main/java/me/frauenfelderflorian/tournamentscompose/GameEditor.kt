@@ -41,16 +41,24 @@ fun GameEditor(
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var dateDialogOpen by remember { mutableStateOf(false) }
 
-    var date by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
-    var hoopsString by rememberSaveable { mutableStateOf("") }
-    var hoopReachedString by rememberSaveable { mutableStateOf("") }
-    var difficulty by rememberSaveable { mutableStateOf("") }
+    var date by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() else games[current].date) }
+    var hoopsString by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].hoops.toString()) }
+    var hoopReachedString by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].hoopReached.toString()) }
+    var difficulty by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].difficulty) }
     var selectablePlayers by rememberSaveable {
-        mutableStateOf(
-            players.toMutableList().apply { add(0, "---") }.toList()
-        )
+        mutableStateOf(players.toMutableList().apply {
+            if (current != -1) removeAll { games[current].ranking[it] != 0 }
+            add(0, "---")
+        }.toList())
     }
-    var selectedPlayers by rememberSaveable { mutableStateOf(List(players.size) { "---" }) }
+    var selectedPlayers by rememberSaveable {
+        mutableStateOf(List(players.size) { "---" }.toMutableList().apply {
+            if (current != -1)
+                games[current].playersByRank.forEach {
+                    set(games[current].playersByRank.indexOf(it), it)
+                }
+        }.toList())
+    }
 
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
@@ -108,17 +116,31 @@ fun GameEditor(
                                 }
                                 val absent =
                                     players.toMutableList().apply { removeAll(ranks) }.toList()
-                                games.add(
-                                    Game(
-                                        date = date,
-                                        hoops = hoopsString.toInt(),
+                                if (current == -1)
+                                    games.add(
+                                        Game(
+                                            date = date,
+                                            hoops = hoopsString.toInt(),
+                                            hoopReached = hoopReachedString.toInt()
+                                        ).apply {
+                                            this.difficulty = difficulty
+                                            ranks.forEach {
+                                                this.ranking[it] = ranks.indexOf(it) + 1
+                                            }
+                                            absent.forEach { this.ranking[it] = 0 }
+                                        }
+                                    )
+                                else
+                                    games[current].apply {
+                                        this.date = date
+                                        hoops = hoopsString.toInt()
                                         hoopReached = hoopReachedString.toInt()
-                                    ).apply {
-                                        ranks.forEach { this.ranking[it] = ranks.indexOf(it) + 1 }
-                                        absent.forEach { this.ranking[it] = 0 }
                                         this.difficulty = difficulty
+                                        ranks.forEach {
+                                            this.ranking[it] = ranks.indexOf(it) + 1
+                                        }
+                                        absent.forEach { this.ranking[it] = 0 }
                                     }
-                                )
                                 navController.popBackStack()
                             } catch (e: NumberFormatException) {
                                 scope.launch {
