@@ -28,7 +28,6 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,9 +48,10 @@ fun TournamentEditor(
     var endDialogOpen by remember { mutableStateOf(false) } //TODO: use DateRangePicker when fixed
 
     var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
-    var start by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() else tournaments[current].start) }
-    //TODO: fix dates (take only date and not current time)
-    var end by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() + 604800000 else tournaments[current].end) }
+    var today = System.currentTimeMillis()
+    today -= (today % 86400000) //Remove the passed milliseconds since the beginning of the day
+    var start by rememberSaveable { mutableStateOf(if (current == -1) today else tournaments[current].start) }
+    var end by rememberSaveable { mutableStateOf(if (current == -1) today + 604800000 else tournaments[current].end) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
     var adaptivePoints by rememberSaveable { mutableStateOf(true) }
@@ -237,9 +237,10 @@ fun TournamentEditor(
                             enter = expandVertically(expandFrom = Alignment.Top),
                             exit = shrinkVertically(shrinkTowards = Alignment.Top)
                         ) {
-                            Row(modifier = Modifier.clickable {
-                                adaptivePoints = !adaptivePoints
-                            }) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier.clickable { adaptivePoints = !adaptivePoints }
+                            ) {
                                 Column(
                                     modifier = Modifier
                                         .weight(2f)
@@ -259,7 +260,7 @@ fun TournamentEditor(
                                         fontWeight = FontWeight.Light
                                     )
                                 }
-                                Spacer(modifier = Modifier.width(16.dp)) //TODO: remove those where possible
+                                Spacer(modifier = Modifier.width(0.dp)) //TODO: remove those where possible
                                 Switch(
                                     checked = adaptivePoints,
                                     onCheckedChange = { adaptivePoints = it }
