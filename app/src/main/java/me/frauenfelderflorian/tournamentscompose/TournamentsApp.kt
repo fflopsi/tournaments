@@ -135,9 +135,7 @@ fun TournamentsApp() {
         }
         composable(
             route = Routes.PLAYERS_EDITOR.route + "?players={players}",
-            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
-            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
+            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" })
         ) {
             PlayersEditor(
                 navController = navController,
@@ -146,11 +144,7 @@ fun TournamentsApp() {
             )
         }
         composable(
-            route = Routes.SETTINGS_EDITOR.route,
-            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) }, //TODO
-            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }, //TODO
+            route = Routes.SETTINGS_EDITOR.route
         ) {
             Settings(
                 navController = navController,
