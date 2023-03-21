@@ -75,34 +75,35 @@ fun TournamentList(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues)
             ) {
-                if (tournaments.isNotEmpty()) items(items = tournaments) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.clickable {
-                            setCurrent(tournaments.indexOf(it))
-                            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(
-                                R.string.tournament_list_title,
-                                it.name,
-                                formatDate(it.start),
-                                formatDate(it.end)
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(2f)
-                        )
-                        IconButton(onClick = {
-                            setCurrent(tournaments.indexOf(it))
-                            navController.navigate(Routes.TOURNAMENT_EDITOR.route)
-                        }) {
-                            Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                if (tournaments.isNotEmpty())
+                    items(items = tournaments.sortedByDescending { it.start }) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.clickable {
+                                setCurrent(tournaments.indexOf(it))
+                                navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.tournament_list_title,
+                                    it.name,
+                                    formatDate(it.start),
+                                    formatDate(it.end)
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(2f)
+                            )
+                            IconButton(onClick = {
+                                setCurrent(tournaments.indexOf(it))
+                                navController.navigate(Routes.TOURNAMENT_EDITOR.route)
+                            }) {
+                                Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                            }
                         }
                     }
-                }
                 else item {
                     Text(
                         text = stringResource(R.string.add_first_tournament_hint),
