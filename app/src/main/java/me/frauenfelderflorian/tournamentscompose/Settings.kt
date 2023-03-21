@@ -100,6 +100,7 @@ fun Settings(
             ) {
                 item {
                     Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable { themeSelectorExpanded = true }
                     ) {
@@ -115,7 +116,6 @@ fun Settings(
                                 .fillMaxWidth()
                                 .weight(2f)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
                         Box {
                             IconButton(onClick = { themeSelectorExpanded = true }) {
                                 Icon(
@@ -207,7 +207,10 @@ fun Settings(
                     }
                 }
                 item {
-                    Row(modifier = Modifier.clickable { adaptivePoints = !adaptivePoints }) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints }
+                    ) {
                         Column(
                             modifier = Modifier
                                 .weight(2f)
@@ -228,7 +231,6 @@ fun Settings(
                                 fontWeight = FontWeight.Light
                             )
                         }
-                        Spacer(modifier = Modifier.width(16.dp))
                         Switch(
                             checked = adaptivePoints,
                             onCheckedChange = { adaptivePoints = it }

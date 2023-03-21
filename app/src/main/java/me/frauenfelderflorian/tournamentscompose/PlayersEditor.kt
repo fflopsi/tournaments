@@ -101,7 +101,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 modifier = Modifier.padding(paddingValues)
             ) {
                 items(items = players.entries.toList(), itemContent = {
-                    Row {
+                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         val context = LocalContext.current
                         TextField(
                             value = it.value,
@@ -119,7 +119,6 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                                 .fillMaxWidth()
                                 .weight(2f)
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
                         IconButton(onClick = { players.remove(it.key) }) {
                             Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
                         }
