@@ -38,7 +38,7 @@ fun TournamentEditor(
     current: Int,
     defaultPlayers: List<String>,
     defaultAdaptivePoints: Boolean,
-    defaultFirstPoints: Int
+    defaultFirstPoints: Int,
 ) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
@@ -49,7 +49,7 @@ fun TournamentEditor(
 
     var name by rememberSaveable { mutableStateOf(if (current == -1) "" else tournaments[current].name) }
     var today = System.currentTimeMillis()
-    today -= (today % 86400000) //Remove the passed milliseconds since the beginning of the day
+    today -= today % 86400000 //Remove the passed milliseconds since the beginning of the day
     var start by rememberSaveable { mutableStateOf(if (current == -1) today else tournaments[current].start) }
     var end by rememberSaveable { mutableStateOf(if (current == -1) today + 604800000 else tournaments[current].end) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
@@ -80,8 +80,8 @@ fun TournamentEditor(
                     actions = {
                         if (current != -1)
                             IconButton(onClick = {
-                                tournaments.remove(tournaments[current])
-                                navController.popBackStack() //TODO: fix from TournamentViewer
+                                tournaments.removeAt(current)
+                                navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
                             }) {
                                 Icon(
                                     Icons.Default.Delete,
@@ -153,10 +153,11 @@ fun TournamentEditor(
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) },
+            contentWindowInsets = WindowInsets.ime, //TODO: add this everywhere
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues)
             ) {
@@ -260,7 +261,6 @@ fun TournamentEditor(
                                         fontWeight = FontWeight.Light
                                     )
                                 }
-                                Spacer(modifier = Modifier.width(0.dp)) //TODO: remove those where possible
                                 Switch(
                                     checked = adaptivePoints,
                                     onCheckedChange = { adaptivePoints = it }
@@ -294,7 +294,7 @@ fun TournamentEditor(
                                     value = firstPointsString,
                                     onValueChange = {
                                         try {
-                                            it.toInt()
+                                            if (it != "") it.toInt()
                                             firstPointsString = it.trim()
                                         } catch (e: NumberFormatException) {
                                             scope.launch {
@@ -322,14 +322,12 @@ fun TournamentEditor(
                         }
                     }
                 } else {
-                    item {
-                        Divider(thickness = 1.dp)
-                    }
+                    item { Divider() }
                     item {
                         Button(
                             onClick = {
-                                tournaments.remove(tournaments[current])
-                                navController.popBackStack() //TODO: fix from TournamentViewer
+                                tournaments.removeAt(current)
+                                navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
                             },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.errorContainer,

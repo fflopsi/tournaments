@@ -73,7 +73,7 @@ fun GameEditor(
                         if (tournament.current != -1)
                             IconButton(onClick = {
                                 tournament.games.remove(tournament.games[tournament.current])
-                                navController.popBackStack()
+                                navController.popBackStack(Routes.TOURNAMENT_VIEWER.route, false)
                             }) {
                                 Icon(Icons.Default.Delete, stringResource(R.string.delete_game))
                             }
