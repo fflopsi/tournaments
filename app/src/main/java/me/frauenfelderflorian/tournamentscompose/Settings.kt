@@ -28,7 +28,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsEditor(
+fun Settings(
     navController: NavController,
     theme: Int,
     updateTheme: (Int) -> Unit,
@@ -261,8 +261,7 @@ fun SettingsEditor(
                                 value = firstPointsString,
                                 onValueChange = {
                                     try {
-                                        if (it != "")
-                                            it.toInt()
+                                        if (it != "") it.toInt()
                                         firstPointsString = it.trim()
                                     } catch (e: NumberFormatException) {
                                         scope.launch {
