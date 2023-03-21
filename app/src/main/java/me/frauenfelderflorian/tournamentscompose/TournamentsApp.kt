@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -27,6 +28,7 @@ import java.util.*
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent { TournamentsApp() }
     }
 }
@@ -150,7 +152,7 @@ fun TournamentsApp() {
             popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
             popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }, //TODO
         ) {
-            SettingsEditor(
+            Settings(
                 navController = navController,
                 theme = prefs.theme,
                 updateTheme = prefs::saveTheme,
