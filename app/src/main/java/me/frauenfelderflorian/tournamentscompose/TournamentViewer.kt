@@ -110,29 +110,30 @@ fun TournamentViewer(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.padding(paddingValues)
                 ) {
-                    if (tournaments[current].games.isNotEmpty()) items(items = tournaments[current].games) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                setCurrent(tournaments[current].games.indexOf(it))
-                                navController.navigate(Routes.GAME_VIEWER.route)
-                            }
-                        ) {
-                            Text(
-                                text = stringResource(R.string.game_title, formatDate(it.date)),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(2f)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            IconButton(onClick = {
-                                setCurrent(tournaments[current].games.indexOf(it))
-                                navController.navigate(Routes.GAME_EDITOR.route)
-                            }) {
-                                Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                    if (tournaments[current].games.isNotEmpty())
+                        items(items = tournaments[current].games.sortedByDescending { it.date }) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.clickable {
+                                    setCurrent(tournaments[current].games.indexOf(it))
+                                    navController.navigate(Routes.GAME_VIEWER.route)
+                                }
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.game_title, formatDate(it.date)),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(2f)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                IconButton(onClick = {
+                                    setCurrent(tournaments[current].games.indexOf(it))
+                                    navController.navigate(Routes.GAME_EDITOR.route)
+                                }) {
+                                    Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                                }
                             }
                         }
-                    }
                     else item {
                         Text(
                             text = stringResource(R.string.add_first_game_hint),
