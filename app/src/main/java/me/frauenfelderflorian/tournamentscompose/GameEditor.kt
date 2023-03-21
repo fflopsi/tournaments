@@ -158,8 +158,7 @@ fun GameEditor(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             Column(
-                modifier = Modifier.padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.padding(paddingValues)
             ) {
                 TabRow(selectedTabIndex = selectedTab) {
                     Tab(
@@ -181,7 +180,7 @@ fun GameEditor(
                         exit = slideOutHorizontally(targetOffsetX = { width -> -width })
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             item {
@@ -207,18 +206,16 @@ fun GameEditor(
                                     OutlinedTextField(
                                         value = hoopsString,
                                         onValueChange = {
-                                            if (it != "")
-                                                try {
-                                                    it.toInt()
-                                                    hoopsString = it.trim()
-                                                } catch (e: NumberFormatException) {
-                                                    scope.launch {
-                                                        hostState.showSnackbar(
-                                                            context.resources.getString(R.string.no_invalid_integer)
-                                                        )
-                                                    }
+                                            try {
+                                                if (it != "") it.toInt()
+                                                hoopsString = it.trim()
+                                            } catch (e: NumberFormatException) {
+                                                scope.launch {
+                                                    hostState.showSnackbar(
+                                                        context.resources.getString(R.string.no_invalid_integer)
+                                                    )
                                                 }
-                                            else hoopsString = ""
+                                            }
                                         },
                                         singleLine = true,
                                         label = { Text(stringResource(R.string.hoops)) },
@@ -230,18 +227,16 @@ fun GameEditor(
                                     OutlinedTextField(
                                         value = hoopReachedString,
                                         onValueChange = {
-                                            if (it != "") //TODO: copy this if/else where needed
-                                                try {
-                                                    it.toInt()
-                                                    hoopReachedString = it.trim()
-                                                } catch (e: NumberFormatException) {
-                                                    scope.launch {
-                                                        hostState.showSnackbar(
-                                                            context.resources.getString(R.string.no_invalid_integer)
-                                                        )
-                                                    }
+                                            try {
+                                                if (it != "") it.toInt()
+                                                hoopReachedString = it.trim()
+                                            } catch (e: NumberFormatException) {
+                                                scope.launch {
+                                                    hostState.showSnackbar(
+                                                        context.resources.getString(R.string.no_invalid_integer)
+                                                    )
                                                 }
-                                            else hoopReachedString = ""
+                                            }
                                         },
                                         singleLine = true,
                                         label = { Text(stringResource(R.string.hoop_reached)) },
@@ -270,7 +265,7 @@ fun GameEditor(
                         exit = slideOutHorizontally(targetOffsetX = { width -> width })
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
