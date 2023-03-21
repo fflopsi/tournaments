@@ -31,9 +31,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun TournamentViewer(
     navController: NavController,
     theme: Int,
-    tournaments: MutableList<Tournament>,
-    current: Int,
-    setCurrent: (Int) -> Unit
+    tournament: Tournament
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -44,7 +42,7 @@ fun TournamentViewer(
             topBar = {
                 LargeTopAppBar(
                     title = {
-                        Text(stringResource(R.string.tournament_title, tournaments[current].name))
+                        Text(stringResource(R.string.tournament_title, tournament.name))
                     },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
@@ -70,7 +68,7 @@ fun TournamentViewer(
                         text = { Text(stringResource(R.string.new_game)) },
                         expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                         onClick = {
-                            setCurrent(-1)
+                            tournament.updateCurrent(-1)
                             navController.navigate(Routes.GAME_EDITOR.route)
                         }
                     )
@@ -110,12 +108,12 @@ fun TournamentViewer(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.padding(paddingValues)
                 ) {
-                    if (tournaments[current].games.isNotEmpty())
-                        items(items = tournaments[current].games.sortedByDescending { it.date }) {
+                    if (tournament.games.isNotEmpty())
+                        items(items = tournament.games.sortedByDescending { it.date }) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.clickable {
-                                    setCurrent(tournaments[current].games.indexOf(it))
+                                    tournament.updateCurrent(tournament.games.indexOf(it))
                                     navController.navigate(Routes.GAME_VIEWER.route)
                                 }
                             ) {
@@ -127,7 +125,7 @@ fun TournamentViewer(
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 IconButton(onClick = {
-                                    setCurrent(tournaments[current].games.indexOf(it))
+                                    tournament.updateCurrent(tournament.games.indexOf(it))
                                     navController.navigate(Routes.GAME_EDITOR.route)
                                 }) {
                                     Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
@@ -153,10 +151,10 @@ fun TournamentViewer(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.padding(paddingValues)
                 ) {
-                    items(items = tournaments[current].playersByPoints) {
+                    items(items = tournament.playersByPoints) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = it + ": " + tournaments[current].getPoints(it),
+                                text = it + ": " + tournament.getPoints(it),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)

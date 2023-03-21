@@ -110,9 +110,7 @@ fun TournamentsApp() {
             TournamentViewer(
                 navController = navController,
                 theme = prefs.theme,
-                tournaments = container.tournaments,
-                current = container.current, //TODO: only provide the current tournament if needed
-                setCurrent = container.tournaments[container.current]::updateCurrent
+                tournament = container.tournaments[container.current]
             )
         }
         composable(
@@ -121,10 +119,7 @@ fun TournamentsApp() {
             GameEditor(
                 navController = navController,
                 theme = prefs.theme,
-                tournament = container.tournaments[container.current],
-                players = container.tournaments[container.current].players,
-                games = container.tournaments[container.current].games,
-                current = container.tournaments[container.current].current
+                tournament = container.tournaments[container.current]
             )
         }
         composable(

@@ -31,10 +31,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun GameEditor(
     navController: NavController,
     theme: Int,
-    tournament: Tournament,
-    players: List<String>,
-    games: MutableList<Game>,
-    current: Int
+    tournament: Tournament
 ) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
@@ -43,25 +40,24 @@ fun GameEditor(
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var dateDialogOpen by remember { mutableStateOf(false) }
 
-    var date by rememberSaveable { mutableStateOf(if (current == -1) System.currentTimeMillis() else games[current].date) }
-    var hoopsString by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].hoops.toString()) }
-    var hoopReachedString by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].hoopReached.toString()) }
-    var difficulty by rememberSaveable { mutableStateOf(if (current == -1) "" else games[current].difficulty) }
+    var date by rememberSaveable { mutableStateOf(if (tournament.current == -1) System.currentTimeMillis() else tournament.games[tournament.current].date) }
+    var hoopsString by rememberSaveable { mutableStateOf(if (tournament.current == -1) "" else tournament.games[tournament.current].hoops.toString()) }
+    var hoopReachedString by rememberSaveable { mutableStateOf(if (tournament.current == -1) "" else tournament.games[tournament.current].hoopReached.toString()) }
+    var difficulty by rememberSaveable { mutableStateOf(if (tournament.current == -1) "" else tournament.games[tournament.current].difficulty) }
     var selectablePlayers by rememberSaveable {
-        mutableStateOf(players.toMutableList().apply {
-            if (current != -1) removeAll { games[current].ranking[it] != 0 }
+        mutableStateOf(tournament.players.toMutableList().apply {
+            if (tournament.current != -1) removeAll { tournament.games[tournament.current].ranking[it] != 0 }
             add(0, "---")
         }.toList())
     }
     var selectedPlayers by rememberSaveable {
-        mutableStateOf(List(players.size) { "---" }.toMutableList().apply {
-            if (current != -1)
-                games[current].playersByRank.forEach {
-                    set(games[current].playersByRank.indexOf(it), it)
+        mutableStateOf(List(tournament.players.size) { "---" }.toMutableList().apply {
+            if (tournament.current != -1)
+                tournament.games[tournament.current].playersByRank.forEach {
+                    set(tournament.games[tournament.current].playersByRank.indexOf(it), it)
                 }
         }.toList())
     }
-
 
     TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
         Scaffold(
@@ -74,9 +70,9 @@ fun GameEditor(
                         }
                     },
                     actions = {
-                        if (current != -1)
+                        if (tournament.current != -1)
                             IconButton(onClick = {
-                                games.remove(games[current])
+                                tournament.games.remove(tournament.games[tournament.current])
                                 navController.popBackStack()
                             }) {
                                 Icon(Icons.Default.Delete, stringResource(R.string.delete_game))
@@ -116,10 +112,10 @@ fun GameEditor(
                                     }
                                     return@IconButton
                                 }
-                                val absent =
-                                    players.toMutableList().apply { removeAll(ranks) }.toList()
-                                if (current == -1)
-                                    games.add(
+                                val absent = tournament.players.toMutableList()
+                                    .apply { removeAll(ranks) }.toList()
+                                if (tournament.current == -1)
+                                    tournament.games.add(
                                         Game(
                                             date = date,
                                             hoops = hoopsString.toInt(),
@@ -133,7 +129,7 @@ fun GameEditor(
                                         }
                                     )
                                 else
-                                    games[current].apply {
+                                    tournament.games[tournament.current].apply {
                                         this.date = date
                                         hoops = hoopsString.toInt()
                                         hoopReached = hoopReachedString.toInt()
@@ -278,20 +274,18 @@ fun GameEditor(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            items(items = players) {
+                            items(items = tournament.players) {
                                 var expanded by remember { mutableStateOf(false) }
                                 ExposedDropdownMenuBox(
                                     expanded = expanded,
                                     onExpandedChange = { expanded = !expanded }
                                 ) {
                                     OutlinedTextField(
-                                        value = selectedPlayers[players.indexOf(it)],
+                                        value = selectedPlayers[tournament.players.indexOf(it)],
                                         onValueChange = {},
                                         readOnly = true,
                                         trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                                expanded = expanded
-                                            )
+                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                                         },
                                         modifier = Modifier
                                             .menuAnchor()
@@ -311,19 +305,23 @@ fun GameEditor(
                                                         selectablePlayers =
                                                             selectablePlayers.toMutableList()
                                                                 .apply { remove(selected) }.toList()
-                                                    if (selectedPlayers[players.indexOf(it)] != "---")
+                                                    if (selectedPlayers[tournament.players
+                                                            .indexOf(it)] != "---"
+                                                    )
                                                         selectablePlayers =
                                                             selectablePlayers.toMutableList()
                                                                 .apply {
                                                                     add(
-                                                                        selectedPlayers[
-                                                                                players.indexOf(it)
-                                                                        ]
+                                                                        selectedPlayers[tournament
+                                                                            .players.indexOf(it)]
                                                                     )
                                                                 }.toList()
                                                     selectedPlayers =
                                                         selectedPlayers.toMutableList().apply {
-                                                            set(players.indexOf(it), selected)
+                                                            set(
+                                                                tournament.players.indexOf(it),
+                                                                selected
+                                                            )
                                                         }.toList()
                                                 },
                                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
