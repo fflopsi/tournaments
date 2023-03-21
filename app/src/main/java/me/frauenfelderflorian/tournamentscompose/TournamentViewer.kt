@@ -114,15 +114,12 @@ fun TournamentViewer(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
-                                /*setCurrent(tournaments[current].games.indexOf(it))
-                                navController.navigate(Routes.GAME_VIEWER.route)*/ //TODO
+                                setCurrent(tournaments[current].games.indexOf(it))
+                                navController.navigate(Routes.GAME_VIEWER.route)
                             }
                         ) {
                             Text(
-                                text = stringResource(
-                                    R.string.game_list_title,
-                                    formatDate(it.date)
-                                ),
+                                text = stringResource(R.string.game_title, formatDate(it.date)),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(2f)

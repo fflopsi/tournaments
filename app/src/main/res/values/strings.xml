@@ -48,7 +48,7 @@
     <string name="enter_number_first_points">Enter a valid integer for points for first place</string>
     <string name="games">Games</string>
     <string name="leaderboard">Leaderboard</string>
-    <string name="game_list_title">Game from %1$s</string>
+    <string name="game_title">Game from %1$s</string>
     <string name="edit_game">Edit game</string>
     <string name="add_first_game_hint">Tap  +  in the lower right corner to add your first game</string>
     <string name="new_game">New game</string>
@@ -67,4 +67,6 @@
     <string name="number_hoops_reached_too_small">Number of reached hoops too small</string>
     <string name="number_hoops_reached_too_big">Number of reached hoops too big</string>
     <string name="ranking_invalid">Ranking invalid</string>
+    <string name="game_details">Hoop %1$s of %2$s reached, with difficulty \"%3$s\"</string>
+    <string name="absent_players">Absent players</string>
 </resources>

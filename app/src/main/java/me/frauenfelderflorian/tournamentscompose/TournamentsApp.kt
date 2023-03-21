@@ -36,6 +36,7 @@ enum class Routes(val route: String) {
     TOURNAMENT_EDITOR("te"),
     TOURNAMENT_VIEWER("tv"),
     GAME_EDITOR("ge"),
+    GAME_VIEWER("gv"),
     PLAYERS_EDITOR("pe"),
     SETTINGS_EDITOR("se"),
 }
@@ -110,7 +111,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 tournaments = container.tournaments,
-                current = container.current,
+                current = container.current, //TODO: only provide the current tournament if needed
                 setCurrent = container.tournaments[container.current]::updateCurrent
             )
         }
@@ -124,6 +125,15 @@ fun TournamentsApp() {
                 players = container.tournaments[container.current].players,
                 games = container.tournaments[container.current].games,
                 current = container.tournaments[container.current].current
+            )
+        }
+        composable(
+            route = Routes.GAME_VIEWER.route
+        ) {
+            GameViewer(
+                navController = navController,
+                theme = prefs.theme,
+                game = container.tournaments[container.current].games[container.tournaments[container.current].current]
             )
         }
         composable(
@@ -165,8 +175,6 @@ fun getTheme(theme: Int): Boolean {
     return when (theme) {
         1 -> false
         2 -> true
-        else -> {
-            isSystemInDarkTheme()
-        }
+        else -> isSystemInDarkTheme()
     }
 }
