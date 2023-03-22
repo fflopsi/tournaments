@@ -4,14 +4,49 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.BrightnessAuto
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -71,11 +106,13 @@ fun AppSettings(
                         val context = LocalContext.current
                         IconButton(onClick = {
                             if (firstPointsString == "") {
-                                if (!adaptivePoints)
+                                if (!adaptivePoints) {
                                     scope.launch {
-                                        hostState.showSnackbar(context.resources.getString(R.string.input_first_points))
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.input_first_points)
+                                        )
                                     }
-                                else {
+                                } else {
                                     savePrefs(players, true, 10)
                                     navController.popBackStack()
                                 }
@@ -87,23 +124,23 @@ fun AppSettings(
                             Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
                     },
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) },
             contentWindowInsets = WindowInsets.ime,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
             ) {
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { themeSelectorExpanded = true }
+                        modifier = Modifier.clickable { themeSelectorExpanded = true },
                     ) {
                         Text(
                             text = "${stringResource(R.string.choose_theme)}: ${
@@ -115,18 +152,15 @@ fun AppSettings(
                             }",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(2f)
+                                .weight(2f),
                         )
                         Box {
                             IconButton(onClick = { themeSelectorExpanded = true }) {
-                                Icon(
-                                    Icons.Default.MoreVert,
-                                    stringResource(R.string.choose_theme)
-                                )
+                                Icon(Icons.Default.MoreVert, stringResource(R.string.choose_theme))
                             }
                             DropdownMenu(
                                 expanded = themeSelectorExpanded,
-                                onDismissRequest = { themeSelectorExpanded = false }
+                                onDismissRequest = { themeSelectorExpanded = false },
                             ) {
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.auto)) },
@@ -138,11 +172,12 @@ fun AppSettings(
                                         )
                                     },
                                     trailingIcon = {
-                                        if (theme == 0) Icon(
-                                            Icons.Default.Check,
-                                            stringResource(R.string.active)
-                                        )
-                                    }
+                                        if (theme == 0) {
+                                            Icon(
+                                                Icons.Default.Check, stringResource(R.string.active)
+                                            )
+                                        }
+                                    },
                                 )
                                 Divider()
                                 DropdownMenuItem(
@@ -150,34 +185,30 @@ fun AppSettings(
                                     onClick = { updateTheme(1) },
                                     leadingIcon = {
                                         Icon(
-                                            Icons.Default.LightMode,
-                                            stringResource(R.string.light)
+                                            Icons.Default.LightMode, stringResource(R.string.light)
                                         )
                                     },
                                     trailingIcon = {
-                                        if (theme == 1)
+                                        if (theme == 1) {
                                             Icon(
-                                                Icons.Default.Check,
-                                                stringResource(R.string.active)
+                                                Icons.Default.Check, stringResource(R.string.active)
                                             )
-                                    }
+                                        }
+                                    },
                                 )
                                 DropdownMenuItem(
                                     text = { Text(text = stringResource(R.string.dark)) },
                                     onClick = { updateTheme(2) },
                                     leadingIcon = {
-                                        Icon(
-                                            Icons.Default.DarkMode,
-                                            stringResource(R.string.dark)
-                                        )
+                                        Icon(Icons.Default.DarkMode, stringResource(R.string.dark))
                                     },
                                     trailingIcon = {
-                                        if (theme == 2)
+                                        if (theme == 2) {
                                             Icon(
-                                                Icons.Default.Check,
-                                                stringResource(R.string.active)
+                                                Icons.Default.Check, stringResource(R.string.active)
                                             )
-                                    }
+                                        }
+                                    },
                                 )
                             }
                         }
@@ -189,18 +220,22 @@ fun AppSettings(
                 item {
                     Row {
                         Text(
-                            text = stringResource(R.string.default_players) + ": " +
-                                    players.joinToString(", "),
+                            text = "${stringResource(R.string.default_players)}: ${
+                                players.joinToString(", ")
+                            }",
                             modifier = Modifier
                                 .weight(2f)
-                                .align(Alignment.CenterVertically)
+                                .align(Alignment.CenterVertically),
                         )
                         IconButton(onClick = {
                             navController.navigate(
-                                route = Routes.PLAYERS_EDITOR.route +
-                                        if (players.isNotEmpty())
-                                            "?players=" + players.joinToString(";")
-                                        else ""
+                                route = "${Routes.PLAYERS_EDITOR.route}${
+                                    if (players.isNotEmpty()) {
+                                        "?players=${players.joinToString(";")}"
+                                    } else {
+                                        ""
+                                    }
+                                }"
                             )
                         }) {
                             Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
@@ -210,7 +245,7 @@ fun AppSettings(
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints }
+                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
                     ) {
                         Column(
                             modifier = Modifier
@@ -218,37 +253,39 @@ fun AppSettings(
                                 .align(Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = stringResource(R.string.default_point_system)
-                                        + ": " +
-                                        if (adaptivePoints) stringResource(R.string.adaptive)
-                                        else stringResource(R.string.classic)
+                                text = "${stringResource(R.string.default_point_system)}: ${
+                                    if (adaptivePoints) {
+                                        stringResource(R.string.adaptive)
+                                    } else {
+                                        stringResource(R.string.classic)
+                                    }
+                                }"
 
                             )
                             Text(
-                                text = if (adaptivePoints)
+                                text = if (adaptivePoints) {
                                     stringResource(R.string.point_system_adaptive)
-                                else stringResource(R.string.point_system_classic),
+                                } else {
+                                    stringResource(R.string.point_system_classic)
+                                },
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
+                                fontWeight = FontWeight.Light,
                             )
                         }
-                        Switch(
-                            checked = adaptivePoints,
-                            onCheckedChange = { adaptivePoints = it }
-                        )
+                        Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
                     }
                 }
                 item {
                     AnimatedVisibility(
                         visible = adaptivePoints,
                         enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
                         Text(
                             text = stringResource(R.string.point_system_adaptive_desc),
                             fontStyle = FontStyle.Italic,
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Light
+                            fontWeight = FontWeight.Light,
                         )
                     }
                 }
@@ -256,7 +293,7 @@ fun AppSettings(
                     AnimatedVisibility(
                         visible = !adaptivePoints,
                         enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
                         Column {
                             val context = LocalContext.current
@@ -268,21 +305,27 @@ fun AppSettings(
                                         firstPointsString = it.trim()
                                     } catch (e: NumberFormatException) {
                                         scope.launch {
-                                            hostState.showSnackbar(context.resources.getString(R.string.no_invalid_integer))
+                                            hostState.showSnackbar(
+                                                context.resources.getString(
+                                                    R.string.no_invalid_integer
+                                                )
+                                            )
                                         }
                                     }
                                 },
                                 singleLine = true,
                                 label = { Text(stringResource(R.string.first_points)) },
                                 trailingIcon = { Icon(Icons.Default.Star, null) },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                modifier = Modifier.fillMaxWidth(),
                             )
                             Text(
                                 text = stringResource(R.string.point_system_classic_desc),
                                 fontStyle = FontStyle.Italic,
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.Light
+                                fontWeight = FontWeight.Light,
                             )
                         }
                     }

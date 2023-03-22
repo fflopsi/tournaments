@@ -18,12 +18,11 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import java.text.DateFormat
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
-import java.text.DateFormat
-import java.util.*
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,29 +48,24 @@ fun TournamentsApp() {
     val container: TournamentContainer = viewModel()
     val prefs: Prefs = viewModel(factory = PrefsFactory(LocalContext.current))
     LaunchedEffect(Unit) {
-        launch {
-            prefs.themeFlow.collect { prefs.useTheme(it) }
-        }
-        launch {
-            prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) }
-        }
-        launch {
-            prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) }
-        }
-        launch {
-            prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) }
-        }
+        launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
+        launch { prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) } }
+        launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
+        launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
     }
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
         navController = navController,
-        startDestination = Routes.TOURNAMENT_LIST.route
+        startDestination = Routes.TOURNAMENT_LIST.route,
     ) {
         composable(
             route = Routes.TOURNAMENT_LIST.route,
             exitTransition = {
-                if (container.current == -1) null
-                else slideOutHorizontally(targetOffsetX = { width -> -width })
+                if (container.current == -1) {
+                    null
+                } else {
+                    slideOutHorizontally(targetOffsetX = { width -> -width })
+                }
             },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
         ) {
@@ -79,18 +73,21 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 tournaments = container.tournaments,
-                setCurrent = container::updateCurrent
+                setCurrent = container::updateCurrent,
             )
         }
         composable(
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
-                if (container.current == -1) scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
-                else slideInHorizontally(initialOffsetX = { width -> width })
+                if (container.current == -1) {
+                    scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
+                } else {
+                    slideInHorizontally(initialOffsetX = { width -> width })
+                }
             },
             exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
         ) {
             TournamentEditor(
                 navController = navController,
@@ -107,45 +104,39 @@ fun TournamentsApp() {
             enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
             popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) }
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
         ) {
             TournamentViewer(
                 navController = navController,
                 theme = prefs.theme,
-                tournament = container.tournaments[container.current]
+                tournament = container.tournaments[container.current],
             )
         }
-        composable(
-            route = Routes.GAME_EDITOR.route,
-        ) {
+        composable(Routes.GAME_EDITOR.route) {
             GameEditor(
                 navController = navController,
                 theme = prefs.theme,
-                tournament = container.tournaments[container.current]
+                tournament = container.tournaments[container.current],
             )
         }
-        composable(
-            route = Routes.GAME_VIEWER.route
-        ) {
+        composable(Routes.GAME_VIEWER.route) {
             GameViewer(
                 navController = navController,
                 theme = prefs.theme,
-                game = container.tournaments[container.current].games[container.tournaments[container.current].current]
+                game = container.tournaments[container.current].games[container.tournaments[container.current].current],
             )
         }
         composable(
             route = Routes.PLAYERS_EDITOR.route + "?players={players}",
-            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" })
+            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
         ) {
             PlayersEditor(
                 navController = navController,
                 theme = prefs.theme,
-                formerPlayers = it.arguments?.getString("players")
+                formerPlayers = it.arguments?.getString("players"),
             )
         }
-        composable(
-            route = Routes.SETTINGS_EDITOR.route
-        ) {
+        composable(Routes.SETTINGS_EDITOR.route) {
             AppSettings(
                 navController = navController,
                 theme = prefs.theme,

@@ -18,42 +18,48 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.frauenfelderflorian.tournamentscompose.TournamentsApp
 
-private val THEME_KEY = intPreferencesKey("theme")
-private val PLAYERS_KEY = stringPreferencesKey("players")
-private val ADAPTIVE_POINTS_KEY = booleanPreferencesKey("adaptivePoints")
-private val FIRST_POINTS_KEY = intPreferencesKey("firstPoints")
-
 @SuppressLint("StaticFieldLeak")
 class Prefs(private val context: Context) : ViewModel() {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
-    var theme by mutableStateOf(0); private set
-    val themeFlow = context.dataStore.data.map { it[THEME_KEY] ?: 0 }
+    private val themeKey = intPreferencesKey("theme")
+    private val playersKey = stringPreferencesKey("players")
+    private val adaptivePointsKey = booleanPreferencesKey("adaptivePoints")
+    private val firstPointsKey = intPreferencesKey("firstPoints")
 
-    var players = mutableStateListOf<String>(); private set
-    val playersFlow = context.dataStore.data.map { it[PLAYERS_KEY] ?: "" }
-    var adaptivePoints by mutableStateOf(true); private set
-    val adaptivePointsFlow = context.dataStore.data.map { it[ADAPTIVE_POINTS_KEY] ?: true }
-    var firstPoints by mutableStateOf(10); private set
-    val firstPointsFlow = context.dataStore.data.map { it[FIRST_POINTS_KEY] ?: 10 }
+    var theme by mutableStateOf(0)
+        private set
+    val themeFlow = context.dataStore.data.map { it[themeKey] ?: 0 }
+
+    var players = mutableStateListOf<String>()
+        private set
+    val playersFlow = context.dataStore.data.map { it[playersKey] ?: "" }
+    var adaptivePoints by mutableStateOf(true)
+        private set
+    val adaptivePointsFlow = context.dataStore.data.map { it[adaptivePointsKey] ?: true }
+    var firstPoints by mutableStateOf(10)
+        private set
+    val firstPointsFlow = context.dataStore.data.map { it[firstPointsKey] ?: 10 }
 
     /**
-     * Update the theme stored in the settings  to [newTheme]
+     * Update the theme stored in the settings to [newTheme]
      *
      * This will automatically also call [useTheme], if [TournamentsApp] was initialized correctly
      */
     fun saveTheme(newTheme: Int) = runBlocking {
-        if (newTheme < 0 || newTheme > 2) throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
-        launch {
-            context.dataStore.edit { it[THEME_KEY] = newTheme }
+        if (newTheme < 0 || newTheme > 2) {
+            throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
         }
+        launch { context.dataStore.edit { it[themeKey] = newTheme } }
     }
 
     /**
      * Use [newTheme] in the app, without changing the value stored in the settings
      */
     fun useTheme(newTheme: Int) {
-        if (newTheme < 0 || newTheme > 2) throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
+        if (newTheme < 0 || newTheme > 2) {
+            throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
+        }
         theme = newTheme
     }
 
@@ -67,16 +73,16 @@ class Prefs(private val context: Context) : ViewModel() {
     fun saveSettings(
         newPlayers: List<String> = players,
         newAdaptivePoints: Boolean = adaptivePoints,
-        newFirstPoints: Int = firstPoints
+        newFirstPoints: Int = firstPoints,
     ) = runBlocking {
-        if (newPlayers != players) launch {
-            context.dataStore.edit { it[PLAYERS_KEY] = newPlayers.joinToString(";") }
+        if (newPlayers != players) {
+            launch { context.dataStore.edit { it[playersKey] = newPlayers.joinToString(";") } }
         }
-        if (newAdaptivePoints != adaptivePoints) launch {
-            context.dataStore.edit { it[ADAPTIVE_POINTS_KEY] = newAdaptivePoints }
+        if (newAdaptivePoints != adaptivePoints) {
+            launch { context.dataStore.edit { it[adaptivePointsKey] = newAdaptivePoints } }
         }
-        if (newFirstPoints != firstPoints) launch {
-            context.dataStore.edit { it[FIRST_POINTS_KEY] = newFirstPoints }
+        if (newFirstPoints != firstPoints) {
+            launch { context.dataStore.edit { it[firstPointsKey] = newFirstPoints } }
         }
     }
 
@@ -87,9 +93,9 @@ class Prefs(private val context: Context) : ViewModel() {
     fun useSettings(
         newPlayers: List<String> = players,
         newAdaptivePoints: Boolean = adaptivePoints,
-        newFirstPoints: Int = firstPoints
+        newFirstPoints: Int = firstPoints,
     ) {
-        if (newPlayers != players) players = mutableStateListOf<String>(*newPlayers.toTypedArray())
+        if (newPlayers != players) players = mutableStateListOf(*newPlayers.toTypedArray())
         if (newAdaptivePoints != adaptivePoints) adaptivePoints = newAdaptivePoints
         if (newFirstPoints != firstPoints) firstPoints = newFirstPoints
     }

@@ -1,11 +1,27 @@
 package me.frauenfelderflorian.tournamentscompose
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +35,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameViewer(
-    navController: NavController,
-    theme: Int,
-    game: Game,
-) {
+fun GameViewer(navController: NavController, theme: Int, game: Game) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -31,15 +43,13 @@ fun GameViewer(
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = {
-                        Text(stringResource(R.string.game_title, formatDate(game.date)))
-                    },
+                    title = { Text(stringResource(R.string.game_title, formatDate(game.date))) },
                     navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
                 )
             },
             contentWindowInsets = WindowInsets.ime,
@@ -48,14 +58,11 @@ fun GameViewer(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
             ) {
                 Text(
                     stringResource(
-                        R.string.game_details,
-                        game.hoopReached,
-                        game.hoops,
-                        game.difficulty
+                        R.string.game_details, game.hoopReached, game.hoops, game.difficulty
                     )
                 )
                 Divider()
@@ -63,40 +70,40 @@ fun GameViewer(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start,
                     contentPadding = PaddingValues(horizontal = 32.dp, vertical = 32.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     item {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(32.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(Icons.Default.EmojiEvents, null)
                             Text(
                                 game.playersByRank[0],
                                 fontWeight = FontWeight.Black,
-                                fontSize = 24.sp
+                                fontSize = 24.sp,
                             )
                         }
                     }
                     items(game.playersByRank.toMutableList().apply { removeAt(0) }) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(32.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(game.ranking[it].toString())
                             Text(
                                 it,
-                                fontWeight = if (game.ranking[it]!! < 4) FontWeight.SemiBold else FontWeight.Light,
-                                fontSize = if (game.ranking[it]!! < 4) 20.sp else 16.sp
+                                fontWeight = if (game.ranking[it]!! < 4) {
+                                    FontWeight.SemiBold
+                                } else {
+                                    FontWeight.Light
+                                },
+                                fontSize = if (game.ranking[it]!! < 4) 20.sp else 16.sp,
                             )
                         }
                     }
-                    item {
-                        Divider()
-                    }
-                    item {
-                        Text(stringResource(R.string.absent_players))
-                    }
+                    item { Divider() }
+                    item { Text(stringResource(R.string.absent_players)) }
                     items(game.absentPlayers.toList()) {
                         Text(it, fontWeight = FontWeight.ExtraLight)
                     }

@@ -1,7 +1,13 @@
 package me.frauenfelderflorian.tournamentscompose
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -10,7 +16,17 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +62,7 @@ fun TournamentList(
                     title = { Text(text = stringResource(R.string.app_title)) },
                     actions = {
                         IconButton(
-                            onClick = { navController.navigate(Routes.SETTINGS_EDITOR.route) }
+                            onClick = { navController.navigate(Routes.SETTINGS_EDITOR.route) },
                         ) {
                             Icon(Icons.Default.Settings, stringResource(R.string.settings))
                         }
@@ -54,7 +70,7 @@ fun TournamentList(
                             Icon(Icons.Outlined.Info, stringResource(R.string.about))
                         }
                     },
-                    scrollBehavior = scrollBehavior
+                    scrollBehavior = scrollBehavior,
                 )
             },
             floatingActionButton = {
@@ -65,18 +81,18 @@ fun TournamentList(
                     onClick = {
                         setCurrent(-1)
                         navController.navigate(Routes.TOURNAMENT_EDITOR.route)
-                    }
+                    },
                 )
             },
             contentWindowInsets = WindowInsets.ime,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
             ) {
-                if (tournaments.isNotEmpty())
+                if (tournaments.isNotEmpty()) {
                     items(items = tournaments.sortedByDescending { it.start }) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -84,18 +100,18 @@ fun TournamentList(
                             modifier = Modifier.clickable {
                                 setCurrent(tournaments.indexOf(it))
                                 navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                            }
+                            },
                         ) {
                             Text(
                                 text = stringResource(
                                     R.string.tournament_list_title,
                                     it.name,
                                     formatDate(it.start),
-                                    formatDate(it.end)
+                                    formatDate(it.end),
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .weight(2f)
+                                    .weight(2f),
                             )
                             IconButton(onClick = {
                                 setCurrent(tournaments.indexOf(it))
@@ -105,25 +121,31 @@ fun TournamentList(
                             }
                         }
                     }
-                else item {
-                    Text(
-                        text = stringResource(R.string.add_first_tournament_hint),
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.ExtraLight
-                    )
+                } else {
+                    item {
+                        Text(
+                            text = stringResource(R.string.add_first_tournament_hint),
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.ExtraLight,
+                        )
+                    }
                 }
             }
-            if (showInfo) AlertDialog(
-                onDismissRequest = { showInfo = false },
-                icon = { Icon(Icons.Default.Info, null) },
-                title = { Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}") },
-                text = { Text(stringResource(R.string.built_by_info)) },
-                confirmButton = {
-                    TextButton(onClick = { showInfo = false }) {
-                        Text(stringResource(R.string.ok))
-                    }
-                },
-            )
+            if (showInfo) {
+                AlertDialog(
+                    onDismissRequest = { showInfo = false },
+                    icon = { Icon(Icons.Default.Info, null) },
+                    title = {
+                        Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}")
+                    },
+                    text = { Text(stringResource(R.string.built_by_info)) },
+                    confirmButton = {
+                        TextButton(onClick = { showInfo = false }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                )
+            }
         }
     }
 }
