@@ -28,7 +28,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Settings(
+fun AppSettings(
     navController: NavController,
     theme: Int,
     updateTheme: (Int) -> Unit,

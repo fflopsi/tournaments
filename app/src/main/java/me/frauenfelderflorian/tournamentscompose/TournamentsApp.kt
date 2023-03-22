@@ -146,7 +146,7 @@ fun TournamentsApp() {
         composable(
             route = Routes.SETTINGS_EDITOR.route
         ) {
-            Settings(
+            AppSettings(
                 navController = navController,
                 theme = prefs.theme,
                 updateTheme = prefs::saveTheme,
