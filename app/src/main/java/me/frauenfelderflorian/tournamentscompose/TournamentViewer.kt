@@ -6,16 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -32,7 +26,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun TournamentViewer(
     navController: NavController,
     theme: Int,
-    tournament: Tournament
+    tournament: Tournament,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -153,18 +147,44 @@ fun TournamentViewer(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             items(items = tournament.playersByPoints) {
+                                var menuExpanded by remember { mutableStateOf(false) }
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    Text(tournament.getPoints(it).toString())
                                     Text(
-                                        text = it + ": " + tournament.getPoints(it),
+                                        text = it,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .weight(2f)
                                     )
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(Icons.Default.MoreHoriz, null)
+                                    Box {
+                                        IconButton(onClick = { menuExpanded = true }) {
+                                            Icon(Icons.Default.MoreVert, null)
+                                        }
+                                        DropdownMenu(
+                                            expanded = menuExpanded,
+                                            onDismissRequest = { menuExpanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(stringResource(R.string.game_overview))
+                                                },
+                                                onClick = { /*TODO*/ },
+                                                leadingIcon = {
+                                                    Icon(Icons.Default.EmojiEvents, null)
+                                                }
+                                            )
+                                            Divider()
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(stringResource(R.string.delete_player))
+                                                },
+                                                onClick = { /*TODO*/ },
+                                                leadingIcon = { Icon(Icons.Default.Delete, null) }
+                                            )
+                                        }
                                     }
                                 }
                             }

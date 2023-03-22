@@ -68,4 +68,5 @@
     <string name="ranking_invalid">Rangliste ungültig</string>
     <string name="game_details">Tor %1$s von %2$s erreicht, mit Schwierigkeit \"%3$s\"</string>
     <string name="absent_players">Abwesende Spieler</string>
+    <string name="game_overview">Spielübersicht</string>
 </resources>
