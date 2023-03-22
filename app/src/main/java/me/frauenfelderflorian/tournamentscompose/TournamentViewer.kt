@@ -69,6 +69,7 @@ fun TournamentViewer(
                     )
                 }
             },
+            contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             Column(

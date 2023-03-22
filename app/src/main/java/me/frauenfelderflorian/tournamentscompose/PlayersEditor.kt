@@ -93,6 +93,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 }
             },
             snackbarHost = { SnackbarHost(hostState = hostState) },
+            contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             LazyColumn(

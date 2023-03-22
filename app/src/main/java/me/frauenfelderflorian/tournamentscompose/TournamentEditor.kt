@@ -153,7 +153,7 @@ fun TournamentEditor(
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) },
-            contentWindowInsets = WindowInsets.ime, //TODO: add this everywhere
+            contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             LazyColumn(

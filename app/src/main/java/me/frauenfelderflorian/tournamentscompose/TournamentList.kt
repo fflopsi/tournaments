@@ -68,6 +68,7 @@ fun TournamentList(
                     }
                 )
             },
+            contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             LazyColumn(

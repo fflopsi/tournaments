@@ -22,7 +22,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeThem
 fun GameViewer(
     navController: NavController,
     theme: Int,
-    game: Game
+    game: Game,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -41,7 +41,8 @@ fun GameViewer(
                     },
                     scrollBehavior = scrollBehavior
                 )
-            }
+            },
+            contentWindowInsets = WindowInsets.ime,
         ) { paddingValues ->
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),

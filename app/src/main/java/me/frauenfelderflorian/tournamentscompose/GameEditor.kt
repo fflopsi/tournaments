@@ -155,6 +155,7 @@ fun GameEditor(
                 )
             },
             snackbarHost = { SnackbarHost(hostState = hostState) },
+            contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { paddingValues ->
             Column(
