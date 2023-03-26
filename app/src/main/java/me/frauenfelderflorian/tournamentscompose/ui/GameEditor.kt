@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose
+package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
@@ -62,9 +62,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import me.frauenfelderflorian.tournamentscompose.R
+import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.Game
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
+import me.frauenfelderflorian.tournamentscompose.formatDate
+import me.frauenfelderflorian.tournamentscompose.getTheme
+import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,7 +130,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
         }.toList())
     }
 
-    TournamentsComposeTheme(getTheme(theme)) {
+    TournamentsTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(

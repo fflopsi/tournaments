@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose
+package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +40,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import me.frauenfelderflorian.tournamentscompose.R
+import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
+import me.frauenfelderflorian.tournamentscompose.formatDate
+import me.frauenfelderflorian.tournamentscompose.getTheme
+import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +59,7 @@ fun TournamentList(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var showInfo by rememberSaveable { mutableStateOf(false) }
 
-    TournamentsComposeTheme(getTheme(theme)) {
+    TournamentsTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(

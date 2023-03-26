@@ -23,6 +23,13 @@ import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
+import me.frauenfelderflorian.tournamentscompose.ui.AppSettings
+import me.frauenfelderflorian.tournamentscompose.ui.GameEditor
+import me.frauenfelderflorian.tournamentscompose.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.ui.PlayersEditor
+import me.frauenfelderflorian.tournamentscompose.ui.TournamentEditor
+import me.frauenfelderflorian.tournamentscompose.ui.TournamentList
+import me.frauenfelderflorian.tournamentscompose.ui.TournamentViewer
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

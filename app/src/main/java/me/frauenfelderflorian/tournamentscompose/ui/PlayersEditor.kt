@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose
+package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import java.util.UUID
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsComposeTheme
+import me.frauenfelderflorian.tournamentscompose.R
+import me.frauenfelderflorian.tournamentscompose.getTheme
+import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +65,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
 
-    TournamentsComposeTheme(getTheme(theme)) {
+    TournamentsTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
@@ -111,7 +113,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                     scrollBehavior = scrollBehavior,
                 )
             },
-            floatingActionButton = {
+            floatingActionButton = { // TODO: ExtendedFAB
                 FloatingActionButton({ players[UUID.randomUUID()] = "" }) {
                     Icon(Icons.Default.Add, stringResource(R.string.add_new_player))
                 }
