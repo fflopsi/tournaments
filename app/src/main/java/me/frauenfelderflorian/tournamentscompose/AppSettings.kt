@@ -156,7 +156,7 @@ fun AppSettings(
                         )
                         Box {
                             IconButton({ themeSelectorExpanded = true }) {
-                                Icon(Icons.Default.MoreVert, stringResource(R.string.choose_theme))
+                                Icon(Icons.Default.MoreVert, null)
                             }
                             DropdownMenu(
                                 expanded = themeSelectorExpanded,
@@ -165,12 +165,7 @@ fun AppSettings(
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.auto)) },
                                     onClick = { updateTheme(0) },
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Default.BrightnessAuto,
-                                            stringResource(R.string.auto)
-                                        )
-                                    },
+                                    leadingIcon = { Icon(Icons.Default.BrightnessAuto, null) },
                                     trailingIcon = {
                                         if (theme == 0) {
                                             Icon(
@@ -183,11 +178,7 @@ fun AppSettings(
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.light)) },
                                     onClick = { updateTheme(1) },
-                                    leadingIcon = {
-                                        Icon(
-                                            Icons.Default.LightMode, stringResource(R.string.light)
-                                        )
-                                    },
+                                    leadingIcon = { Icon(Icons.Default.LightMode, null) },
                                     trailingIcon = {
                                         if (theme == 1) {
                                             Icon(
@@ -199,9 +190,7 @@ fun AppSettings(
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.dark)) },
                                     onClick = { updateTheme(2) },
-                                    leadingIcon = {
-                                        Icon(Icons.Default.DarkMode, stringResource(R.string.dark))
-                                    },
+                                    leadingIcon = { Icon(Icons.Default.DarkMode, null) },
                                     trailingIcon = {
                                         if (theme == 2) {
                                             Icon(
