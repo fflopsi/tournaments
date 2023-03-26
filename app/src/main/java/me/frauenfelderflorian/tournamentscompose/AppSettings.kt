@@ -92,19 +92,19 @@ fun AppSettings(
         }
     }
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
                     title = { Text(stringResource(R.string.settings)) },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
                         val context = LocalContext.current
-                        IconButton(onClick = {
+                        IconButton({
                             if (firstPointsString == "") {
                                 if (!adaptivePoints) {
                                     scope.launch {
@@ -127,12 +127,12 @@ fun AppSettings(
                     scrollBehavior = scrollBehavior,
                 )
             },
-            snackbarHost = { SnackbarHost(hostState = hostState) },
+            snackbarHost = { SnackbarHost(hostState) },
             contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(16.dp, 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues),
             ) {
@@ -155,7 +155,7 @@ fun AppSettings(
                                 .weight(2f),
                         )
                         Box {
-                            IconButton(onClick = { themeSelectorExpanded = true }) {
+                            IconButton({ themeSelectorExpanded = true }) {
                                 Icon(Icons.Default.MoreVert, stringResource(R.string.choose_theme))
                             }
                             DropdownMenu(
@@ -181,7 +181,7 @@ fun AppSettings(
                                 )
                                 Divider()
                                 DropdownMenuItem(
-                                    text = { Text(text = stringResource(R.string.light)) },
+                                    text = { Text(stringResource(R.string.light)) },
                                     onClick = { updateTheme(1) },
                                     leadingIcon = {
                                         Icon(
@@ -197,7 +197,7 @@ fun AppSettings(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text(text = stringResource(R.string.dark)) },
+                                    text = { Text(stringResource(R.string.dark)) },
                                     onClick = { updateTheme(2) },
                                     leadingIcon = {
                                         Icon(Icons.Default.DarkMode, stringResource(R.string.dark))
@@ -227,9 +227,9 @@ fun AppSettings(
                                 .weight(2f)
                                 .align(Alignment.CenterVertically),
                         )
-                        IconButton(onClick = {
+                        IconButton({
                             navController.navigate(
-                                route = "${Routes.PLAYERS_EDITOR.route}${
+                                "${Routes.PLAYERS_EDITOR.route}${
                                     if (players.isNotEmpty()) {
                                         "?players=${players.joinToString(";")}"
                                     } else {
@@ -248,12 +248,12 @@ fun AppSettings(
                         modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
                     ) {
                         Column(
-                            modifier = Modifier
+                            Modifier
                                 .weight(2f)
                                 .align(Alignment.CenterVertically)
                         ) {
                             Text(
-                                text = "${stringResource(R.string.default_point_system)}: ${
+                                "${stringResource(R.string.default_point_system)}: ${
                                     if (adaptivePoints) {
                                         stringResource(R.string.adaptive)
                                     } else {

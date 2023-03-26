@@ -74,9 +74,7 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = { navController.navigate(Routes.TOURNAMENT_EDITOR.route) },
-                        ) {
+                        IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
                             Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
                         }
                     },
@@ -107,7 +105,7 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                 modifier = Modifier.padding(paddingValues),
                 verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
-                TabRow(selectedTabIndex = selectedTab) {
+                TabRow(selectedTab) {
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
@@ -127,11 +125,11 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                         exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                            contentPadding = PaddingValues(16.dp, 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             if (tournament.games.isNotEmpty()) {
-                                items(items = tournament.games.sortedByDescending { it.date }) {
+                                items(tournament.games.sortedByDescending { it.date }) {
                                     Row(
                                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                                         verticalAlignment = Alignment.CenterVertically,
@@ -148,7 +146,7 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                                                 .fillMaxWidth()
                                                 .weight(2f),
                                         )
-                                        IconButton(onClick = {
+                                        IconButton({
                                             tournament.updateCurrent(tournament.games.indexOf(it))
                                             navController.navigate(Routes.GAME_EDITOR.route)
                                         }) {
@@ -176,10 +174,10 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                         exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                            contentPadding = PaddingValues(16.dp, 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            items(items = tournament.playersByPoints) {
+                            items(tournament.playersByPoints) {
                                 var menuExpanded by remember { mutableStateOf(false) }
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -193,7 +191,7 @@ fun TournamentViewer(navController: NavController, theme: Int, tournament: Tourn
                                             .weight(2f),
                                     )
                                     Box {
-                                        IconButton(onClick = { menuExpanded = true }) {
+                                        IconButton({ menuExpanded = true }) {
                                             Icon(Icons.Default.MoreVert, null)
                                         }
                                         DropdownMenu(

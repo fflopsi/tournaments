@@ -127,7 +127,7 @@ fun TournamentsApp() {
             )
         }
         composable(
-            route = Routes.PLAYERS_EDITOR.route + "?players={players}",
+            route = "${Routes.PLAYERS_EDITOR.route}?players={players}",
             arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
         ) {
             PlayersEditor(

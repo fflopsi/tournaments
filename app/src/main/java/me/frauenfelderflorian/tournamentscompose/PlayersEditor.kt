@@ -63,19 +63,19 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
-                    title = { Text(text = stringResource(R.string.player_editor_title)) },
+                    title = { Text(stringResource(R.string.player_editor_title)) },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
                         val context = LocalContext.current
-                        IconButton(onClick = {
+                        IconButton({
                             for (player1 in players) {
                                 if (player1.value.isBlank()) {
                                     scope.launch {
@@ -112,20 +112,20 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { players[UUID.randomUUID()] = "" }) {
+                FloatingActionButton({ players[UUID.randomUUID()] = "" }) {
                     Icon(Icons.Default.Add, stringResource(R.string.add_new_player))
                 }
             },
-            snackbarHost = { SnackbarHost(hostState = hostState) },
+            snackbarHost = { SnackbarHost(hostState) },
             contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars), // TODO: add everywhere
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(16.dp, 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues),
             ) {
-                items(items = players.entries.toList()) {
+                items(players.entries.toList()) {
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         val context = LocalContext.current
                         TextField(
@@ -149,7 +149,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                                 .fillMaxWidth()
                                 .weight(2f),
                         )
-                        IconButton(onClick = { players.remove(it.key) }) {
+                        IconButton({ players.remove(it.key) }) {
                             Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
                         }
                     }

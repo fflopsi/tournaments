@@ -126,25 +126,27 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
         }.toList())
     }
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
                     title = { Text(stringResource(R.string.edit_game)) },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
                         if (tournament.current != -1) {
-                            IconButton(onClick = {
+                            IconButton({
                                 tournament.games.remove(tournament.games[tournament.current])
                                 navController.popBackStack(Routes.TOURNAMENT_VIEWER.route, false)
-                            }) { Icon(Icons.Default.Delete, stringResource(R.string.delete_game)) }
+                            }) {
+                                Icon(Icons.Default.Delete, stringResource(R.string.delete_game))
+                            }
                         }
                         val context = LocalContext.current
-                        IconButton(onClick = {
+                        IconButton({
                             try {
                                 if (hoopsString.toInt() < 1) {
                                     scope.launch {
@@ -226,12 +228,12 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                     scrollBehavior = scrollBehavior,
                 )
             },
-            snackbarHost = { SnackbarHost(hostState = hostState) },
+            snackbarHost = { SnackbarHost(hostState) },
             contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                TabRow(selectedTabIndex = selectedTab) {
+            Column(Modifier.padding(paddingValues)) {
+                TabRow(selectedTab) {
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
@@ -251,7 +253,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                         exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                            contentPadding = PaddingValues(16.dp, 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             item {
@@ -265,7 +267,9 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                                         modifier = Modifier.fillMaxWidth(),
                                     ) {
                                         Text(
-                                            stringResource(R.string.date) + ": " + formatDate(date),
+                                            text = "${stringResource(R.string.date)}: ${
+                                                formatDate(date)
+                                            }",
                                             textAlign = TextAlign.Center,
                                         )
                                     }
@@ -350,11 +354,11 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                         exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                     ) {
                         LazyColumn(
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                            contentPadding = PaddingValues(16.dp, 16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            items(items = tournament.players) {
+                            items(tournament.players) {
                                 var expanded by remember { mutableStateOf(false) }
                                 ExposedDropdownMenuBox(
                                     expanded = expanded,
@@ -365,9 +369,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                                         onValueChange = {},
                                         readOnly = true,
                                         trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                                expanded = expanded
-                                            )
+                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded)
                                         },
                                         modifier = Modifier
                                             .menuAnchor()
@@ -421,7 +423,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                 }
             }
             if (dateDialogOpen) {
-                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = date)
+                val datePickerState = rememberDatePickerState(date)
                 val confirmEnabled by remember {
                     derivedStateOf { datePickerState.selectedDateMillis != null }
                 }
@@ -439,7 +441,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                         }
                     },
                     dismissButton = {
-                        TextButton(onClick = { dateDialogOpen = false }) {
+                        TextButton({ dateDialogOpen = false }) {
                             Text(stringResource(R.string.cancel))
                         }
                     },

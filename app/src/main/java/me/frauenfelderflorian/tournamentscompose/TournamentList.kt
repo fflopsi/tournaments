@@ -55,18 +55,16 @@ fun TournamentList(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var showInfo by rememberSaveable { mutableStateOf(false) }
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(text = stringResource(R.string.app_title)) },
+                    title = { Text(stringResource(R.string.app_title)) },
                     actions = {
-                        IconButton(
-                            onClick = { navController.navigate(Routes.SETTINGS_EDITOR.route) },
-                        ) {
+                        IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
                             Icon(Icons.Default.Settings, stringResource(R.string.settings))
                         }
-                        IconButton(onClick = { showInfo = true }) {
+                        IconButton({ showInfo = true }) {
                             Icon(Icons.Outlined.Info, stringResource(R.string.about))
                         }
                     },
@@ -76,7 +74,7 @@ fun TournamentList(
             floatingActionButton = {
                 ExtendedFloatingActionButton(
                     icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text(text = stringResource(R.string.new_tournament)) },
+                    text = { Text(stringResource(R.string.new_tournament)) },
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
                         setCurrent(-1)
@@ -88,12 +86,12 @@ fun TournamentList(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                contentPadding = PaddingValues(16.dp, 8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues),
             ) {
                 if (tournaments.isNotEmpty()) {
-                    items(items = tournaments.sortedByDescending { it.start }) {
+                    items(tournaments.sortedByDescending { it.start }) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -113,7 +111,7 @@ fun TournamentList(
                                     .fillMaxWidth()
                                     .weight(2f),
                             )
-                            IconButton(onClick = {
+                            IconButton({
                                 setCurrent(tournaments.indexOf(it))
                                 navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                             }) {
@@ -140,9 +138,7 @@ fun TournamentList(
                     },
                     text = { Text(stringResource(R.string.built_by_info)) },
                     confirmButton = {
-                        TextButton(onClick = { showInfo = false }) {
-                            Text(stringResource(R.string.ok))
-                        }
+                        TextButton({ showInfo = false }) { Text(stringResource(R.string.ok)) }
                     },
                 )
             }

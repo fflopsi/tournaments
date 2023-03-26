@@ -113,19 +113,19 @@ fun TournamentEditor(
         }
     }
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
                     title = { Text(stringResource(R.string.edit_tournament)) },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
                     actions = {
                         if (current != -1) {
-                            IconButton(onClick = {
+                            IconButton({
                                 tournaments.removeAt(current)
                                 navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
                             }) {
@@ -135,7 +135,7 @@ fun TournamentEditor(
                             }
                         }
                         val context = LocalContext.current
-                        IconButton(onClick = {
+                        IconButton({
                             if (current == -1) {
                                 if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                                     scope.launch {
@@ -196,12 +196,12 @@ fun TournamentEditor(
                     scrollBehavior = scrollBehavior,
                 )
             },
-            snackbarHost = { SnackbarHost(hostState = hostState) },
+            snackbarHost = { SnackbarHost(hostState) },
             contentWindowInsets = WindowInsets.ime,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                contentPadding = PaddingValues(16.dp, 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.padding(paddingValues),
             ) {
@@ -219,20 +219,22 @@ fun TournamentEditor(
                 item {
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         OutlinedButton(
-                            onClick = { startDialogOpen = true }, modifier = Modifier.weight(1f)
+                            onClick = { startDialogOpen = true },
+                            modifier = Modifier.weight(1f),
                         ) {
-                            Text(stringResource(R.string.start_date) + ": " + formatDate(start))
+                            Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
                         }
                         OutlinedButton(
-                            onClick = { endDialogOpen = true }, modifier = Modifier.weight(1f)
+                            onClick = { endDialogOpen = true },
+                            modifier = Modifier.weight(1f),
                         ) {
-                            Text(stringResource(R.string.end_date) + ": " + formatDate(end))
+                            Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
                         }
                     }
                 }
                 if (current == -1) {
                     item {
-                        Row(modifier = Modifier.clickable { useDefaults = !useDefaults }) {
+                        Row(Modifier.clickable { useDefaults = !useDefaults }) {
                             Text(
                                 text = stringResource(R.string.use_defaults),
                                 modifier = Modifier
@@ -257,9 +259,9 @@ fun TournamentEditor(
                                         .weight(2f)
                                         .align(Alignment.CenterVertically),
                                 )
-                                IconButton(onClick = {
+                                IconButton({
                                     navController.navigate(
-                                        route = "${Routes.PLAYERS_EDITOR.route}${
+                                        "${Routes.PLAYERS_EDITOR.route}${
                                             if (players.isNotEmpty()) {
                                                 "?players=${players.joinToString(";")}"
                                             } else {
@@ -289,7 +291,7 @@ fun TournamentEditor(
                                         .align(Alignment.CenterVertically)
                                 ) {
                                     Text(
-                                        text = "${stringResource(R.string.point_system)}: ${
+                                        "${stringResource(R.string.point_system)}: ${
                                             if (adaptivePoints) {
                                                 stringResource(R.string.adaptive)
                                             } else {
@@ -389,7 +391,7 @@ fun TournamentEditor(
                 }
             }
             if (startDialogOpen) {
-                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = start)
+                val datePickerState = rememberDatePickerState(start)
                 val confirmEnabled by remember {
                     derivedStateOf { datePickerState.selectedDateMillis != null }
                 }
@@ -407,7 +409,7 @@ fun TournamentEditor(
                         }
                     },
                     dismissButton = {
-                        TextButton(onClick = { startDialogOpen = false }) {
+                        TextButton({ startDialogOpen = false }) {
                             Text(stringResource(R.string.cancel))
                         }
                     },
@@ -416,7 +418,7 @@ fun TournamentEditor(
                 }
             }
             if (endDialogOpen) {
-                val datePickerState = rememberDatePickerState(initialSelectedDateMillis = end)
+                val datePickerState = rememberDatePickerState(end)
                 val confirmEnabled by remember {
                     derivedStateOf { datePickerState.selectedDateMillis != null }
                 }
@@ -434,7 +436,7 @@ fun TournamentEditor(
                         }
                     },
                     dismissButton = {
-                        TextButton(onClick = { endDialogOpen = false }) {
+                        TextButton({ endDialogOpen = false }) {
                             Text(stringResource(R.string.cancel))
                         }
                     },

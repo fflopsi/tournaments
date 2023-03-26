@@ -39,13 +39,13 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    TournamentsComposeTheme(darkTheme = getTheme(theme = theme)) {
+    TournamentsComposeTheme(getTheme(theme)) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(
                     title = { Text(stringResource(R.string.game_title, formatDate(game.date))) },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
@@ -58,7 +58,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .padding(paddingValues)
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                    .padding(16.dp, 16.dp),
             ) {
                 Text(
                     stringResource(
@@ -69,7 +69,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start,
-                    contentPadding = PaddingValues(horizontal = 32.dp, vertical = 32.dp),
+                    contentPadding = PaddingValues(32.dp, 32.dp),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     item {
@@ -79,7 +79,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                         ) {
                             Icon(Icons.Default.EmojiEvents, null)
                             Text(
-                                game.playersByRank[0],
+                                text = game.playersByRank[0],
                                 fontWeight = FontWeight.Black,
                                 fontSize = 24.sp,
                             )
@@ -92,7 +92,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                         ) {
                             Text(game.ranking[it].toString())
                             Text(
-                                it,
+                                text = it,
                                 fontWeight = if (game.ranking[it]!! < 4) {
                                     FontWeight.SemiBold
                                 } else {
@@ -105,7 +105,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                     item { Divider() }
                     item { Text(stringResource(R.string.absent_players)) }
                     items(game.absentPlayers.toList()) {
-                        Text(it, fontWeight = FontWeight.ExtraLight)
+                        Text(text = it, fontWeight = FontWeight.ExtraLight)
                     }
                 }
             }
