@@ -102,7 +102,7 @@ fun TournamentEditor(
         mutableStateOf(if (current == -1) today else tournaments[current].start)
     }
     var end by rememberSaveable {
-        mutableStateOf(if (current == -1) today + 604800000 else tournaments[current].end)
+        mutableStateOf(if (current == -1) today + 7 * 86400000 else tournaments[current].end)
     }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
