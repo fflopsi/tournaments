@@ -80,6 +80,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 fun TournamentEditor(
     navController: NavController,
     theme: Int,
+    dynamicColor: Boolean,
     tournaments: MutableList<Tournament>,
     current: Int,
     defaultPlayers: List<String>,
@@ -119,7 +120,7 @@ fun TournamentEditor(
         }
     }
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(

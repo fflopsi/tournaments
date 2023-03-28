@@ -56,6 +56,7 @@ fun TournamentsApp() {
     val prefs: Prefs = viewModel(factory = PrefsFactory(LocalContext.current))
     LaunchedEffect(Unit) {
         launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
+        launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
         launch { prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) } }
         launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
         launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
@@ -79,6 +80,7 @@ fun TournamentsApp() {
             TournamentList(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 tournaments = container.tournaments,
                 setCurrent = container::updateCurrent,
             )
@@ -99,6 +101,7 @@ fun TournamentsApp() {
             TournamentEditor(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 tournaments = container.tournaments,
                 current = container.current,
                 defaultPlayers = prefs.players.toList(),
@@ -116,6 +119,7 @@ fun TournamentsApp() {
             TournamentViewer(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 tournament = container.tournaments[container.current],
             )
         }
@@ -123,6 +127,7 @@ fun TournamentsApp() {
             GameEditor(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 tournament = container.tournaments[container.current],
             )
         }
@@ -130,6 +135,7 @@ fun TournamentsApp() {
             GameViewer(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 game = container.tournaments[container.current].games[container.tournaments[container.current].current],
             )
         }
@@ -140,6 +146,7 @@ fun TournamentsApp() {
             PlayersEditor(
                 navController = navController,
                 theme = prefs.theme,
+                dynamicColor = prefs.dynamicColor,
                 formerPlayers = it.arguments?.getString("players"),
             )
         }
@@ -148,6 +155,8 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 updateTheme = prefs::saveTheme,
+                dynamicColor = prefs.dynamicColor,
+                updateDynamicColor = prefs::saveDynamicColor,
                 formerPlayers = prefs.players,
                 formerAdaptivePoints = prefs.adaptivePoints,
                 formerFirstPoints = prefs.firstPoints,

@@ -72,6 +72,8 @@ fun AppSettings(
     navController: NavController,
     theme: Int,
     updateTheme: (Int) -> Unit,
+    dynamicColor: Boolean,
+    updateDynamicColor: (Boolean) -> Unit,
     formerPlayers: List<String>,
     formerAdaptivePoints: Boolean,
     formerFirstPoints: Int,
@@ -97,7 +99,7 @@ fun AppSettings(
         }
     }
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(
@@ -209,8 +211,19 @@ fun AppSettings(
                     }
                 }
                 item {
-                    Divider()
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.use_dynamic_color),
+                            modifier = Modifier.weight(2f),
+                        )
+                        Switch(checked = dynamicColor, onCheckedChange = { updateDynamicColor(it) })
+                    }
                 }
+                item { Divider() }
                 item {
                     Row {
                         Text(

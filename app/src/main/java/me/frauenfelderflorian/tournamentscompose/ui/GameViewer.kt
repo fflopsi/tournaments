@@ -40,11 +40,16 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameViewer(navController: NavController, theme: Int, game: Game) {
+fun GameViewer(
+    navController: NavController,
+    theme: Int,
+    dynamicColor: Boolean,
+    game: Game,
+) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(

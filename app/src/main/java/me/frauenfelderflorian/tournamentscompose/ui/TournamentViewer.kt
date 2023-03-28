@@ -64,12 +64,17 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun TournamentViewer(navController: NavController, theme: Int, tournament: Tournament) {
+fun TournamentViewer(
+    navController: NavController,
+    theme: Int,
+    dynamicColor: Boolean,
+    tournament: Tournament,
+) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var selectedTab by rememberSaveable { mutableStateOf(0) }
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(

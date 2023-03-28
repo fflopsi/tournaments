@@ -69,4 +69,5 @@
     <string name="game_details">Tor %1$s von %2$s erreicht, mit Schwierigkeit \"%3$s\"</string>
     <string name="absent_players">Abwesende Spieler</string>
     <string name="game_overview">Spielübersicht</string>
+    <string name="use_dynamic_color">Dynamische Farben verwenden</string>
 </resources>

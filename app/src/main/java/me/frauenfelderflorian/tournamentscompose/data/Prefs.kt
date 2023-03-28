@@ -20,9 +20,10 @@ import me.frauenfelderflorian.tournamentscompose.TournamentsApp
 
 @SuppressLint("StaticFieldLeak")
 class Prefs(private val context: Context) : ViewModel() {
-    private val Context.dataStore by preferencesDataStore(name = "settings")
+    private val Context.dataStore by preferencesDataStore("settings")
 
     private val themeKey = intPreferencesKey("theme")
+    private val dynamicColorKey = booleanPreferencesKey("dynamicColor")
     private val playersKey = stringPreferencesKey("players")
     private val adaptivePointsKey = booleanPreferencesKey("adaptivePoints")
     private val firstPointsKey = intPreferencesKey("firstPoints")
@@ -30,6 +31,9 @@ class Prefs(private val context: Context) : ViewModel() {
     var theme by mutableStateOf(0)
         private set
     val themeFlow = context.dataStore.data.map { it[themeKey] ?: 0 }
+    var dynamicColor by mutableStateOf(true)
+        private set
+    val dynamicColorFlow = context.dataStore.data.map { it[dynamicColorKey] ?: true }
 
     var players = mutableStateListOf<String>()
         private set
@@ -61,6 +65,23 @@ class Prefs(private val context: Context) : ViewModel() {
             throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
         }
         theme = newTheme
+    }
+
+    /**
+     * Update the dynamicColor value stored in the settings to [newDynamicColor]
+     *
+     * This will automatically also call [useDynamicColor], if [TournamentsApp] was initialized
+     * correctly
+     */
+    fun saveDynamicColor(newDynamicColor: Boolean) = runBlocking {
+        launch { context.dataStore.edit { it[dynamicColorKey] = newDynamicColor } }
+    }
+
+    /**
+     * Use [newDynamicColor] in the app, without changing the value stored in the settings
+     */
+    fun useDynamicColor(newDynamicColor: Boolean) {
+        dynamicColor = newDynamicColor
     }
 
     /**

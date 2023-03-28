@@ -74,7 +74,12 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameEditor(navController: NavController, theme: Int, tournament: Tournament) {
+fun GameEditor(
+    navController: NavController,
+    theme: Int,
+    dynamicColor: Boolean,
+    tournament: Tournament,
+) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
@@ -132,7 +137,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
         }.toList())
     }
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 MediumTopAppBar(

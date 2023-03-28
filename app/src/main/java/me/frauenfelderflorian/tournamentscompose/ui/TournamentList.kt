@@ -54,6 +54,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 fun TournamentList(
     navController: NavHostController,
     theme: Int,
+    dynamicColor: Boolean,
     tournaments: MutableList<Tournament>,
     setCurrent: (Int) -> Unit,
 ) {
@@ -61,7 +62,7 @@ fun TournamentList(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var showInfo by rememberSaveable { mutableStateOf(false) }
 
-    TournamentsTheme(getTheme(theme)) {
+    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
             topBar = {
                 LargeTopAppBar(
