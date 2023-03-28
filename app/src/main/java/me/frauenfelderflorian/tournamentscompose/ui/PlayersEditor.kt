@@ -30,10 +30,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Modifier
@@ -42,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import java.util.UUID
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.getTheme
@@ -57,10 +59,11 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val players = rememberMutableStateMapOf()
+    var playersIdCounter by rememberSaveable { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
         if (formerPlayers != null && formerPlayers.trim() != "") {
-            for (player in formerPlayers.split(";")) players[UUID.randomUUID()] = player
+            for (player in formerPlayers.split(";")) players[playersIdCounter++] = player
         }
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
@@ -114,7 +117,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 )
             },
             floatingActionButton = { // TODO: ExtendedFAB
-                FloatingActionButton({ players[UUID.randomUUID()] = "" }) {
+                FloatingActionButton({ players[playersIdCounter++] = "" }) {
                     Icon(Icons.Default.Add, stringResource(R.string.add_new_player))
                 }
             },
@@ -163,13 +166,13 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
 
 @Composable
 private fun rememberMutableStateMapOf(
-    vararg elements: Pair<UUID, String>,
-): SnapshotStateMap<UUID, String> {
+    vararg elements: Pair<Int, String>,
+): SnapshotStateMap<Int, String> {
     return rememberSaveable(
         saver = listSaver(
             save = { map -> map.toList().map { "${it.first},${it.second}" } },
             restore = { list ->
-                list.map { UUID.fromString(it.substringBefore(",")) to it.substringAfter(",") }
+                list.map { it.substringBefore(",").toInt() to it.substringAfter(",") }
                     .toMutableStateMap()
             },
         ),
