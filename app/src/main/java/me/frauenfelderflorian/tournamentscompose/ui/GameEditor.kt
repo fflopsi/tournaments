@@ -382,7 +382,7 @@ fun GameEditor(navController: NavController, theme: Int, tournament: Tournament)
                                     DropdownMenu(
                                         expanded = expanded,
                                         onDismissRequest = { expanded = false },
-                                        modifier = Modifier.exposedDropdownSize(), // TODO: remove workaround
+                                        modifier = Modifier.exposedDropdownSize(),
                                     ) {
                                         selectablePlayers.forEach { selected ->
                                             DropdownMenuItem(

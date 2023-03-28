@@ -89,7 +89,7 @@ fun TournamentEditor(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var startDialogOpen by remember { mutableStateOf(false) }
-    var endDialogOpen by remember { mutableStateOf(false) } // TODO: use DateRangePicker when fixed
+    var endDialogOpen by remember { mutableStateOf(false) }
 
     var name by rememberSaveable {
         mutableStateOf(if (current == -1) "" else tournaments[current].name)
