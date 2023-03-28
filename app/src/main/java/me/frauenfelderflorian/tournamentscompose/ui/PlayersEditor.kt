@@ -119,7 +119,7 @@ fun PlayersEditor(navController: NavController, theme: Int, formerPlayers: Strin
                 }
             },
             snackbarHost = { SnackbarHost(hostState) },
-            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars), // TODO: add everywhere
+            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             LazyColumn(

@@ -1,13 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -55,7 +48,7 @@ fun GameViewer(navController: NavController, theme: Int, game: Game) {
                     scrollBehavior = scrollBehavior,
                 )
             },
-            contentWindowInsets = WindowInsets.ime,
+            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         ) { paddingValues ->
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
