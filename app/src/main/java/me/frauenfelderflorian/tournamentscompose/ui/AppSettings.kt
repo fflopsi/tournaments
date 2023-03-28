@@ -1,5 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -210,17 +211,21 @@ fun AppSettings(
                         }
                     }
                 }
-                item {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.use_dynamic_color),
-                            modifier = Modifier.weight(2f),
-                        )
-                        Switch(checked = dynamicColor, onCheckedChange = { updateDynamicColor(it) })
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    item {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.use_dynamic_color),
+                                modifier = Modifier.weight(2f),
+                            )
+                            Switch(
+                                checked = dynamicColor,
+                                onCheckedChange = { updateDynamicColor(it) })
+                        }
                     }
                 }
                 item { Divider() }
