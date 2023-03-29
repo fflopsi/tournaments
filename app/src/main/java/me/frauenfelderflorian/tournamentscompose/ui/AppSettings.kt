@@ -97,6 +97,11 @@ fun AppSettings(
             players.clear()
             newPlayers.split(";").forEach { players.add(it) }
             navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
+            if (adaptivePoints || firstPointsString == "") {
+                savePrefs(players, adaptivePoints, 10)
+            } else {
+                savePrefs(players, false, firstPointsString.toInt())
+            }
         }
     }
 
@@ -257,7 +262,14 @@ fun AppSettings(
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
+                        modifier = Modifier.clickable {
+                            adaptivePoints = !adaptivePoints
+                            if (adaptivePoints || firstPointsString == "") {
+                                savePrefs(players, adaptivePoints, 10)
+                            } else {
+                                savePrefs(players, false, firstPointsString.toInt())
+                            }
+                        },
                     ) {
                         Column(
                             Modifier
@@ -284,7 +296,17 @@ fun AppSettings(
                                 fontWeight = FontWeight.Light,
                             )
                         }
-                        Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
+                        Switch(
+                            checked = adaptivePoints,
+                            onCheckedChange = {
+                                adaptivePoints = it
+                                if (adaptivePoints || firstPointsString == "") {
+                                    savePrefs(players, adaptivePoints, 10)
+                                } else {
+                                    savePrefs(players, false, firstPointsString.toInt())
+                                }
+                            },
+                        )
                     }
                 }
                 item {
@@ -323,6 +345,11 @@ fun AppSettings(
                                                 )
                                             )
                                         }
+                                    }
+                                    if (adaptivePoints || firstPointsString == "") {
+                                        savePrefs(players, adaptivePoints, 10)
+                                    } else {
+                                        savePrefs(players, false, firstPointsString.toInt())
                                     }
                                 },
                                 singleLine = true,
