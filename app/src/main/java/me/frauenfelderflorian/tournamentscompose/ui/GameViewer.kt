@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -46,6 +48,7 @@ fun GameViewer(
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
@@ -56,6 +59,9 @@ fun GameViewer(
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
+                    },
+                    actions = {
+                        SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                     },
                     scrollBehavior = scrollBehavior,
                 )
@@ -117,6 +123,7 @@ fun GameViewer(
                     }
                 }
             }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }

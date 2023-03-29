@@ -82,6 +82,7 @@ fun GameEditor(
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(0) }
     var dateDialogOpen by remember { mutableStateOf(false) }
 
@@ -233,6 +234,7 @@ fun GameEditor(
                         }) {
                             Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
+                        SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                     },
                     scrollBehavior = scrollBehavior,
                 )
@@ -461,6 +463,7 @@ fun GameEditor(
                     )
                 }
             }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }

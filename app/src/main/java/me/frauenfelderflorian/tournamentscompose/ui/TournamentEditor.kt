@@ -89,6 +89,7 @@ fun TournamentEditor(
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
     var startDialogOpen by remember { mutableStateOf(false) }
     var endDialogOpen by remember { mutableStateOf(false) }
 
@@ -197,6 +198,7 @@ fun TournamentEditor(
                         }) {
                             Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
+                        SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                     },
                     scrollBehavior = scrollBehavior,
                 )
@@ -449,6 +451,7 @@ fun TournamentEditor(
                     DatePicker(state = datePickerState, dateValidator = { it > start })
                 }
             }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }

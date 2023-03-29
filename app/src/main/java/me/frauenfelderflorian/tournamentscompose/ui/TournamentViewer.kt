@@ -70,6 +70,7 @@ fun TournamentViewer(
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
     var selectedTab by rememberSaveable { mutableStateOf(0) }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
@@ -86,6 +87,7 @@ fun TournamentViewer(
                         IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
                             Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
                         }
+                        SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                     },
                     scrollBehavior = scrollBehavior,
                 )
@@ -232,6 +234,7 @@ fun TournamentViewer(
                     }
                 }
             }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }
