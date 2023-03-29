@@ -71,8 +71,6 @@ import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.formatDate
-import me.frauenfelderflorian.tournamentscompose.getTheme
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

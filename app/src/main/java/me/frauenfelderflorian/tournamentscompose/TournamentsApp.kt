@@ -7,7 +7,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.TransformOrigin
@@ -18,7 +17,6 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import java.text.DateFormat
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
@@ -163,16 +161,5 @@ fun TournamentsApp() {
                 savePrefs = prefs::saveSettings,
             )
         }
-    }
-}
-
-fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
-
-@Composable
-fun getTheme(theme: Int): Boolean {
-    return when (theme) {
-        1 -> false
-        2 -> true
-        else -> isSystemInDarkTheme()
     }
 }

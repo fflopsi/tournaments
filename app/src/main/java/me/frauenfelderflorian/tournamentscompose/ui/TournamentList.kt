@@ -15,10 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -26,14 +24,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -45,8 +40,6 @@ import androidx.navigation.NavHostController
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.formatDate
-import me.frauenfelderflorian.tournamentscompose.getTheme
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +53,7 @@ fun TournamentList(
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    var showInfo by rememberSaveable { mutableStateOf(false) }
+    val showInfo = rememberSaveable { mutableStateOf(false) }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
         Scaffold(
@@ -71,7 +64,7 @@ fun TournamentList(
                         IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
                             Icon(Icons.Default.Settings, stringResource(R.string.settings))
                         }
-                        IconButton({ showInfo = true }) {
+                        IconButton({ showInfo.value = true }) {
                             Icon(Icons.Outlined.Info, stringResource(R.string.about))
                         }
                     },
@@ -136,19 +129,7 @@ fun TournamentList(
                     }
                 }
             }
-            if (showInfo) {
-                AlertDialog(
-                    onDismissRequest = { showInfo = false },
-                    icon = { Icon(Icons.Default.Info, null) },
-                    title = {
-                        Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}")
-                    },
-                    text = { Text(stringResource(R.string.built_by_info)) },
-                    confirmButton = {
-                        TextButton({ showInfo = false }) { Text(stringResource(R.string.ok)) }
-                    },
-                )
-            }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }

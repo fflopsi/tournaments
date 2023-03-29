@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -64,7 +65,6 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.getTheme
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,6 +85,7 @@ fun AppSettings(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     var themeSelectorExpanded by remember { mutableStateOf(false) }
+    val showInfo = rememberSaveable { mutableStateOf(false) }
 
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
     var adaptivePoints by rememberSaveable { mutableStateOf(formerAdaptivePoints) }
@@ -113,6 +114,11 @@ fun AppSettings(
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
+                        }
+                    },
+                    actions = {
+                        IconButton({ showInfo.value = true }) {
+                            Icon(Icons.Outlined.Info, stringResource(R.string.about))
                         }
                     },
                     scrollBehavior = scrollBehavior,
@@ -348,6 +354,7 @@ fun AppSettings(
                     }
                 }
             }
+            InfoDialog(showDialog = showInfo)
         }
     }
 }
