@@ -115,28 +115,6 @@ fun AppSettings(
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                         }
                     },
-                    actions = {
-                        val context = LocalContext.current
-                        IconButton({
-                            if (firstPointsString == "") {
-                                if (!adaptivePoints) {
-                                    scope.launch {
-                                        hostState.showSnackbar(
-                                            context.resources.getString(R.string.input_first_points)
-                                        )
-                                    }
-                                } else {
-                                    savePrefs(players, true, 10)
-                                    navController.popBackStack()
-                                }
-                            } else {
-                                savePrefs(players, adaptivePoints, firstPointsString.toInt())
-                                navController.popBackStack()
-                            }
-                        }) {
-                            Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
-                        }
-                    },
                     scrollBehavior = scrollBehavior,
                 )
             },
