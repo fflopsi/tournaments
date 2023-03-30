@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -26,11 +27,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         compose true
@@ -51,6 +52,8 @@ dependencies {
     implementation composeBom
     androidTestImplementation composeBom
 
+    def roomVersion = '2.5.1'
+
     implementation 'androidx.core:core-ktx:1.9.0'
 
     implementation 'androidx.compose.ui:ui'
@@ -64,6 +67,13 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
     implementation 'androidx.navigation:navigation-compose:2.5.3'
+
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+
+    kapt "androidx.room:room-compiler:$roomVersion"
+    //ksp "androidx.room:room-compiler:$roomVersion"
 
     implementation 'com.google.accompanist:accompanist-navigation-animation:0.30.0'
 

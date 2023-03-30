@@ -35,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -62,10 +63,33 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
+import me.frauenfelderflorian.tournamentscompose.data.User
+import me.frauenfelderflorian.tournamentscompose.data.UserDao
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
+
+suspend fun getUsers(dao: UserDao): Flow<List<User>> {
+    return withContext(Dispatchers.IO) {
+        return@withContext dao.getAll()
+    }
+}
+
+suspend fun insertUsers(dao: UserDao, vararg users: User) {
+    return withContext(Dispatchers.IO) {
+        dao.insertAll(*users)
+    }
+}
+
+suspend fun deleteUser(dao: UserDao, user: User) {
+    return withContext(Dispatchers.IO) {
+        dao.delete(user)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +103,8 @@ fun AppSettings(
     formerAdaptivePoints: Boolean,
     formerFirstPoints: Int,
     savePrefs: (List<String>, Boolean, Int) -> Unit,
+    userDao: UserDao,
+    userTest: List<User>,
 ) {
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
@@ -90,6 +116,10 @@ fun AppSettings(
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
     var adaptivePoints by rememberSaveable { mutableStateOf(formerAdaptivePoints) }
     var firstPointsString by rememberSaveable { mutableStateOf(formerFirstPoints.toString()) }
+
+    val users = listOf<User>()
+    //LaunchedEffect(adaptivePoints) { scope.launch { users = getUsers(userDao) } }
+    var userIdCounter by rememberSaveable { mutableStateOf(users.size) }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -205,7 +235,7 @@ fun AppSettings(
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) }
+                            modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) },
                         ) {
                             Text(
                                 text = stringResource(R.string.use_dynamic_color),
@@ -213,7 +243,8 @@ fun AppSettings(
                             )
                             Switch(
                                 checked = dynamicColor,
-                                onCheckedChange = { updateDynamicColor(it) })
+                                onCheckedChange = { updateDynamicColor(it) },
+                            )
                         }
                     }
                 }
@@ -350,6 +381,26 @@ fun AppSettings(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                             )
+                        }
+                    }
+                }
+                item {
+                    Column {
+                        Text(userTest.toString())
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    insertUsers(userDao, User(userIdCounter, "hello", "world"))
+                                }
+                                userIdCounter++
+                            },
+                        ) {
+                            Text("add")
+                        }
+                        OutlinedButton(
+                            onClick = { scope.launch { deleteUser(userDao, userTest[0]) } },
+                        ) {
+                            Text("delete")
                         }
                     }
                 }
