@@ -104,15 +104,15 @@ fun GameViewer(
                             horizontalArrangement = Arrangement.spacedBy(32.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(game.ranking[it].toString())
+                            Text(game.rankingMap[it].toString())
                             Text(
                                 text = it,
-                                fontWeight = if (game.ranking[it]!! < 4) {
+                                fontWeight = if (game.rankingMap[it]!! < 4) {
                                     FontWeight.SemiBold
                                 } else {
                                     FontWeight.Light
                                 },
-                                fontSize = if (game.ranking[it]!! < 4) 20.sp else 16.sp,
+                                fontSize = if (game.rankingMap[it]!! < 4) 20.sp else 16.sp,
                             )
                         }
                     }

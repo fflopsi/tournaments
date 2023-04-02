@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
@@ -18,14 +19,11 @@ import androidx.room.Room
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.data.AppDatabase
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
-import me.frauenfelderflorian.tournamentscompose.data.TournamentContainer
-import me.frauenfelderflorian.tournamentscompose.data.User
+import me.frauenfelderflorian.tournamentscompose.data.TournamentsDatabase
+import me.frauenfelderflorian.tournamentscompose.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.ui.AppSettings
 import me.frauenfelderflorian.tournamentscompose.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.ui.GameViewer
@@ -33,7 +31,6 @@ import me.frauenfelderflorian.tournamentscompose.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentViewer
-import me.frauenfelderflorian.tournamentscompose.ui.getUsers
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,19 +53,19 @@ enum class Routes(val route: String) {
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TournamentsApp() {
-    val container: TournamentContainer = viewModel()
     val context = LocalContext.current
     val prefs: Prefs = viewModel(factory = PrefsFactory(context))
-    val db = Room.databaseBuilder(context, AppDatabase::class.java, "testDb").build()
-    val dao = db.userDao()
-    var usersTest = listOf<User>()
+    val model: TournamentsModel = viewModel()
+    val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
+    val tournamentDao = db.tournamentDao()
+    val gameDao = db.gameDao()
+    model.tournaments = tournamentDao.getTournamentsWithGames().observeAsState(emptyList()).value
     LaunchedEffect(Unit) {
         launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
         launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
         launch { prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) } }
         launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
         launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
-        launch { withContext(Dispatchers.IO) { getUsers(dao).collect { usersTest = it } } }
     }
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -78,7 +75,7 @@ fun TournamentsApp() {
         composable(
             route = Routes.TOURNAMENT_LIST.route,
             exitTransition = {
-                if (container.current == -1) {
+                if (model.current == -1) {
                     null
                 } else {
                     slideOutHorizontally(targetOffsetX = { width -> -width })
@@ -90,14 +87,14 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournaments = container.tournaments,
-                setCurrent = container::updateCurrent,
+                tournaments = model.tournaments,
+                setCurrent = model::updateCurrent,
             )
         }
         composable(
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
-                if (container.current == -1) {
+                if (model.current == -1) {
                     scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
                 } else {
                     slideInHorizontally(initialOffsetX = { width -> width })
@@ -111,8 +108,10 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournaments = container.tournaments,
-                current = container.current,
+                tournaments = model.tournaments,
+                current = model.current,
+                dao = tournamentDao,
+                gameDao = gameDao,
                 defaultPlayers = prefs.players.toList(),
                 defaultAdaptivePoints = prefs.adaptivePoints,
                 defaultFirstPoints = prefs.firstPoints,
@@ -129,7 +128,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournament = container.tournaments[container.current],
+                tournament = model.tournaments[model.current],
             )
         }
         composable(Routes.GAME_EDITOR.route) {
@@ -137,7 +136,8 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournament = container.tournaments[container.current],
+                tournament = model.tournaments[model.current],
+                dao = gameDao,
             )
         }
         composable(Routes.GAME_VIEWER.route) {
@@ -145,7 +145,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                game = container.tournaments[container.current].games[container.tournaments[container.current].current],
+                game = model.tournaments[model.current].games[model.tournaments[model.current].current],
             )
         }
         composable(
@@ -170,8 +170,6 @@ fun TournamentsApp() {
                 formerAdaptivePoints = prefs.adaptivePoints,
                 formerFirstPoints = prefs.firstPoints,
                 savePrefs = prefs::saveSettings,
-                userDao = dao,
-                userTest = usersTest,
             )
         }
     }

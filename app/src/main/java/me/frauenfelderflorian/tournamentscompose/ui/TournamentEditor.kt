@@ -22,15 +22,11 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -67,10 +63,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import java.util.UUID
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
+import me.frauenfelderflorian.tournamentscompose.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.data.Tournament
+import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,8 +81,10 @@ fun TournamentEditor(
     navController: NavController,
     theme: Int,
     dynamicColor: Boolean,
-    tournaments: MutableList<Tournament>,
+    tournaments: List<TournamentWithGames>,
     current: Int,
+    dao: TournamentDao,
+    gameDao: GameDao,
     defaultPlayers: List<String>,
     defaultAdaptivePoints: Boolean,
     defaultFirstPoints: Int,
@@ -94,15 +98,15 @@ fun TournamentEditor(
     var endDialogOpen by remember { mutableStateOf(false) }
 
     var name by rememberSaveable {
-        mutableStateOf(if (current == -1) "" else tournaments[current].name)
+        mutableStateOf(if (current == -1) "" else tournaments[current].t.name)
     }
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
     var start by rememberSaveable {
-        mutableStateOf(if (current == -1) today else tournaments[current].start)
+        mutableStateOf(if (current == -1) today else tournaments[current].t.start)
     }
     var end by rememberSaveable {
-        mutableStateOf(if (current == -1) today + 7 * 86400000 else tournaments[current].end)
+        mutableStateOf(if (current == -1) today + 7 * 86400000 else tournaments[current].t.end)
     }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
@@ -132,7 +136,12 @@ fun TournamentEditor(
                     actions = {
                         if (current != -1) {
                             IconButton({
-                                tournaments.removeAt(current)
+                                scope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        dao.delete(tournaments[current].t)
+                                        tournaments[current].games.forEach { gameDao.delete(it) }
+                                    }
+                                }
                                 navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
                             }) {
                                 Icon(
@@ -156,27 +165,33 @@ fun TournamentEditor(
                                 val t: Tournament
                                 if (useDefaults) {
                                     t = Tournament(
+                                        id = UUID.randomUUID(),
                                         start = start,
                                         end = end,
-                                        players = defaultPlayers.toMutableList(),
                                         useAdaptivePoints = defaultAdaptivePoints,
                                         firstPoints = defaultFirstPoints,
-                                    )
+                                    ).apply {
+                                        this.playersList = defaultPlayers
+                                    }
                                 } else if (adaptivePoints) {
                                     t = Tournament(
+                                        id = UUID.randomUUID(),
                                         start = start,
                                         end = end,
-                                        players = players,
                                         useAdaptivePoints = true,
-                                    )
+                                    ).apply {
+                                        this.playersList = players
+                                    }
                                 } else if (firstPointsString.toIntOrNull() != null) {
                                     t = Tournament(
+                                        id = UUID.randomUUID(),
                                         start = start,
                                         end = end,
-                                        players = players,
                                         useAdaptivePoints = adaptivePoints,
                                         firstPoints = firstPointsString.toInt(),
-                                    )
+                                    ).apply {
+                                        this.playersList = players
+                                    }
                                 } else {
                                     scope.launch {
                                         hostState.showSnackbar(
@@ -188,11 +203,15 @@ fun TournamentEditor(
                                     return@IconButton
                                 }
                                 t.name = name
-                                tournaments.add(t)
+                                scope.launch { withContext(Dispatchers.IO) { dao.insert(t) } }
                             } else {
-                                tournaments[current].name = name
-                                tournaments[current].start = start
-                                tournaments[current].end = end
+                                scope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        dao.update(tournaments[current].t.copy(
+                                            start = start, end = end
+                                        ).apply { this.name = name })
+                                    }
+                                }
                             }
                             navController.popBackStack()
                         }) {
@@ -376,23 +395,6 @@ fun TournamentEditor(
                                     fontWeight = FontWeight.Light,
                                 )
                             }
-                        }
-                    }
-                } else {
-                    item { Divider() }
-                    item {
-                        Button(
-                            onClick = {
-                                tournaments.removeAt(current)
-                                navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer,
-                                contentColor = MaterialTheme.colorScheme.onErrorContainer
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text(stringResource(R.string.delete_tournament))
                         }
                     }
                 }

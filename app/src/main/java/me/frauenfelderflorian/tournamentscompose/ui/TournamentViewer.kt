@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.Tournament
+import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -66,7 +66,7 @@ fun TournamentViewer(
     navController: NavController,
     theme: Int,
     dynamicColor: Boolean,
-    tournament: Tournament,
+    tournament: TournamentWithGames,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -77,7 +77,13 @@ fun TournamentViewer(
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.tournament_title, tournament.name)) },
+                    title = {
+                        Text(
+                            stringResource(
+                                R.string.tournament_title, tournament.t.name
+                            )
+                        )
+                    },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))

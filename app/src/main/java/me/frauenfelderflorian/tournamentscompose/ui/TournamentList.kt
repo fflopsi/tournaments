@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.Tournament
+import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +48,7 @@ fun TournamentList(
     navController: NavHostController,
     theme: Int,
     dynamicColor: Boolean,
-    tournaments: MutableList<Tournament>,
+    tournaments: List<TournamentWithGames>,
     setCurrent: (Int) -> Unit,
 ) {
     val scrollBehavior =
@@ -91,7 +91,7 @@ fun TournamentList(
                 modifier = Modifier.padding(paddingValues),
             ) {
                 if (tournaments.isNotEmpty()) {
-                    items(tournaments.sortedByDescending { it.start }) {
+                    items(tournaments.sortedByDescending { it.t.start }) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -103,9 +103,9 @@ fun TournamentList(
                             Text(
                                 text = stringResource(
                                     R.string.tournament_list_title,
-                                    it.name,
-                                    formatDate(it.start),
-                                    formatDate(it.end),
+                                    it.t.name,
+                                    formatDate(it.t.start),
+                                    formatDate(it.t.end),
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()

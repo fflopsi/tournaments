@@ -1,42 +1,55 @@
 package me.frauenfelderflorian.tournamentscompose.data
 
-import androidx.room.ColumnInfo
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
-import androidx.room.Entity
 import androidx.room.Insert
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.flow.Flow
-
-@Entity
-data class User(
-    @PrimaryKey val id: Int,
-    @ColumnInfo(name = "first_name") val firstName: String?,
-    @ColumnInfo(name = "last_name") val lastName: String?,
-)
+import androidx.room.Transaction
+import androidx.room.Update
+import androidx.room.Upsert
 
 @Dao
-interface UserDao {
-    @Query("SELECT * FROM user")
-    fun getAll(): Flow<List<User>>
+interface TournamentDao {
+    @Query("SELECT * FROM tournament")
+    fun getAll(): LiveData<List<Tournament>>
 
-    @Query("SELECT * FROM user WHERE id IN (:userIds)")
-    suspend fun loadAllByIds(userIds: IntArray): List<User>
-
-    @Query("SELECT * FROM user WHERE first_name LIKE :first AND last_name LIKE :last LIMIT 1")
-    suspend fun findByName(first: String, last: String): User
+    @Transaction
+    @Query("SELECT * FROM tournament")
+    fun getTournamentsWithGames(): LiveData<List<TournamentWithGames>>
 
     @Insert
-    suspend fun insertAll(vararg users: User)
+    suspend fun insert(vararg tournaments: Tournament)
+
+    @Update
+    suspend fun update(vararg tournaments: Tournament)
+
+    @Upsert
+    suspend fun upsert(vararg tournaments: Tournament)
 
     @Delete
-    suspend fun delete(user: User)
+    suspend fun delete(tournament: Tournament)
 }
 
-@Database(entities = [User::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+@Dao
+interface GameDao {
+    @Insert
+    suspend fun insert(vararg games: Game)
+
+    @Update
+    suspend fun update(vararg games: Game)
+
+    @Upsert
+    suspend fun upsert(vararg games: Game)
+
+    @Delete
+    suspend fun delete(game: Game)
+}
+
+@Database(entities = [Tournament::class, Game::class], version = 1)
+abstract class TournamentsDatabase : RoomDatabase() {
+    abstract fun tournamentDao(): TournamentDao
+    abstract fun gameDao(): GameDao
 }
