@@ -77,13 +77,7 @@ fun TournamentViewer(
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = {
-                        Text(
-                            stringResource(
-                                R.string.tournament_title, tournament.t.name
-                            )
-                        )
-                    },
+                    title = { Text(stringResource(R.string.tournament_title, tournament.t.name)) },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
@@ -109,7 +103,7 @@ fun TournamentViewer(
                         text = { Text(stringResource(R.string.new_game)) },
                         expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                         onClick = {
-                            tournament.updateCurrent(-1)
+                            tournament.current = null
                             navController.navigate(Routes.GAME_EDITOR.route)
                         },
                     )
@@ -151,7 +145,7 @@ fun TournamentViewer(
                                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.clickable {
-                                            tournament.updateCurrent(tournament.games.indexOf(it))
+                                            tournament.current = it
                                             navController.navigate(Routes.GAME_VIEWER.route)
                                         },
                                     ) {
@@ -164,7 +158,7 @@ fun TournamentViewer(
                                                 .weight(2f),
                                         )
                                         IconButton({
-                                            tournament.updateCurrent(tournament.games.indexOf(it))
+                                            tournament.current = it
                                             navController.navigate(Routes.GAME_EDITOR.route)
                                         }) {
                                             Icon(

@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import java.util.UUID
+import kotlin.reflect.KFunction1
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
@@ -48,8 +50,8 @@ fun TournamentList(
     navController: NavHostController,
     theme: Int,
     dynamicColor: Boolean,
-    tournaments: List<TournamentWithGames>,
-    setCurrent: (Int) -> Unit,
+    tournaments: Map<UUID, TournamentWithGames>,
+    setCurrentUuid: KFunction1<UUID?, Unit>,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -77,7 +79,7 @@ fun TournamentList(
                     text = { Text(stringResource(R.string.new_tournament)) },
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
-                        setCurrent(-1)
+                        setCurrentUuid(null)
                         navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                     },
                 )
@@ -91,12 +93,12 @@ fun TournamentList(
                 modifier = Modifier.padding(paddingValues),
             ) {
                 if (tournaments.isNotEmpty()) {
-                    items(tournaments.sortedByDescending { it.t.start }) {
+                    items(tournaments.values.sortedByDescending { it.t.start }) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.clickable {
-                                setCurrent(tournaments.indexOf(it))
+                                setCurrentUuid(it.t.id)
                                 navController.navigate(Routes.TOURNAMENT_VIEWER.route)
                             },
                         ) {
@@ -112,7 +114,7 @@ fun TournamentList(
                                     .weight(2f),
                             )
                             IconButton({
-                                setCurrent(tournaments.indexOf(it))
+                                setCurrentUuid(it.t.id)
                                 navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                             }) {
                                 Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))

@@ -81,8 +81,8 @@ fun TournamentEditor(
     navController: NavController,
     theme: Int,
     dynamicColor: Boolean,
-    tournaments: List<TournamentWithGames>,
-    current: Int,
+    tournament: TournamentWithGames?,
+    current: UUID?,
     dao: TournamentDao,
     gameDao: GameDao,
     defaultPlayers: List<String>,
@@ -97,17 +97,11 @@ fun TournamentEditor(
     var startDialogOpen by remember { mutableStateOf(false) }
     var endDialogOpen by remember { mutableStateOf(false) }
 
-    var name by rememberSaveable {
-        mutableStateOf(if (current == -1) "" else tournaments[current].t.name)
-    }
+    var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
-    var start by rememberSaveable {
-        mutableStateOf(if (current == -1) today else tournaments[current].t.start)
-    }
-    var end by rememberSaveable {
-        mutableStateOf(if (current == -1) today + 7 * 86400000 else tournaments[current].t.end)
-    }
+    var start by rememberSaveable { mutableStateOf(tournament?.t?.start ?: today) }
+    var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
     var adaptivePoints by rememberSaveable { mutableStateOf(true) }
@@ -134,12 +128,12 @@ fun TournamentEditor(
                         }
                     },
                     actions = {
-                        if (current != -1) {
+                        if (current != null) {
                             IconButton({
                                 scope.launch {
                                     withContext(Dispatchers.IO) {
-                                        dao.delete(tournaments[current].t)
-                                        tournaments[current].games.forEach { gameDao.delete(it) }
+                                        dao.delete(tournament!!.t)
+                                        tournament.games.forEach { gameDao.delete(it) }
                                     }
                                 }
                                 navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
@@ -151,7 +145,7 @@ fun TournamentEditor(
                         }
                         val context = LocalContext.current
                         IconButton({
-                            if (current == -1) {
+                            if (current == null) {
                                 if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                                     scope.launch {
                                         hostState.showSnackbar(
@@ -166,31 +160,34 @@ fun TournamentEditor(
                                 if (useDefaults) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
+                                        name = name,
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = defaultAdaptivePoints,
                                         firstPoints = defaultFirstPoints,
                                     ).apply {
-                                        this.playersList = defaultPlayers
+                                        this.players = defaultPlayers
                                     }
                                 } else if (adaptivePoints) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
+                                        name = name,
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = true,
                                     ).apply {
-                                        this.playersList = players
+                                        this.players = players
                                     }
                                 } else if (firstPointsString.toIntOrNull() != null) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
+                                        name = name,
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = adaptivePoints,
                                         firstPoints = firstPointsString.toInt(),
                                     ).apply {
-                                        this.playersList = players
+                                        this.players = players
                                     }
                                 } else {
                                     scope.launch {
@@ -202,14 +199,15 @@ fun TournamentEditor(
                                     }
                                     return@IconButton
                                 }
-                                t.name = name
                                 scope.launch { withContext(Dispatchers.IO) { dao.insert(t) } }
                             } else {
                                 scope.launch {
                                     withContext(Dispatchers.IO) {
-                                        dao.update(tournaments[current].t.copy(
-                                            start = start, end = end
-                                        ).apply { this.name = name })
+                                        dao.update(
+                                            tournament!!.t.copy(
+                                                name = name, start = start, end = end
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -258,7 +256,7 @@ fun TournamentEditor(
                         }
                     }
                 }
-                if (current == -1) {
+                if (current == null) {
                     item {
                         Row(Modifier.clickable { useDefaults = !useDefaults }) {
                             Text(

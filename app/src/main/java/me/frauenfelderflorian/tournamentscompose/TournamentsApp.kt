@@ -59,7 +59,8 @@ fun TournamentsApp() {
     val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
     val tournamentDao = db.tournamentDao()
     val gameDao = db.gameDao()
-    model.tournaments = tournamentDao.getTournamentsWithGames().observeAsState(emptyList()).value
+    model.tournaments = tournamentDao.getTournamentsWithGames()
+        .observeAsState(emptyList()).value.associateBy { it.t.id }
     LaunchedEffect(Unit) {
         launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
         launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
@@ -75,7 +76,7 @@ fun TournamentsApp() {
         composable(
             route = Routes.TOURNAMENT_LIST.route,
             exitTransition = {
-                if (model.current == -1) {
+                if (model.current == null) {
                     null
                 } else {
                     slideOutHorizontally(targetOffsetX = { width -> -width })
@@ -88,13 +89,13 @@ fun TournamentsApp() {
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
                 tournaments = model.tournaments,
-                setCurrent = model::updateCurrent,
+                setCurrentUuid = model::current::set,
             )
         }
         composable(
             route = Routes.TOURNAMENT_EDITOR.route,
             enterTransition = {
-                if (model.current == -1) {
+                if (model.current == null) {
                     scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
                 } else {
                     slideInHorizontally(initialOffsetX = { width -> width })
@@ -108,7 +109,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournaments = model.tournaments,
+                tournament = model.tournaments[model.current],
                 current = model.current,
                 dao = tournamentDao,
                 gameDao = gameDao,
@@ -128,7 +129,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournament = model.tournaments[model.current],
+                tournament = model.tournaments[model.current]!!,
             )
         }
         composable(Routes.GAME_EDITOR.route) {
@@ -136,7 +137,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                tournament = model.tournaments[model.current],
+                tournament = model.tournaments[model.current]!!,
                 dao = gameDao,
             )
         }
@@ -145,7 +146,7 @@ fun TournamentsApp() {
                 navController = navController,
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
-                game = model.tournaments[model.current].games[model.tournaments[model.current].current],
+                game = model.tournaments[model.current]!!.current!!,
             )
         }
         composable(

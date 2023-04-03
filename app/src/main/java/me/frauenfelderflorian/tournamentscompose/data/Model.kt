@@ -12,14 +12,8 @@ import com.google.gson.reflect.TypeToken
 import java.util.UUID
 
 class TournamentsModel : ViewModel() {
-    var current = -1
-        private set
-    var tournaments = listOf<TournamentWithGames>()
-
-    fun updateCurrent(new: Int) {
-        if (new < -1 || new >= tournaments.size) throw ArrayIndexOutOfBoundsException()
-        current = new
-    }
+    var current: UUID? = null
+    var tournaments = mapOf<UUID, TournamentWithGames>()
 }
 
 data class TournamentWithGames(
@@ -27,41 +21,36 @@ data class TournamentWithGames(
     @Relation(parentColumn = "id", entityColumn = "tournamentId") val games: List<Game>,
 ) {
     @Ignore
-    var current: Int = -1
+    var current: Game? = null
 
-    val playersByPoints get() = t.players.split(";").sortedByDescending { getPoints(it) }
-
-    fun updateCurrent(new: Int) {
-        if (new < -1 || new >= games.size) throw ArrayIndexOutOfBoundsException()
-        current = new
-    }
+    val playersByPoints get() = t.playersString.split(";").sortedByDescending { getPoints(it) }
 
     fun getPoints(player: String): Int {
         var points = 0
         for (game in games) {
             var present = 0
-            for (player1 in t.players.split(";")) if (game.rankingMap[player1]!! > 0) present++
+            for (player1 in t.playersString.split(";")) if (game.ranking[player1]!! > 0) present++
             if (t.useAdaptivePoints) {
-                if (game.rankingMap[player] == 1) {
+                if (game.ranking[player] == 1) {
                     points += present + 5
-                } else if (game.rankingMap[player] == 2) {
+                } else if (game.ranking[player] == 2) {
                     points += present + 2
-                } else if (game.rankingMap[player] == 3) {
+                } else if (game.ranking[player] == 3) {
                     points += present
-                } else if (game.rankingMap[player]!! > 3) {
-                    points += present - game.rankingMap[player]!! + 2
+                } else if (game.ranking[player]!! > 3) {
+                    points += present - game.ranking[player]!! + 2
                 }
             } else {
-                if (game.rankingMap[player] == 0) {
+                if (game.ranking[player] == 0) {
                     points += t.firstPoints - (present + 5)
-                } else if (game.rankingMap[player] == 1) {
+                } else if (game.ranking[player] == 1) {
                     points += t.firstPoints
-                } else if (game.rankingMap[player] == 2) {
+                } else if (game.ranking[player] == 2) {
                     points += t.firstPoints - 3
-                } else if (game.rankingMap[player] == 3) {
+                } else if (game.ranking[player] == 3) {
                     points += t.firstPoints - 5
-                } else if (game.rankingMap[player]!! > 3) {
-                    points += t.firstPoints - (game.rankingMap[player]!! + 3)
+                } else if (game.ranking[player]!! > 3) {
+                    points += t.firstPoints - (game.ranking[player]!! + 3)
                 }
             }
         }
@@ -72,20 +61,25 @@ data class TournamentWithGames(
 @Entity
 data class Tournament(
     @PrimaryKey val id: UUID,
+    val name: String,
     val start: Long,
     val end: Long,
     val useAdaptivePoints: Boolean,
     val firstPoints: Int = 10,
+    /**
+     * Concatenated list of all players in this tournament. Use [players] to access.
+     *
+     * Leave this empty upon instantiation, and modify it afterwards using [players]
+     */
+    var playersString: String = "",
 ) {
-    var players = ""
-    var name = ""
+    /**
+     * List of all players in this tournament. Use this to modify or read [playersString]
+     */
+    var players: List<String>
+        get() = playersString.split(";")
         set(value) {
-            field = value.trim()
-        }
-    var playersList: List<String>
-        get() = players.split(";")
-        set(value) {
-            players = value.joinToString(";")
+            playersString = value.joinToString(";")
         }
 }
 
@@ -96,28 +90,33 @@ data class Game(
     val date: Long,
     val hoops: Int,
     val hoopReached: Int,
+    val difficulty: String,
+    /**
+     * JSON version of the map of the ranking of this game. Use [ranking] to access
+     *
+     * Leave this empty upon instantiation, and modify it afterwards using [ranking]
+     */
+    var rankingString: String = "",
 ) {
-    var ranking = ""
-    var difficulty = "not set"
-        set(value) {
-            field = value.trim()
-        }
-    var rankingMap: Map<String, Int>
+    /**
+     * Map of the ranking of this game. Use this to modify or read [rankingString]
+     */
+    var ranking: Map<String, Int>
         get() {
             return GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
-                .fromJson(ranking, object : TypeToken<MutableMap<String, Int>>() {}.type)
+                .fromJson(rankingString, object : TypeToken<MutableMap<String, Int>>() {}.type)
         }
         set(value) {
-            ranking =
+            rankingString =
                 GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
                     .toJson(value)
         }
-    val absentPlayers get() = rankingMap.filterValues { it == 0 }.keys
+    val absentPlayers get() = ranking.filterValues { it == 0 }.keys
     val playersByRank: List<String>
         get() {
             val players = mutableListOf<String>()
-            for (i in 0 until rankingMap.size - absentPlayers.size) {
-                players.add(rankingMap.filterValues { it == i + 1 }.keys.first())
+            for (i in 0 until ranking.size - absentPlayers.size) {
+                players.add(ranking.filterValues { it == i + 1 }.keys.first())
             }
             return players.toList()
         }
