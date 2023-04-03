@@ -142,14 +142,15 @@ fun PlayersEditor(
                         TextField(
                             value = it.value,
                             onValueChange = { value ->
-                                if (value.contains(";")) scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(
-                                            R.string.no_semicolon_players
+                                if (value.contains(";")) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(
+                                                R.string.no_semicolon_players
+                                            )
                                         )
-                                    )
-                                }
-                                else {
+                                    }
+                                } else if (value.length < 100) {
                                     players[it.key] = value
                                 }
                             },

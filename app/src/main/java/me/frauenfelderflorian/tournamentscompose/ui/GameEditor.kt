@@ -187,14 +187,14 @@ fun GameEditor(
                                         date = date,
                                         hoops = hoopsString.toInt(),
                                         hoopReached = hoopReachedString.toInt(),
-                                        difficulty = difficulty,
+                                        difficulty = difficulty.trim(),
                                     )
                                 } else {
                                     tournament.current!!.copy(
                                         date = date,
                                         hoops = hoopsString.toInt(),
                                         hoopReached = hoopReachedString.toInt(),
-                                        difficulty = difficulty,
+                                        difficulty = difficulty.trim(),
                                     )
                                 }
                                 g.let { game ->
@@ -336,7 +336,7 @@ fun GameEditor(
                             item {
                                 OutlinedTextField(
                                     value = difficulty,
-                                    onValueChange = { difficulty = it },
+                                    onValueChange = { if (it.length < 100) difficulty = it },
                                     singleLine = true,
                                     label = { Text(stringResource(R.string.difficulty)) },
                                     placeholder = {

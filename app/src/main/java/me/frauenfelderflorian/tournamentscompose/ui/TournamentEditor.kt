@@ -154,7 +154,7 @@ fun TournamentEditor(
                                 if (useDefaults) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
-                                        name = name,
+                                        name = name.trim(),
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = defaultAdaptivePoints,
@@ -165,7 +165,7 @@ fun TournamentEditor(
                                 } else if (adaptivePoints) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
-                                        name = name,
+                                        name = name.trim(),
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = true,
@@ -175,7 +175,7 @@ fun TournamentEditor(
                                 } else if (firstPointsString.toIntOrNull() != null) {
                                     t = Tournament(
                                         id = UUID.randomUUID(),
-                                        name = name,
+                                        name = name.trim(),
                                         start = start,
                                         end = end,
                                         useAdaptivePoints = adaptivePoints,
@@ -199,7 +199,7 @@ fun TournamentEditor(
                                     withContext(Dispatchers.IO) {
                                         dao.update(
                                             tournament!!.t.copy(
-                                                name = name, start = start, end = end
+                                                name = name.trim(), start = start, end = end
                                             )
                                         )
                                     }
@@ -229,7 +229,7 @@ fun TournamentEditor(
                 item {
                     TextField(
                         value = name,
-                        onValueChange = { if (it.length < 50) name = it },
+                        onValueChange = { if (it.length < 100) name = it },
                         singleLine = true,
                         label = { Text(stringResource(R.string.name)) },
                         placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
