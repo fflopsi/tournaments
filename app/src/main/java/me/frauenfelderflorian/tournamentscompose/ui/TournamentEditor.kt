@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -96,6 +97,7 @@ fun TournamentEditor(
     val showInfo = remember { mutableStateOf(false) }
     var startDialogOpen by remember { mutableStateOf(false) }
     var endDialogOpen by remember { mutableStateOf(false) }
+    var deleteDialogOpen by remember { mutableStateOf(false) }
 
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
@@ -129,15 +131,7 @@ fun TournamentEditor(
                     },
                     actions = {
                         if (current != null) {
-                            IconButton({
-                                scope.launch {
-                                    withContext(Dispatchers.IO) {
-                                        dao.delete(tournament!!.t)
-                                        tournament.games.forEach { gameDao.delete(it) }
-                                    }
-                                }
-                                navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
-                            }) {
+                            IconButton({ deleteDialogOpen = true }) {
                                 Icon(
                                     Icons.Default.Delete, stringResource(R.string.delete_tournament)
                                 )
@@ -450,6 +444,33 @@ fun TournamentEditor(
                 ) {
                     DatePicker(state = datePickerState, dateValidator = { it > start })
                 }
+            }
+            if (deleteDialogOpen) {
+                AlertDialog(
+                    onDismissRequest = { deleteDialogOpen = false },
+                    confirmButton = {
+                        TextButton({
+                            deleteDialogOpen = false
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    dao.delete(tournament!!.t)
+                                    tournament.games.forEach { gameDao.delete(it) }
+                                }
+                            }
+                            navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
+                        }) {
+                            Text(stringResource(R.string.delete_tournament))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton({ deleteDialogOpen = false }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    },
+                    icon = { Icon(Icons.Default.Delete, null) },
+                    title = { Text("${stringResource(R.string.delete_tournament)}?") },
+                    text = { Text(stringResource(R.string.delete_tournament_hint)) },
+                )
             }
             InfoDialog(showDialog = showInfo)
         }

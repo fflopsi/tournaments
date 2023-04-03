@@ -71,4 +71,6 @@
     <string name="game_overview">Spielübersicht</string>
     <string name="use_dynamic_color">Dynamische Farben verwenden</string>
     <string name="more_actions">Mehr Aktionen</string>
+    <string name="delete_game_hint">Dieses Spiel wird gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="delete_tournament_hint">Dieses Turnier und alle seine Spiele werden gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
 </resources>
