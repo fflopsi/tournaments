@@ -13,9 +13,6 @@ import androidx.room.Upsert
 
 @Dao
 interface TournamentDao {
-    @Query("SELECT * FROM tournament")
-    fun getAll(): LiveData<List<Tournament>>
-
     @Transaction
     @Query("SELECT * FROM tournament")
     fun getTournamentsWithGames(): LiveData<List<TournamentWithGames>>
