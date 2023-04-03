@@ -34,7 +34,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -84,15 +84,6 @@ fun GameEditor(
     tournament: TournamentWithGames,
     dao: GameDao,
 ) {
-    val scope = rememberCoroutineScope()
-    val hostState = remember { SnackbarHostState() }
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = remember { mutableStateOf(false) }
-    var selectedTab by rememberSaveable { mutableStateOf(0) }
-    var dateDialogOpen by remember { mutableStateOf(false) }
-    var deleteDialogOpen by remember { mutableStateOf(false) }
-
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
     var date by rememberSaveable { mutableStateOf(tournament.current?.date ?: today) }
@@ -126,10 +117,17 @@ fun GameEditor(
     }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val scope = rememberCoroutineScope()
+        val hostState = remember { SnackbarHostState() }
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = remember { mutableStateOf(false) }
+        var deleteDialogOpen by remember { mutableStateOf(false) }
+
         Scaffold(
             topBar = {
-                MediumTopAppBar(
-                    title = { Text(stringResource(R.string.edit_game)) },
+                LargeTopAppBar(
+                    title = { TopAppBarTitle(stringResource(R.string.edit_game), scrollBehavior) },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
@@ -229,7 +227,11 @@ fun GameEditor(
             contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
+            var dateDialogOpen by remember { mutableStateOf(false) }
+
             Column(Modifier.padding(paddingValues)) {
+                var selectedTab by rememberSaveable { mutableStateOf(0) }
+
                 TabRow(selectedTab) {
                     Tab(
                         selected = selectedTab == 0,

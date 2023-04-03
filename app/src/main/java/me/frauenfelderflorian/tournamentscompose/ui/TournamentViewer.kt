@@ -68,16 +68,21 @@ fun TournamentViewer(
     dynamicColor: Boolean,
     tournament: TournamentWithGames,
 ) {
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = remember { mutableStateOf(false) }
-    var selectedTab by rememberSaveable { mutableStateOf(0) }
-
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = remember { mutableStateOf(false) }
+        var selectedTab by rememberSaveable { mutableStateOf(0) }
+
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.tournament_title, tournament.t.name)) },
+                    title = {
+                        TopAppBarTitle(
+                            text = stringResource(R.string.tournament_title, tournament.t.name),
+                            scrollBehavior = scrollBehavior,
+                        )
+                    },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))

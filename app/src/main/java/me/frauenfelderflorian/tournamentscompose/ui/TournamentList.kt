@@ -51,17 +51,17 @@ fun TournamentList(
     theme: Int,
     dynamicColor: Boolean,
     tournaments: Map<UUID, TournamentWithGames>,
-    setCurrentUuid: KFunction1<UUID?, Unit>,
+    setCurrent: KFunction1<UUID?, Unit>,
 ) {
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = rememberSaveable { mutableStateOf(false) }
-
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = rememberSaveable { mutableStateOf(false) }
+
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.app_title)) },
+                    title = { TopAppBarTitle(stringResource(R.string.app_title), scrollBehavior) },
                     actions = {
                         IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
                             Icon(Icons.Default.Settings, stringResource(R.string.settings))
@@ -79,7 +79,7 @@ fun TournamentList(
                     text = { Text(stringResource(R.string.new_tournament)) },
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
-                        setCurrentUuid(null)
+                        setCurrent(null)
                         navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                     },
                 )
@@ -98,7 +98,7 @@ fun TournamentList(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.clickable {
-                                setCurrentUuid(it.t.id)
+                                setCurrent(it.t.id)
                                 navController.navigate(Routes.TOURNAMENT_VIEWER.route)
                             },
                         ) {
@@ -114,7 +114,7 @@ fun TournamentList(
                                     .weight(2f),
                             )
                             IconButton({
-                                setCurrentUuid(it.t.id)
+                                setCurrent(it.t.id)
                                 navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                             }) {
                                 Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))

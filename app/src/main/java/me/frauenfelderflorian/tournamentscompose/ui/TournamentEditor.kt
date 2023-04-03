@@ -28,7 +28,7 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -90,15 +90,6 @@ fun TournamentEditor(
     defaultAdaptivePoints: Boolean,
     defaultFirstPoints: Int,
 ) {
-    val scope = rememberCoroutineScope()
-    val hostState = remember { SnackbarHostState() }
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = remember { mutableStateOf(false) }
-    var startDialogOpen by remember { mutableStateOf(false) }
-    var endDialogOpen by remember { mutableStateOf(false) }
-    var deleteDialogOpen by remember { mutableStateOf(false) }
-
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
@@ -120,10 +111,19 @@ fun TournamentEditor(
     }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val scope = rememberCoroutineScope()
+        val hostState = remember { SnackbarHostState() }
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = remember { mutableStateOf(false) }
+        var deleteDialogOpen by remember { mutableStateOf(false) }
+
         Scaffold(
             topBar = {
-                MediumTopAppBar(
-                    title = { Text(stringResource(R.string.edit_tournament)) },
+                LargeTopAppBar(
+                    title = {
+                        TopAppBarTitle(stringResource(R.string.edit_tournament), scrollBehavior)
+                    },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
@@ -218,6 +218,9 @@ fun TournamentEditor(
             contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
+            var startDialogOpen by remember { mutableStateOf(false) }
+            var endDialogOpen by remember { mutableStateOf(false) }
+
             LazyColumn(
                 contentPadding = PaddingValues(16.dp, 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

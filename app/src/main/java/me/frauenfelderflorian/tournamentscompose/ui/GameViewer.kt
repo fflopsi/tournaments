@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,15 +49,20 @@ fun GameViewer(
     dynamicColor: Boolean,
     game: Game,
 ) {
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = remember { mutableStateOf(false) }
-
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = remember { mutableStateOf(false) }
+
         Scaffold(
             topBar = {
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.game_title, formatDate(game.date))) },
+                    title = {
+                        TopAppBarTitle(
+                            text = stringResource(R.string.game_title, formatDate(game.date)),
+                            scrollBehavior = scrollBehavior,
+                        )
+                    },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
@@ -72,6 +78,7 @@ fun GameViewer(
                 )
             },
             contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         ) { paddingValues ->
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),

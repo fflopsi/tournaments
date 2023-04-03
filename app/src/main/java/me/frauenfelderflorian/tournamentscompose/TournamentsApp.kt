@@ -55,12 +55,13 @@ enum class Routes(val route: String) {
 fun TournamentsApp() {
     val context = LocalContext.current
     val prefs: Prefs = viewModel(factory = PrefsFactory(context))
-    val model: TournamentsModel = viewModel()
     val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
     val tournamentDao = db.tournamentDao()
     val gameDao = db.gameDao()
+    val model: TournamentsModel = viewModel()
     model.tournaments = tournamentDao.getTournamentsWithGames()
         .observeAsState(emptyList()).value.associateBy { it.t.id }
+    val navController = rememberAnimatedNavController()
     LaunchedEffect(Unit) {
         launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
         launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
@@ -68,7 +69,6 @@ fun TournamentsApp() {
         launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
         launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
     }
-    val navController = rememberAnimatedNavController()
     AnimatedNavHost(
         navController = navController,
         startDestination = Routes.TOURNAMENT_LIST.route,
@@ -89,7 +89,7 @@ fun TournamentsApp() {
                 theme = prefs.theme,
                 dynamicColor = prefs.dynamicColor,
                 tournaments = model.tournaments,
-                setCurrentUuid = model::current::set,
+                setCurrent = model::current::set,
             )
         }
         composable(

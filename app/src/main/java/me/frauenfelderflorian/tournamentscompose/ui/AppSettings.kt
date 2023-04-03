@@ -34,7 +34,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -80,13 +80,6 @@ fun AppSettings(
     formerFirstPoints: Int,
     savePrefs: (List<String>, Boolean, Int) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    val hostState = remember { SnackbarHostState() }
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    var themeSelectorExpanded by remember { mutableStateOf(false) }
-    val showInfo = rememberSaveable { mutableStateOf(false) }
-
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
     var adaptivePoints by rememberSaveable { mutableStateOf(formerAdaptivePoints) }
     var firstPointsString by rememberSaveable { mutableStateOf(formerFirstPoints.toString()) }
@@ -107,10 +100,15 @@ fun AppSettings(
     }
 
     TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
+        val hostState = remember { SnackbarHostState() }
+        val scrollBehavior =
+            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+        val showInfo = rememberSaveable { mutableStateOf(false) }
+
         Scaffold(
             topBar = {
-                MediumTopAppBar(
-                    title = { Text(stringResource(R.string.settings)) },
+                LargeTopAppBar(
+                    title = { TopAppBarTitle(stringResource(R.string.settings), scrollBehavior) },
                     navigationIcon = {
                         IconButton({ navController.popBackStack() }) {
                             Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
@@ -134,6 +132,8 @@ fun AppSettings(
                 modifier = Modifier.padding(paddingValues),
             ) {
                 item {
+                    var themeSelectorExpanded by remember { mutableStateOf(false) }
+
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
@@ -315,7 +315,9 @@ fun AppSettings(
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
                         Column {
+                            val scope = rememberCoroutineScope()
                             val context = LocalContext.current
+
                             TextField(
                                 value = firstPointsString,
                                 onValueChange = {
