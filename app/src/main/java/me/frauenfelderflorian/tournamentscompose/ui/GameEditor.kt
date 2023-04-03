@@ -257,7 +257,7 @@ fun GameEditor(
                         ) {
                             item {
                                 Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Icon(Icons.Default.Event, null)
@@ -275,7 +275,10 @@ fun GameEditor(
                                 }
                             }
                             item {
-                                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
                                     val context = LocalContext.current
                                     OutlinedTextField(
                                         value = hoopsString,

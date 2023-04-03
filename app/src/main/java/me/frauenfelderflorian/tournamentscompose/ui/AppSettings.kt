@@ -220,7 +220,10 @@ fun AppSettings(
                 }
                 item { Divider() }
                 item {
-                    Row {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text(
                             text = "${stringResource(R.string.default_players)}: ${
                                 players.joinToString(", ")
@@ -247,6 +250,7 @@ fun AppSettings(
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable {
                             adaptivePoints = !adaptivePoints
                             if (adaptivePoints || firstPointsString == "") {

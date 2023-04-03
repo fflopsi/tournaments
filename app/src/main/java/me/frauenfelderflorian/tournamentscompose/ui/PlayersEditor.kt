@@ -17,7 +17,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -39,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -122,11 +124,15 @@ fun PlayersEditor(
                     scrollBehavior = scrollBehavior,
                 )
             },
-            floatingActionButton = { // TODO: ExtendedFAB
-                FloatingActionButton({ players[playersIdCounter++] = "" }) {
-                    Icon(Icons.Default.Add, stringResource(R.string.add_new_player))
-                }
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    icon = { Icon(Icons.Default.Add, null) },
+                    text = { Text(stringResource(R.string.add_new_player)) },
+                    expanded = scrollBehavior.state.collapsedFraction < 0.5f,
+                    onClick = { players[playersIdCounter++] = "" },
+                )
             },
+            floatingActionButtonPosition = FabPosition.Center,
             snackbarHost = { SnackbarHost(hostState) },
             contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -137,7 +143,10 @@ fun PlayersEditor(
                 modifier = Modifier.padding(paddingValues),
             ) {
                 items(players.entries.toList()) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         val context = LocalContext.current
                         TextField(
                             value = it.value,

@@ -95,8 +95,8 @@ fun TournamentList(
                 if (tournaments.isNotEmpty()) {
                     items(tournaments.values.sortedByDescending { it.t.start }) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.clickable {
                                 setCurrent(it.t.id)
                                 navController.navigate(Routes.TOURNAMENT_VIEWER.route)

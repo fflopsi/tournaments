@@ -238,7 +238,10 @@ fun TournamentEditor(
                     )
                 }
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         OutlinedButton(
                             onClick = { startDialogOpen = true },
                             modifier = Modifier.weight(1f),
@@ -255,7 +258,11 @@ fun TournamentEditor(
                 }
                 if (current == null) {
                     item {
-                        Row(Modifier.clickable { useDefaults = !useDefaults }) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.clickable { useDefaults = !useDefaults },
+                        ) {
                             Text(
                                 text = stringResource(R.string.use_defaults),
                                 modifier = Modifier
@@ -271,7 +278,10 @@ fun TournamentEditor(
                             enter = expandVertically(expandFrom = Alignment.Top),
                             exit = shrinkVertically(shrinkTowards = Alignment.Top),
                         ) {
-                            Row {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
                                 Text(
                                     text = "${stringResource(R.string.players)}: ${
                                         players.joinToString(", ")
@@ -304,6 +314,7 @@ fun TournamentEditor(
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
                             ) {
                                 Column(
