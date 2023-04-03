@@ -3,13 +3,12 @@
     <string name="settings">Einstellungen</string>
     <string name="about">Über</string>
     <string name="new_tournament">Neues Turnier</string>
-    <string name="player_editor_title">Spieler bearbeiten</string>
     <string name="no_nameless_players">Namenlose Spieler nicht erlaubt</string>
     <string name="no_same_name_players">Zwei Spieler können nicht denselben Namen haben: %1$s</string>
     <string name="back">Zurück</string>
     <string name="save_and_exit">Speichern und schliessen</string>
     <string name="add_new_player">Neuen Spieler hinzufügen</string>
-    <string name="no_semicolon_players">Semikolon im Namen nicht erlaubt</string>
+    <string name="invalid_name">Semikolon im Namen nicht erlaubt</string>
     <string name="name">Name</string>
     <string name="name_unique">Name muss eindeutig sein</string>
     <string name="delete_player">Spieler löschen</string>
@@ -30,7 +29,7 @@
     <string name="default_point_system">Standard-Punktesystem</string>
     <string name="adaptive">Adaptiv</string>
     <string name="classic">Klassisch</string>
-    <string name="no_invalid_integer">Ganze Zahl eingeben</string>
+    <string name="invalid_number">Ganze Zahl eingeben</string>
     <string name="first_points">Punkte für ersten Platz</string>
     <string name="point_system_adaptive">Empfohlenes Punktesystem. Ausschalten für klassisches System</string>
     <string name="point_system_classic">Altes Punktesystem. Einschalten für adaptives System</string>

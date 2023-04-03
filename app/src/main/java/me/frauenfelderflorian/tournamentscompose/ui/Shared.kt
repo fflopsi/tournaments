@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -22,7 +21,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
@@ -31,15 +36,6 @@ import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 
 fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
-
-@Composable
-fun getTheme(theme: Int): Boolean {
-    return when (theme) {
-        1 -> false
-        2 -> true
-        else -> isSystemInDarkTheme()
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,5 +91,29 @@ fun SettingsInfoMenu(navController: NavController, showInfoDialog: MutableState<
                 leadingIcon = { Icon(Icons.Outlined.Info, null) },
             )
         }
+    }
+}
+
+@Composable
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+    return rememberSaveable(
+        saver = listSaver(save = { it.toList() }, restore = { it.toMutableStateList() }),
+    ) {
+        elements.toList().toMutableStateList()
+    }
+}
+
+@Composable
+fun rememberMutableStateMapOf(vararg elements: Pair<Int, String>): SnapshotStateMap<Int, String> {
+    return rememberSaveable(
+        saver = listSaver(
+            save = { map -> map.toList().map { "${it.first};${it.second}" } },
+            restore = { list ->
+                list.map { it.substringBefore(";").toInt() to it.substringAfter(";") }
+                    .toMutableStateMap()
+            },
+        ),
+    ) {
+        elements.toList().map { it.first to it.second }.toMutableStateMap()
     }
 }

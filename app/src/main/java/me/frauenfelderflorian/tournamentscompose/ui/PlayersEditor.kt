@@ -35,11 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -49,14 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayersEditor(
     navController: NavController,
-    theme: Int,
-    dynamicColor: Boolean,
     formerPlayers: String?,
 ) {
     val players = rememberMutableStateMapOf()
@@ -69,130 +63,105 @@ fun PlayersEditor(
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
 
-    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
-        val scope = rememberCoroutineScope()
-        val hostState = remember { SnackbarHostState() }
-        val scrollBehavior =
-            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-        Scaffold(
-            topBar = {
-                LargeTopAppBar(
-                    title = {
-                        TopAppBarTitle(stringResource(R.string.player_editor_title), scrollBehavior)
-                    },
-                    navigationIcon = {
-                        IconButton({ navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
-                        }
-                    },
-                    actions = {
-                        val context = LocalContext.current
-                        IconButton({
-                            for (player1 in players) {
-                                if (player1.value.isBlank()) {
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = { TopAppBarTitle(stringResource(R.string.edit_players), scrollBehavior) },
+                navigationIcon = {
+                    IconButton({ navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
+                    }
+                },
+                actions = {
+                    val context = LocalContext.current
+                    IconButton({
+                        for (player1 in players) {
+                            if (player1.value.isBlank()) {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(R.string.no_nameless_players)
+                                    )
+                                }
+                                return@IconButton
+                            }
+                            for (player2 in players) {
+                                if (player1.key != player2.key && player1.value.trim() == player2.value.trim()) {
                                     scope.launch {
                                         hostState.showSnackbar(
                                             context.resources.getString(
-                                                R.string.no_nameless_players
+                                                R.string.no_same_name_players, player1.value
                                             )
                                         )
                                     }
                                     return@IconButton
                                 }
-                                for (player2 in players) {
-                                    if (player1.key != player2.key && player1.value.trim() == player2.value.trim()) {
-                                        scope.launch {
-                                            hostState.showSnackbar(
-                                                context.resources.getString(
-                                                    R.string.no_same_name_players, player1.value
-                                                )
-                                            )
-                                        }
-                                        return@IconButton
-                                    }
-                                }
                             }
-                            navController.previousBackStackEntry?.savedStateHandle?.set(
-                                "players", players.values.joinToString(";")
-                            )
-                            navController.popBackStack()
-                        }) {
-                            Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                         }
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text(stringResource(R.string.add_new_player)) },
-                    expanded = scrollBehavior.state.collapsedFraction < 0.5f,
-                    onClick = { players[playersIdCounter++] = "" },
-                )
-            },
-            floatingActionButtonPosition = FabPosition.Center,
-            snackbarHost = { SnackbarHost(hostState) },
-            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { paddingValues ->
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp, 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(paddingValues),
-            ) {
-                items(players.entries.toList()) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val context = LocalContext.current
-                        TextField(
-                            value = it.value,
-                            onValueChange = { value ->
-                                if (value.contains(";")) {
-                                    scope.launch {
-                                        hostState.showSnackbar(
-                                            context.resources.getString(
-                                                R.string.no_semicolon_players
-                                            )
-                                        )
-                                    }
-                                } else if (value.length < 100) {
-                                    players[it.key] = value
-                                }
-                            },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.name)) },
-                            placeholder = { Text(stringResource(R.string.name_unique)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(2f),
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                            "players", players.values.joinToString(";")
                         )
-                        IconButton({ players.remove(it.key) }) {
-                            Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
-                        }
+                        navController.popBackStack()
+                    }) {
+                        Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
+                    }
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                icon = { Icon(Icons.Default.Add, null) },
+                text = { Text(stringResource(R.string.add_new_player)) },
+                expanded = scrollBehavior.state.collapsedFraction < 0.5f,
+                onClick = { players[playersIdCounter++] = "" },
+            )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        snackbarHost = { SnackbarHost(hostState) },
+        contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { paddingValues ->
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp, 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(paddingValues),
+        ) {
+            items(players.entries.toList()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val context = LocalContext.current
+                    TextField(
+                        value = it.value,
+                        onValueChange = { value ->
+                            if (value.contains(";")) {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(R.string.invalid_name)
+                                    )
+                                }
+                            } else if (value.length < 100) {
+                                players[it.key] = value
+                            }
+                        },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.name)) },
+                        placeholder = { Text(stringResource(R.string.name_unique)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(2f),
+                    )
+                    IconButton({ players.remove(it.key) }) {
+                        Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun rememberMutableStateMapOf(
-    vararg elements: Pair<Int, String>,
-): SnapshotStateMap<Int, String> {
-    return rememberSaveable(
-        saver = listSaver(
-            save = { map -> map.toList().map { "${it.first},${it.second}" } },
-            restore = { list ->
-                list.map { it.substringBefore(",").toInt() to it.substringAfter(",") }
-                    .toMutableStateMap()
-            },
-        ),
-    ) {
-        elements.toList().map { it.first to it.second }.toMutableStateMap()
     }
 }

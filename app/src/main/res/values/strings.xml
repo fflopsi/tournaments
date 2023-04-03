@@ -4,13 +4,12 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="new_tournament">New tournament</string>
-    <string name="player_editor_title">Edit Players</string>
     <string name="no_nameless_players">Nameless players not allowed</string>
     <string name="no_same_name_players">Two players cannot have the same name: %1$s</string>
     <string name="back">Back</string>
     <string name="save_and_exit">Save and exit</string>
     <string name="add_new_player">Add a new player</string>
-    <string name="no_semicolon_players">No semicolon allowed in name</string>
+    <string name="invalid_name">No semicolon allowed in name</string>
     <string name="name">Name</string>
     <string name="name_unique">Name must be unique</string>
     <string name="delete_player">Delete player</string>
@@ -31,7 +30,7 @@
     <string name="default_point_system">Default point system</string>
     <string name="adaptive">Adaptive</string>
     <string name="classic">Classic</string>
-    <string name="no_invalid_integer">Input a valid integer</string>
+    <string name="invalid_number">Input a valid integer</string>
     <string name="first_points">Points for first place</string>
     <string name="point_system_adaptive">Recommended point system. Switch off for classic system</string>
     <string name="point_system_classic">Old point system. Switch on for adaptive system</string>

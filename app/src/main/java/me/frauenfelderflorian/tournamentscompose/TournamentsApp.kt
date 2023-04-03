@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,6 +32,7 @@ import me.frauenfelderflorian.tournamentscompose.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.ui.TournamentViewer
+import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +64,7 @@ fun TournamentsApp() {
     model.tournaments = tournamentDao.getTournamentsWithGames()
         .observeAsState(emptyList()).value.associateBy { it.t.id }
     val navController = rememberAnimatedNavController()
+
     LaunchedEffect(Unit) {
         launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
         launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
@@ -69,109 +72,107 @@ fun TournamentsApp() {
         launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
         launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
     }
-    AnimatedNavHost(
-        navController = navController,
-        startDestination = Routes.TOURNAMENT_LIST.route,
+
+    TournamentsTheme(
+        darkTheme = when (prefs.theme) {
+            1 -> false
+            2 -> true
+            else -> isSystemInDarkTheme()
+        },
+        dynamicColor = prefs.dynamicColor,
     ) {
-        composable(
-            route = Routes.TOURNAMENT_LIST.route,
-            exitTransition = {
-                if (model.current == null) {
-                    null
-                } else {
-                    slideOutHorizontally(targetOffsetX = { width -> -width })
-                }
-            },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+        AnimatedNavHost(
+            navController = navController,
+            startDestination = Routes.TOURNAMENT_LIST.route,
         ) {
-            TournamentList(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                tournaments = model.tournaments,
-                setCurrent = model::current::set,
-            )
-        }
-        composable(
-            route = Routes.TOURNAMENT_EDITOR.route,
-            enterTransition = {
-                if (model.current == null) {
-                    scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
-                } else {
-                    slideInHorizontally(initialOffsetX = { width -> width })
-                }
-            },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
-        ) {
-            TournamentEditor(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                tournament = model.tournaments[model.current],
-                current = model.current,
-                dao = tournamentDao,
-                gameDao = gameDao,
-                defaultPlayers = prefs.players.toList(),
-                defaultAdaptivePoints = prefs.adaptivePoints,
-                defaultFirstPoints = prefs.firstPoints,
-            )
-        }
-        composable(
-            route = Routes.TOURNAMENT_VIEWER.route,
-            enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
-            exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-            popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
-        ) {
-            TournamentViewer(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                tournament = model.tournaments[model.current]!!,
-            )
-        }
-        composable(Routes.GAME_EDITOR.route) {
-            GameEditor(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                tournament = model.tournaments[model.current]!!,
-                dao = gameDao,
-            )
-        }
-        composable(Routes.GAME_VIEWER.route) {
-            GameViewer(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                game = model.tournaments[model.current]!!.current!!,
-            )
-        }
-        composable(
-            route = "${Routes.PLAYERS_EDITOR.route}?players={players}",
-            arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
-        ) {
-            PlayersEditor(
-                navController = navController,
-                theme = prefs.theme,
-                dynamicColor = prefs.dynamicColor,
-                formerPlayers = it.arguments?.getString("players"),
-            )
-        }
-        composable(Routes.SETTINGS_EDITOR.route) {
-            AppSettings(
-                navController = navController,
-                theme = prefs.theme,
-                updateTheme = prefs::saveTheme,
-                dynamicColor = prefs.dynamicColor,
-                updateDynamicColor = prefs::saveDynamicColor,
-                formerPlayers = prefs.players,
-                formerAdaptivePoints = prefs.adaptivePoints,
-                formerFirstPoints = prefs.firstPoints,
-                savePrefs = prefs::saveSettings,
-            )
+            composable(
+                route = Routes.TOURNAMENT_LIST.route,
+                exitTransition = {
+                    if (model.current == null) {
+                        null
+                    } else {
+                        slideOutHorizontally(targetOffsetX = { width -> -width })
+                    }
+                },
+                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+            ) {
+                TournamentList(
+                    navController = navController,
+                    tournaments = model.tournaments,
+                    setCurrent = model::current::set,
+                )
+            }
+            composable(
+                route = Routes.TOURNAMENT_EDITOR.route,
+                enterTransition = {
+                    if (model.current == null) {
+                        scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
+                    } else {
+                        slideInHorizontally(initialOffsetX = { width -> width })
+                    }
+                },
+                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
+            ) {
+                TournamentEditor(
+                    navController = navController,
+                    tournament = model.tournaments[model.current],
+                    current = model.current,
+                    dao = tournamentDao,
+                    gameDao = gameDao,
+                    defaultPlayers = prefs.players.toList(),
+                    defaultAdaptivePoints = prefs.adaptivePoints,
+                    defaultFirstPoints = prefs.firstPoints,
+                )
+            }
+            composable(
+                route = Routes.TOURNAMENT_VIEWER.route,
+                enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
+                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
+            ) {
+                TournamentViewer(
+                    navController = navController,
+                    tournament = model.tournaments[model.current]!!,
+                )
+            }
+            composable(Routes.GAME_EDITOR.route) {
+                GameEditor(
+                    navController = navController,
+                    tournament = model.tournaments[model.current]!!,
+                    dao = gameDao,
+                )
+            }
+            composable(Routes.GAME_VIEWER.route) {
+                GameViewer(
+                    navController = navController,
+                    game = model.tournaments[model.current]!!.current!!,
+                )
+            }
+            composable(
+                route = "${Routes.PLAYERS_EDITOR.route}?players={players}",
+                arguments = listOf(navArgument("players") { defaultValue = "Player 1;Player 2" }),
+            ) {
+                PlayersEditor(
+                    navController = navController,
+                    formerPlayers = it.arguments?.getString("players"),
+                )
+            }
+            composable(Routes.SETTINGS_EDITOR.route) {
+                AppSettings(
+                    navController = navController,
+                    theme = prefs.theme,
+                    updateTheme = prefs::saveTheme,
+                    dynamicColor = prefs.dynamicColor,
+                    updateDynamicColor = prefs::saveDynamicColor,
+                    formerPlayers = prefs.players,
+                    formerAdaptivePoints = prefs.adaptivePoints,
+                    formerFirstPoints = prefs.firstPoints,
+                    savePrefs = prefs::saveSettings,
+                )
+            }
         }
     }
 }

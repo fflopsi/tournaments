@@ -42,96 +42,91 @@ import kotlin.reflect.KFunction1
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentList(
     navController: NavHostController,
-    theme: Int,
-    dynamicColor: Boolean,
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: KFunction1<UUID?, Unit>,
 ) {
-    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
-        val scrollBehavior =
-            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-        val showInfo = rememberSaveable { mutableStateOf(false) }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = rememberSaveable { mutableStateOf(false) }
 
-        Scaffold(
-            topBar = {
-                LargeTopAppBar(
-                    title = { TopAppBarTitle(stringResource(R.string.app_title), scrollBehavior) },
-                    actions = {
-                        IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
-                            Icon(Icons.Default.Settings, stringResource(R.string.settings))
-                        }
-                        IconButton({ showInfo.value = true }) {
-                            Icon(Icons.Outlined.Info, stringResource(R.string.about))
-                        }
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text(stringResource(R.string.new_tournament)) },
-                    expanded = scrollBehavior.state.collapsedFraction < 0.5f,
-                    onClick = {
-                        setCurrent(null)
-                        navController.navigate(Routes.TOURNAMENT_EDITOR.route)
-                    },
-                )
-            },
-            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { paddingValues ->
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp, 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(paddingValues),
-            ) {
-                if (tournaments.isNotEmpty()) {
-                    items(tournaments.values.sortedByDescending { it.t.start }) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable {
-                                setCurrent(it.t.id)
-                                navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                            },
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    R.string.tournament_list_title,
-                                    it.t.name,
-                                    formatDate(it.t.start),
-                                    formatDate(it.t.end),
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(2f),
-                            )
-                            IconButton({
-                                setCurrent(it.t.id)
-                                navController.navigate(Routes.TOURNAMENT_EDITOR.route)
-                            }) {
-                                Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
-                            }
-                        }
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = { TopAppBarTitle(stringResource(R.string.app_title), scrollBehavior) },
+                actions = {
+                    IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
+                        Icon(Icons.Default.Settings, stringResource(R.string.settings))
                     }
-                } else {
-                    item {
+                    IconButton({ showInfo.value = true }) {
+                        Icon(Icons.Outlined.Info, stringResource(R.string.about))
+                    }
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                icon = { Icon(Icons.Default.Add, null) },
+                text = { Text(stringResource(R.string.new_tournament)) },
+                expanded = scrollBehavior.state.collapsedFraction < 0.5f,
+                onClick = {
+                    setCurrent(null)
+                    navController.navigate(Routes.TOURNAMENT_EDITOR.route)
+                },
+            )
+        },
+        contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { paddingValues ->
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp, 8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(paddingValues),
+        ) {
+            if (tournaments.isNotEmpty()) {
+                items(tournaments.values.sortedByDescending { it.t.start }) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable {
+                            setCurrent(it.t.id)
+                            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+                        },
+                    ) {
                         Text(
-                            text = stringResource(R.string.add_first_tournament_hint),
-                            fontStyle = FontStyle.Italic,
-                            fontWeight = FontWeight.ExtraLight,
+                            text = stringResource(
+                                R.string.tournament_list_title,
+                                it.t.name,
+                                formatDate(it.t.start),
+                                formatDate(it.t.end),
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(2f),
                         )
+                        IconButton({
+                            setCurrent(it.t.id)
+                            navController.navigate(Routes.TOURNAMENT_EDITOR.route)
+                        }) {
+                            Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                        }
                     }
                 }
+            } else {
+                item {
+                    Text(
+                        text = stringResource(R.string.add_first_tournament_hint),
+                        fontStyle = FontStyle.Italic,
+                        fontWeight = FontWeight.ExtraLight,
+                    )
+                }
             }
-            InfoDialog(showDialog = showInfo)
         }
+        InfoDialog(showDialog = showInfo)
     }
 }

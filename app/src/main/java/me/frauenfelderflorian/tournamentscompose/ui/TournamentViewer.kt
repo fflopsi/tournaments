@@ -58,180 +58,168 @@ import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun TournamentViewer(
     navController: NavController,
-    theme: Int,
-    dynamicColor: Boolean,
     tournament: TournamentWithGames,
 ) {
-    TournamentsTheme(darkTheme = getTheme(theme), dynamicColor = dynamicColor) {
-        val scrollBehavior =
-            TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-        val showInfo = remember { mutableStateOf(false) }
-        var selectedTab by rememberSaveable { mutableStateOf(0) }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
+    var selectedTab by rememberSaveable { mutableStateOf(0) }
 
-        Scaffold(
-            topBar = {
-                LargeTopAppBar(
-                    title = {
-                        TopAppBarTitle(
-                            text = stringResource(R.string.tournament_title, tournament.t.name),
-                            scrollBehavior = scrollBehavior,
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton({ navController.popBackStack() }) {
-                            Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
-                        }
-                    },
-                    actions = {
-                        IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
-                            Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
-                        }
-                        SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
-                    },
-                    scrollBehavior = scrollBehavior,
-                )
-            },
-            floatingActionButton = {
-                AnimatedVisibility(
-                    visible = selectedTab == 0,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                ) {
-                    ExtendedFloatingActionButton(
-                        icon = { Icon(Icons.Default.Add, null) },
-                        text = { Text(stringResource(R.string.new_game)) },
-                        expanded = scrollBehavior.state.collapsedFraction < 0.5f,
-                        onClick = {
-                            tournament.current = null
-                            navController.navigate(Routes.GAME_EDITOR.route)
-                        },
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    TopAppBarTitle(
+                        text = stringResource(R.string.tournament_title, tournament.t.name),
+                        scrollBehavior = scrollBehavior,
                     )
-                }
-            },
-            contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier.padding(paddingValues),
-                verticalArrangement = Arrangement.spacedBy(0.dp),
-            ) {
-                TabRow(selectedTab) {
-                    Tab(
-                        selected = selectedTab == 0,
-                        onClick = { selectedTab = 0 },
-                        text = { Text(stringResource(R.string.details)) },
-                    )
-                    Tab(
-                        selected = selectedTab == 1,
-                        onClick = { selectedTab = 1 },
-                        text = { Text(stringResource(R.string.ranking)) },
-                    )
-                }
-                val columnScope = this
-                Box {
-                    columnScope.AnimatedVisibility(
-                        visible = selectedTab == 0,
-                        enter = slideInHorizontally(initialOffsetX = { width -> -width }),
-                        exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
-                    ) {
-                        LazyColumn(
-                            contentPadding = PaddingValues(16.dp, 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            if (tournament.games.isNotEmpty()) {
-                                items(tournament.games.sortedByDescending { it.date }) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.clickable {
-                                            tournament.current = it
-                                            navController.navigate(Routes.GAME_VIEWER.route)
-                                        },
-                                    ) {
-                                        Text(
-                                            text = stringResource(
-                                                R.string.game_title, formatDate(it.date)
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .weight(2f),
-                                        )
-                                        IconButton({
-                                            tournament.current = it
-                                            navController.navigate(Routes.GAME_EDITOR.route)
-                                        }) {
-                                            Icon(
-                                                Icons.Default.Edit,
-                                                stringResource(R.string.edit_game),
-                                            )
-                                        }
-                                    }
-                                }
-                            } else {
-                                item {
-                                    Text(
-                                        text = stringResource(R.string.add_first_game_hint),
-                                        fontStyle = FontStyle.Italic,
-                                        fontWeight = FontWeight.ExtraLight,
-                                    )
-                                }
-                            }
-                        }
+                },
+                navigationIcon = {
+                    IconButton({ navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
-                    columnScope.AnimatedVisibility(
-                        visible = selectedTab == 1,
-                        enter = slideInHorizontally(initialOffsetX = { width -> width }),
-                        exit = slideOutHorizontally(targetOffsetX = { width -> width }),
+                },
+                actions = {
+                    IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
+                        Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                    }
+                    SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = selectedTab == 0,
+                enter = scaleIn(),
+                exit = scaleOut(),
+            ) {
+                ExtendedFloatingActionButton(
+                    icon = { Icon(Icons.Default.Add, null) },
+                    text = { Text(stringResource(R.string.new_game)) },
+                    expanded = scrollBehavior.state.collapsedFraction < 0.5f,
+                    onClick = {
+                        tournament.current = null
+                        navController.navigate(Routes.GAME_EDITOR.route)
+                    },
+                )
+            }
+        },
+        contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+        ) {
+            TabRow(selectedTab) {
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = { Text(stringResource(R.string.details)) },
+                )
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = { Text(stringResource(R.string.ranking)) },
+                )
+            }
+            val columnScope = this
+            Box {
+                columnScope.AnimatedVisibility(
+                    visible = selectedTab == 0,
+                    enter = slideInHorizontally(initialOffsetX = { width -> -width }),
+                    exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
+                ) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp, 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        LazyColumn(
-                            contentPadding = PaddingValues(16.dp, 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            items(tournament.playersByPoints) {
-                                var menuExpanded by remember { mutableStateOf(false) }
+                        if (tournament.games.isNotEmpty()) {
+                            items(tournament.games.sortedByDescending { it.date }) {
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                                     verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.clickable {
+                                        tournament.current = it
+                                        navController.navigate(Routes.GAME_VIEWER.route)
+                                    },
                                 ) {
-                                    Text(tournament.getPoints(it).toString())
                                     Text(
-                                        text = it,
+                                        text = stringResource(
+                                            R.string.game_title, formatDate(it.date)
+                                        ),
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .weight(2f),
                                     )
-                                    Box {
-                                        IconButton({ menuExpanded = true }) {
-                                            Icon(Icons.Default.MoreVert, null)
-                                        }
-                                        DropdownMenu(
-                                            expanded = menuExpanded,
-                                            onDismissRequest = { menuExpanded = false },
-                                        ) {
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(stringResource(R.string.game_overview))
-                                                },
-                                                onClick = { /*TODO*/ },
-                                                leadingIcon = {
-                                                    Icon(Icons.Default.EmojiEvents, null)
-                                                },
-                                            )
-                                            Divider()
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(stringResource(R.string.delete_player))
-                                                },
-                                                onClick = { /*TODO*/ },
-                                                leadingIcon = { Icon(Icons.Default.Delete, null) },
-                                            )
-                                        }
+                                    IconButton({
+                                        tournament.current = it
+                                        navController.navigate(Routes.GAME_EDITOR.route)
+                                    }) {
+                                        Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                                    }
+                                }
+                            }
+                        } else {
+                            item {
+                                Text(
+                                    text = stringResource(R.string.add_first_game_hint),
+                                    fontStyle = FontStyle.Italic,
+                                    fontWeight = FontWeight.ExtraLight,
+                                )
+                            }
+                        }
+                    }
+                }
+                columnScope.AnimatedVisibility(
+                    visible = selectedTab == 1,
+                    enter = slideInHorizontally(initialOffsetX = { width -> width }),
+                    exit = slideOutHorizontally(targetOffsetX = { width -> width }),
+                ) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp, 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        items(tournament.playersByPoints) {
+                            var menuExpanded by remember { mutableStateOf(false) }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(tournament.getPoints(it).toString())
+                                Text(
+                                    text = it,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(2f),
+                                )
+                                Box {
+                                    IconButton({ menuExpanded = true }) {
+                                        Icon(Icons.Default.MoreVert, null)
+                                    }
+                                    DropdownMenu(
+                                        expanded = menuExpanded,
+                                        onDismissRequest = { menuExpanded = false },
+                                    ) {
+                                        DropdownMenuItem(
+                                            enabled = false,
+                                            text = { Text(stringResource(R.string.game_overview)) },
+                                            onClick = { /*TODO*/ },
+                                            leadingIcon = { Icon(Icons.Default.EmojiEvents, null) },
+                                        )
+                                        Divider()
+                                        DropdownMenuItem(
+                                            enabled = false,
+                                            text = { Text(stringResource(R.string.delete_player)) },
+                                            onClick = { /*TODO*/ },
+                                            leadingIcon = { Icon(Icons.Default.Delete, null) },
+                                        )
                                     }
                                 }
                             }
@@ -239,7 +227,7 @@ fun TournamentViewer(
                     }
                 }
             }
-            InfoDialog(showDialog = showInfo)
         }
+        InfoDialog(showDialog = showInfo)
     }
 }
