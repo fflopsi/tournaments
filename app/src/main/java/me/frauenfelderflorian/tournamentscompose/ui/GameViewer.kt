@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.R
+import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.Game
 import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
 
@@ -61,6 +63,9 @@ fun GameViewer(
                         }
                     },
                     actions = {
+                        IconButton({ navController.navigate(Routes.GAME_EDITOR.route) }) {
+                            Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                        }
                         SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                     },
                     scrollBehavior = scrollBehavior,
