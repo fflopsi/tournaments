@@ -90,8 +90,12 @@ fun TournamentEditor(
     var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
-    var adaptivePoints by rememberSaveable { mutableStateOf(true) }
-    var firstPointsString by rememberSaveable { mutableStateOf("") }
+    var adaptivePoints by rememberSaveable {
+        mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
+    }
+    var firstPointsString by rememberSaveable {
+        mutableStateOf(if (current == null) "" else tournament!!.t.firstPoints.toString())
+    }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -125,6 +129,7 @@ fun TournamentEditor(
                     }
                     val context = LocalContext.current
                     IconButton({
+                        val t: Tournament
                         if (current == null) {
                             if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                                 scope.launch {
@@ -134,7 +139,6 @@ fun TournamentEditor(
                                 }
                                 return@IconButton
                             }
-                            val t: Tournament
                             if (useDefaults) {
                                 t = Tournament(
                                     id = UUID.randomUUID(),
@@ -158,7 +162,7 @@ fun TournamentEditor(
                                     name = name.trim(),
                                     start = start,
                                     end = end,
-                                    useAdaptivePoints = adaptivePoints,
+                                    useAdaptivePoints = false,
                                     firstPoints = firstPointsString.toInt(),
                                 ).apply { this.players = players }
                             } else {
@@ -171,18 +175,34 @@ fun TournamentEditor(
                                 }
                                 return@IconButton
                             }
-                            scope.launch { withContext(Dispatchers.IO) { dao.insert(t) } }
                         } else {
-                            scope.launch {
-                                withContext(Dispatchers.IO) {
-                                    dao.update(
-                                        tournament!!.t.copy(
-                                            name = name.trim(), start = start, end = end
+                            if (adaptivePoints) {
+                                t = tournament!!.t.copy(
+                                    name = name.trim(),
+                                    start = start,
+                                    end = end,
+                                    useAdaptivePoints = true
+                                )
+                            } else if (firstPointsString.toIntOrNull() != null) {
+                                t = tournament!!.t.copy(
+                                    name = name.trim(),
+                                    start = start,
+                                    end = end,
+                                    useAdaptivePoints = false,
+                                    firstPoints = firstPointsString.toInt()
+                                )
+                            } else {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(
+                                            R.string.enter_number_first_points
                                         )
                                     )
                                 }
+                                return@IconButton
                             }
                         }
+                        scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
                         navController.popBackStack()
                     }) {
                         Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
@@ -277,89 +297,89 @@ fun TournamentEditor(
                         }
                     }
                 }
-                AnimatedVisibility(
-                    visible = !useDefaults,
-                    enter = expandVertically(expandFrom = Alignment.Top),
-                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            }
+            AnimatedVisibility(
+                visible = current != null || !useDefaults,
+                enter = expandVertically(expandFrom = Alignment.Top),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
+                    Column(
+                        modifier = Modifier
+                            .weight(2f)
+                            .align(Alignment.CenterVertically)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .weight(2f)
-                                .align(Alignment.CenterVertically)
-                        ) {
-                            Text(
-                                "${stringResource(R.string.point_system)}: ${
-                                    stringResource(
-                                        if (adaptivePoints) R.string.adaptive else R.string.classic
-                                    )
-                                }"
-                            )
-                            Text(
-                                text = stringResource(
-                                    if (adaptivePoints) {
-                                        R.string.point_system_adaptive
-                                    } else {
-                                        R.string.point_system_classic
-                                    }
-                                ),
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Light,
-                            )
-                        }
-                        Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
-                    }
-                }
-                AnimatedVisibility(
-                    visible = !useDefaults && adaptivePoints,
-                    enter = expandVertically(expandFrom = Alignment.Top),
-                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                ) {
-                    Text(
-                        text = stringResource(R.string.point_system_adaptive_desc),
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                }
-                AnimatedVisibility(
-                    visible = !useDefaults && !adaptivePoints,
-                    enter = expandVertically(expandFrom = Alignment.Top),
-                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                ) {
-                    Column {
-                        val context = LocalContext.current
-                        OutlinedTextField(
-                            value = firstPointsString,
-                            onValueChange = {
-                                try {
-                                    if (it != "") it.toInt()
-                                    firstPointsString = it.trim()
-                                } catch (e: NumberFormatException) {
-                                    scope.launch {
-                                        hostState.showSnackbar(
-                                            context.resources.getString(R.string.invalid_number)
-                                        )
-                                    }
-                                }
-                            },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.first_points)) },
-                            trailingIcon = { Icon(Icons.Default.Star, null) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth(),
+                        Text(
+                            "${stringResource(R.string.point_system)}: ${
+                                stringResource(
+                                    if (adaptivePoints) R.string.adaptive else R.string.classic
+                                )
+                            }"
                         )
                         Text(
-                            text = stringResource(R.string.point_system_classic_desc),
-                            fontStyle = FontStyle.Italic,
+                            text = stringResource(
+                                if (adaptivePoints) {
+                                    R.string.point_system_adaptive
+                                } else {
+                                    R.string.point_system_classic
+                                }
+                            ),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Light,
                         )
                     }
+                    Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
+                }
+            }
+            AnimatedVisibility(
+                visible = (current != null || !useDefaults) && adaptivePoints,
+                enter = expandVertically(expandFrom = Alignment.Top),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            ) {
+                Text(
+                    text = stringResource(R.string.point_system_adaptive_desc),
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Light,
+                )
+            }
+            AnimatedVisibility(
+                visible = (current != null || !useDefaults) && !adaptivePoints,
+                enter = expandVertically(expandFrom = Alignment.Top),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            ) {
+                Column {
+                    val context = LocalContext.current
+                    OutlinedTextField(
+                        value = firstPointsString,
+                        onValueChange = {
+                            try {
+                                if (it != "") it.toInt()
+                                firstPointsString = it.trim()
+                            } catch (e: NumberFormatException) {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(R.string.invalid_number)
+                                    )
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        label = { Text(stringResource(R.string.first_points)) },
+                        trailingIcon = { Icon(Icons.Default.Star, null) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    Text(
+                        text = stringResource(R.string.point_system_classic_desc),
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Light,
+                    )
                 }
             }
         }
