@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Divider
@@ -59,11 +58,7 @@ fun GameViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = {
-                    IconButton({ navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
-                    }
-                },
+                navigationIcon = { BackButton(navController) },
                 actions = {
                     IconButton({ navController.navigate(Routes.GAME_EDITOR.route) }) {
                         Icon(Icons.Default.Edit, stringResource(R.string.edit_game))

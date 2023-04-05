@@ -2,6 +2,7 @@ package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -45,6 +46,13 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
         overflow = TextOverflow.Ellipsis,
         maxLines = if (scrollBehavior.state.collapsedFraction < 0.5f) 2 else 1,
     )
+}
+
+@Composable
+fun BackButton(navController: NavController) {
+    IconButton({ navController.popBackStack() }) {
+        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
+    }
 }
 
 @Composable

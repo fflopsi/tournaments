@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -117,11 +116,7 @@ fun TournamentEditor(
                 title = {
                     TopAppBarTitle(stringResource(R.string.edit_tournament), scrollBehavior)
                 },
-                navigationIcon = {
-                    IconButton({ navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
-                    }
-                },
+                navigationIcon = { BackButton(navController) },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {

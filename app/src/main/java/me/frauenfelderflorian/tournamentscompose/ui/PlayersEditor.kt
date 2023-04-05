@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,11 +71,7 @@ fun PlayersEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(R.string.edit_players), scrollBehavior) },
-                navigationIcon = {
-                    IconButton({ navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
-                    }
-                },
+                navigationIcon = { BackButton(navController) },
                 actions = {
                     val context = LocalContext.current
                     IconButton({
