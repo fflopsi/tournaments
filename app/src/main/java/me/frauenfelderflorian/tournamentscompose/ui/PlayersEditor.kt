@@ -3,8 +3,10 @@ package me.frauenfelderflorian.tournamentscompose.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -122,7 +124,7 @@ fun PlayersEditor(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp, 16.dp),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(paddingValues),
         ) {
@@ -157,6 +159,7 @@ fun PlayersEditor(
                     }
                 }
             }
+            item { Spacer(modifier = Modifier.height(64.dp)) }
         }
     }
 }

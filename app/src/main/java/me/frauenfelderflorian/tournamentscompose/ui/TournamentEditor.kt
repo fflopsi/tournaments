@@ -6,7 +6,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +13,9 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -198,188 +198,167 @@ fun TournamentEditor(
     ) { paddingValues ->
         var startDialogOpen by remember { mutableStateOf(false) }
         var endDialogOpen by remember { mutableStateOf(false) }
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp, 16.dp),
+        Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(paddingValues),
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            item {
-                TextField(
-                    value = name,
-                    onValueChange = { if (it.length < 100) name = it },
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.name)) },
-                    placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
-                    trailingIcon = { Icon(Icons.Default.Edit, null) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+            TextField(
+                value = name,
+                onValueChange = { if (it.length < 100) name = it },
+                singleLine = true,
+                label = { Text(stringResource(R.string.name)) },
+                placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
+                trailingIcon = { Icon(Icons.Default.Edit, null) },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                OutlinedButton(
+                    onClick = { startDialogOpen = true },
+                    modifier = Modifier.weight(1f),
                 ) {
-                    OutlinedButton(
-                        onClick = { startDialogOpen = true },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
-                    }
-                    OutlinedButton(
-                        onClick = { endDialogOpen = true },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
-                    }
+                    Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
+                }
+                OutlinedButton(
+                    onClick = { endDialogOpen = true },
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
                 }
             }
             if (current == null) {
-                item {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable { useDefaults = !useDefaults },
+                ) {
+                    Text(
+                        text = stringResource(R.string.use_defaults),
+                        modifier = Modifier
+                            .weight(2f)
+                            .align(Alignment.CenterVertically),
+                    )
+                    Switch(checked = useDefaults, onCheckedChange = { useDefaults = it })
+                }
+                AnimatedVisibility(
+                    visible = !useDefaults,
+                    enter = expandVertically(expandFrom = Alignment.Top),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { useDefaults = !useDefaults },
                     ) {
                         Text(
-                            text = stringResource(R.string.use_defaults),
+                            text = "${stringResource(R.string.players)}: ${
+                                players.joinToString(", ")
+                            }",
                             modifier = Modifier
                                 .weight(2f)
                                 .align(Alignment.CenterVertically),
                         )
-                        Switch(checked = useDefaults, onCheckedChange = { useDefaults = it })
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = !useDefaults,
-                        enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = "${stringResource(R.string.players)}: ${
-                                    players.joinToString(", ")
-                                }",
-                                modifier = Modifier
-                                    .weight(2f)
-                                    .align(Alignment.CenterVertically),
-                            )
-                            IconButton({
-                                navController.navigate(
-                                    "${Routes.PLAYERS_EDITOR.route}${
-                                        if (players.isNotEmpty()) {
-                                            "?players=${players.joinToString(";")}"
-                                        } else {
-                                            ""
-                                        }
-                                    }"
-                                )
-                            }) {
-                                Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
-                            }
-                        }
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = !useDefaults,
-                        enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                    ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(2f)
-                                    .align(Alignment.CenterVertically)
-                            ) {
-                                Text(
-                                    "${stringResource(R.string.point_system)}: ${
-                                        stringResource(
-                                            if (adaptivePoints) {
-                                                R.string.adaptive
-                                            } else {
-                                                R.string.classic
-                                            }
-                                        )
-                                    }"
-                                )
-                                Text(
-                                    text = stringResource(
-                                        if (adaptivePoints) {
-                                            R.string.point_system_adaptive
-                                        } else {
-                                            R.string.point_system_classic
-                                        }
-                                    ),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Light,
-                                )
-                            }
-                            Switch(
-                                checked = adaptivePoints,
-                                onCheckedChange = { adaptivePoints = it },
-                            )
-                        }
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = !useDefaults && adaptivePoints,
-                        enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.point_system_adaptive_desc),
-                            fontStyle = FontStyle.Italic,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                        )
-                    }
-                }
-                item {
-                    AnimatedVisibility(
-                        visible = !useDefaults && !adaptivePoints,
-                        enter = expandVertically(expandFrom = Alignment.Top),
-                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
-                    ) {
-                        Column {
-                            val context = LocalContext.current
-                            OutlinedTextField(
-                                value = firstPointsString,
-                                onValueChange = {
-                                    try {
-                                        if (it != "") it.toInt()
-                                        firstPointsString = it.trim()
-                                    } catch (e: NumberFormatException) {
-                                        scope.launch {
-                                            hostState.showSnackbar(
-                                                context.resources.getString(R.string.invalid_number)
-                                            )
-                                        }
+                        IconButton({
+                            navController.navigate(
+                                "${Routes.PLAYERS_EDITOR.route}${
+                                    if (players.isNotEmpty()) {
+                                        "?players=${players.joinToString(";")}"
+                                    } else {
+                                        ""
                                     }
-                                },
-                                singleLine = true,
-                                label = { Text(stringResource(R.string.first_points)) },
-                                trailingIcon = { Icon(Icons.Default.Star, null) },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier.fillMaxWidth(),
+                                }"
+                            )
+                        }) {
+                            Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
+                        }
+                    }
+                }
+                AnimatedVisibility(
+                    visible = !useDefaults,
+                    enter = expandVertically(expandFrom = Alignment.Top),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(2f)
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Text(
+                                "${stringResource(R.string.point_system)}: ${
+                                    stringResource(
+                                        if (adaptivePoints) R.string.adaptive else R.string.classic
+                                    )
+                                }"
                             )
                             Text(
-                                text = stringResource(R.string.point_system_classic_desc),
-                                fontStyle = FontStyle.Italic,
+                                text = stringResource(
+                                    if (adaptivePoints) {
+                                        R.string.point_system_adaptive
+                                    } else {
+                                        R.string.point_system_classic
+                                    }
+                                ),
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light,
                             )
                         }
+                        Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
+                    }
+                }
+                AnimatedVisibility(
+                    visible = !useDefaults && adaptivePoints,
+                    enter = expandVertically(expandFrom = Alignment.Top),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
+                    Text(
+                        text = stringResource(R.string.point_system_adaptive_desc),
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Light,
+                    )
+                }
+                AnimatedVisibility(
+                    visible = !useDefaults && !adaptivePoints,
+                    enter = expandVertically(expandFrom = Alignment.Top),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top),
+                ) {
+                    Column {
+                        val context = LocalContext.current
+                        OutlinedTextField(
+                            value = firstPointsString,
+                            onValueChange = {
+                                try {
+                                    if (it != "") it.toInt()
+                                    firstPointsString = it.trim()
+                                } catch (e: NumberFormatException) {
+                                    scope.launch {
+                                        hostState.showSnackbar(
+                                            context.resources.getString(R.string.invalid_number)
+                                        )
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            label = { Text(stringResource(R.string.first_points)) },
+                            trailingIcon = { Icon(Icons.Default.Star, null) },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        Text(
+                            text = stringResource(R.string.point_system_classic_desc),
+                            fontStyle = FontStyle.Italic,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Light,
+                        )
                     }
                 }
             }

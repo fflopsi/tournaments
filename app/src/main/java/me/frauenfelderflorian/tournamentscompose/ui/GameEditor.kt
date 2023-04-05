@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
@@ -214,10 +216,8 @@ fun GameEditor(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         var dateDialogOpen by remember { mutableStateOf(false) }
-
         Column(Modifier.padding(paddingValues)) {
             var selectedTab by rememberSaveable { mutableStateOf(0) }
-
             TabRow(selectedTab) {
                 Tab(
                     selected = selectedTab == 0,
@@ -237,101 +237,89 @@ fun GameEditor(
                     enter = slideInHorizontally(initialOffsetX = { width -> -width }),
                     exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp, 16.dp),
+                    Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
                     ) {
-                        item {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Icon(Icons.Default.Event, null)
-                                OutlinedButton(
-                                    onClick = { dateDialogOpen = true },
-                                    modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    Text(
-                                        text = "${stringResource(R.string.date)}: ${
-                                            formatDate(date)
-                                        }",
-                                        textAlign = TextAlign.Center,
-                                    )
-                                }
-                            }
-                        }
-                        item {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                val context = LocalContext.current
-                                OutlinedTextField(
-                                    value = hoopsString,
-                                    onValueChange = {
-                                        try {
-                                            if (it != "") it.toInt()
-                                            hoopsString = it.trim()
-                                        } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    context.resources.getString(
-                                                        R.string.invalid_number
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    },
-                                    singleLine = true,
-                                    label = { Text(stringResource(R.string.hoops)) },
-                                    supportingText = { Text(stringResource(R.string.hoops_desc)) },
-                                    leadingIcon = { Icon(Icons.Default.Flag, null) },
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Number
-                                    ),
-                                    modifier = Modifier.weight(1f),
-                                )
-                                OutlinedTextField(
-                                    value = hoopReachedString,
-                                    onValueChange = {
-                                        try {
-                                            if (it != "") it.toInt()
-                                            hoopReachedString = it.trim()
-                                        } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    context.resources.getString(
-                                                        R.string.invalid_number
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    },
-                                    singleLine = true,
-                                    label = { Text(stringResource(R.string.hoop_reached)) },
-                                    supportingText = {
-                                        Text(stringResource(R.string.hoop_reached_desc))
-                                    },
-                                    trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
-                                    keyboardOptions = KeyboardOptions(
-                                        keyboardType = KeyboardType.Number
-                                    ),
-                                    modifier = Modifier.weight(1f),
-                                )
-                            }
-                        }
-                        item {
-                            OutlinedTextField(
-                                value = difficulty,
-                                onValueChange = { if (it.length < 100) difficulty = it },
-                                singleLine = true,
-                                label = { Text(stringResource(R.string.difficulty)) },
-                                placeholder = {
-                                    Text(stringResource(R.string.difficulty_placeholder))
-                                },
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(Icons.Default.Event, null)
+                            OutlinedButton(
+                                onClick = { dateDialogOpen = true },
                                 modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = "${stringResource(R.string.date)}: ${formatDate(date)}",
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            val context = LocalContext.current
+                            OutlinedTextField(
+                                value = hoopsString,
+                                onValueChange = {
+                                    try {
+                                        if (it != "") it.toInt()
+                                        hoopsString = it.trim()
+                                    } catch (e: NumberFormatException) {
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                context.resources.getString(R.string.invalid_number)
+                                            )
+                                        }
+                                    }
+                                },
+                                singleLine = true,
+                                label = { Text(stringResource(R.string.hoops)) },
+                                supportingText = { Text(stringResource(R.string.hoops_desc)) },
+                                leadingIcon = { Icon(Icons.Default.Flag, null) },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                modifier = Modifier.weight(1f),
+                            )
+                            OutlinedTextField(
+                                value = hoopReachedString,
+                                onValueChange = {
+                                    try {
+                                        if (it != "") it.toInt()
+                                        hoopReachedString = it.trim()
+                                    } catch (e: NumberFormatException) {
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                context.resources.getString(R.string.invalid_number)
+                                            )
+                                        }
+                                    }
+                                },
+                                singleLine = true,
+                                label = { Text(stringResource(R.string.hoop_reached)) },
+                                supportingText = {
+                                    Text(stringResource(R.string.hoop_reached_desc))
+                                },
+                                trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                modifier = Modifier.weight(1f),
                             )
                         }
+                        OutlinedTextField(
+                            value = difficulty,
+                            onValueChange = { if (it.length < 100) difficulty = it },
+                            singleLine = true,
+                            label = { Text(stringResource(R.string.difficulty)) },
+                            placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
                 columnScope.AnimatedVisibility(
@@ -340,7 +328,7 @@ fun GameEditor(
                     exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                 ) {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp, 16.dp),
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {

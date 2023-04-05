@@ -75,7 +75,7 @@ fun GameViewer(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(16.dp, 16.dp),
+                .padding(16.dp),
         ) {
             Text(
                 stringResource(R.string.game_details, game.hoopReached, game.hoops, game.difficulty)
@@ -84,7 +84,7 @@ fun GameViewer(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.Start,
-                contentPadding = PaddingValues(32.dp, 32.dp),
+                contentPadding = PaddingValues(32.dp),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 item {

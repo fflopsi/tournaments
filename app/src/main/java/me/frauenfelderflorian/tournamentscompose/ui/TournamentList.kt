@@ -84,7 +84,7 @@ fun TournamentList(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp, 8.dp),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(paddingValues),
         ) {

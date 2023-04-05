@@ -108,10 +108,7 @@ fun TournamentViewer(
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-        ) {
+        Column(Modifier.padding(paddingValues)) {
             TabRow(selectedTab) {
                 Tab(
                     selected = selectedTab == 0,
@@ -132,7 +129,7 @@ fun TournamentViewer(
                     exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                 ) {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp, 16.dp),
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         if (tournament.games.isNotEmpty()) {
@@ -178,7 +175,7 @@ fun TournamentViewer(
                     exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                 ) {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp, 16.dp),
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         items(tournament.playersByPoints) {
