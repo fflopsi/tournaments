@@ -254,7 +254,7 @@ fun TournamentEditor(
                             .weight(2f)
                             .align(Alignment.CenterVertically),
                     )
-                    Switch(checked = useDefaults, onCheckedChange = { useDefaults = it })
+                    Switch(checked = useDefaults, onCheckedChange = null)
                 }
                 AnimatedVisibility(
                     visible = !useDefaults,

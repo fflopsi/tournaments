@@ -189,7 +189,7 @@ fun AppSettings(
                         text = stringResource(R.string.use_dynamic_color),
                         modifier = Modifier.weight(2f),
                     )
-                    Switch(checked = dynamicColor, onCheckedChange = { updateDynamicColor(it) })
+                    Switch(checked = dynamicColor, onCheckedChange = null)
                 }
             }
             Divider()
