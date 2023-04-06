@@ -25,9 +25,7 @@
     <string name="dark">Dark</string>
     <string name="auto">Auto</string>
     <string name="active">Active</string>
-    <string name="default_players">Default players</string>
     <string name="edit_players">Edit players</string>
-    <string name="default_point_system">Default point system</string>
     <string name="adaptive">Adaptive</string>
     <string name="classic">Classic</string>
     <string name="invalid_number">Input a valid integer</string>
@@ -73,4 +71,5 @@
     <string name="more_actions">More actions</string>
     <string name="delete_game_hint">This Game will be deleted. This action cannot be undone.</string>
     <string name="delete_tournament_hint">This Tournament and all its Games will be deleted. This action cannot be undone.</string>
+    <string name="default_tournament_settings">Default Tournament creation settings</string>
 </resources>

@@ -1,9 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
 import android.os.Build
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,16 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -39,11 +33,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,13 +51,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +70,8 @@ fun AppSettings(
     savePrefs: (List<String>, Boolean, Int) -> Unit,
 ) {
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
-    var adaptivePoints by rememberSaveable { mutableStateOf(formerAdaptivePoints) }
-    var firstPointsString by rememberSaveable { mutableStateOf(formerFirstPoints.toString()) }
+    val adaptivePoints = rememberSaveable { mutableStateOf(formerAdaptivePoints) }
+    val firstPoints: MutableState<Int?> = rememberSaveable { mutableStateOf(formerFirstPoints) }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -89,10 +80,10 @@ fun AppSettings(
             players.clear()
             newPlayers.split(";").forEach { players.add(it) }
             navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
-            if (adaptivePoints || firstPointsString == "") {
-                savePrefs(players, adaptivePoints, 10)
+            if (adaptivePoints.value || firstPoints.value == null) {
+                savePrefs(players, adaptivePoints.value, 10)
             } else {
-                savePrefs(players, false, firstPointsString.toInt())
+                savePrefs(players, false, firstPoints.value!!)
             }
         }
     }
@@ -202,134 +193,43 @@ fun AppSettings(
                 }
             }
             Divider()
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "${stringResource(R.string.default_players)}: ${
-                        players.joinToString(", ")
-                    }",
-                    modifier = Modifier
-                        .weight(2f)
-                        .align(Alignment.CenterVertically),
-                )
-                IconButton({
-                    navController.navigate(
-                        "${Routes.PLAYERS_EDITOR.route}${
-                            if (players.isNotEmpty()) {
-                                "?players=${players.joinToString(";")}"
-                            } else {
-                                ""
-                            }
-                        }"
-                    )
-                }) {
-                    Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable {
-                    adaptivePoints = !adaptivePoints
-                    if (adaptivePoints || firstPointsString == "") {
-                        savePrefs(players, adaptivePoints, 10)
+            Text(
+                text = stringResource(R.string.default_tournament_settings),
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Italic,
+            )
+            PlayersSetting(navController = navController, players = players)
+            val scope = rememberCoroutineScope()
+            val context = LocalContext.current
+            TournamentCreationSettings(
+                adaptivePoints = adaptivePoints,
+                onClickAdaptivePoints = {
+                    adaptivePoints.value = !adaptivePoints.value
+                    if (adaptivePoints.value || firstPoints.value == null) {
+                        savePrefs(players, adaptivePoints.value, 10)
                     } else {
-                        savePrefs(players, false, firstPointsString.toInt())
+                        savePrefs(players, false, firstPoints.value!!)
                     }
                 },
-            ) {
-                Column(
-                    Modifier
-                        .weight(2f)
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Text(
-                        "${stringResource(R.string.default_point_system)}: ${
-                            stringResource(
-                                if (adaptivePoints) R.string.adaptive else R.string.classic
+                firstPointsString = firstPoints,
+                onChangeFirstPoints = {
+                    try {
+                        if (it != "") it.toInt()
+                        firstPoints.value = it.toIntOrNull()
+                    } catch (e: NumberFormatException) {
+                        scope.launch {
+                            hostState.showSnackbar(
+                                context.resources.getString(R.string.invalid_number)
                             )
-                        }"
-
-                    )
-                    Text(
-                        text = stringResource(
-                            if (adaptivePoints) {
-                                R.string.point_system_adaptive
-                            } else {
-                                R.string.point_system_classic
-                            }
-                        ),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                }
-                Switch(
-                    checked = adaptivePoints,
-                    onCheckedChange = {
-                        adaptivePoints = it
-                        if (adaptivePoints || firstPointsString == "") {
-                            savePrefs(players, adaptivePoints, 10)
-                        } else {
-                            savePrefs(players, false, firstPointsString.toInt())
                         }
-                    },
-                )
-            }
-            AnimatedVisibility(
-                visible = adaptivePoints,
-                enter = expandVertically(expandFrom = Alignment.Top),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top),
-            ) {
-                Text(
-                    text = stringResource(R.string.point_system_adaptive_desc),
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light,
-                )
-            }
-            AnimatedVisibility(
-                visible = !adaptivePoints,
-                enter = expandVertically(expandFrom = Alignment.Top),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top),
-            ) {
-                Column {
-                    val scope = rememberCoroutineScope()
-                    val context = LocalContext.current
-                    TextField(
-                        value = firstPointsString,
-                        onValueChange = {
-                            try {
-                                if (it != "") it.toInt()
-                                firstPointsString = it.trim()
-                            } catch (e: NumberFormatException) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(R.string.invalid_number)
-                                    )
-                                }
-                            }
-                            if (adaptivePoints || firstPointsString == "") {
-                                savePrefs(players, adaptivePoints, 10)
-                            } else {
-                                savePrefs(players, false, firstPointsString.toInt())
-                            }
-                        },
-                        singleLine = true,
-                        label = { Text(stringResource(R.string.first_points)) },
-                        trailingIcon = { Icon(Icons.Default.Star, null) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Text(
-                        text = stringResource(R.string.point_system_classic_desc),
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                }
-            }
+                    }
+                    if (adaptivePoints.value || firstPoints.value == null) {
+                        savePrefs(players, adaptivePoints.value, 10)
+                    } else {
+                        savePrefs(players, false, firstPoints.value!!)
+                    }
+                },
+            )
         }
         InfoDialog(showDialog = showInfo)
     }

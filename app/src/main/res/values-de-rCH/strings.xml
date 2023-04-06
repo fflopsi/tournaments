@@ -24,9 +24,7 @@
     <string name="dark">Dunkel</string>
     <string name="auto">Auto</string>
     <string name="active">Aktiv</string>
-    <string name="default_players">Standardspieler</string>
     <string name="edit_players">Spieler bearbeiten</string>
-    <string name="default_point_system">Standard-Punktesystem</string>
     <string name="adaptive">Adaptiv</string>
     <string name="classic">Klassisch</string>
     <string name="invalid_number">Ganze Zahl eingeben</string>
@@ -72,4 +70,5 @@
     <string name="more_actions">Mehr Aktionen</string>
     <string name="delete_game_hint">Dieses Spiel wird gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="delete_tournament_hint">Dieses Turnier und alle seine Spiele werden gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="default_tournament_settings">Standardeinstellungen für neue Turniere</string>
 </resources>

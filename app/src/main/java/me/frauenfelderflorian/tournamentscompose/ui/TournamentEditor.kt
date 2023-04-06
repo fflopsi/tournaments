@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -29,7 +27,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -54,11 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
@@ -90,12 +83,10 @@ fun TournamentEditor(
     var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(true) }
     val players = rememberMutableStateListOf<String>()
-    var adaptivePoints by rememberSaveable {
+    val adaptivePoints = rememberSaveable {
         mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
     }
-    var firstPointsString by rememberSaveable {
-        mutableStateOf(if (current == null) "" else tournament!!.t.firstPoints.toString())
-    }
+    val firstPoints = rememberSaveable { mutableStateOf(tournament?.t?.firstPoints) }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -148,7 +139,7 @@ fun TournamentEditor(
                                     useAdaptivePoints = defaultAdaptivePoints,
                                     firstPoints = defaultFirstPoints,
                                 ).apply { this.players = defaultPlayers }
-                            } else if (adaptivePoints) {
+                            } else if (adaptivePoints.value) {
                                 t = Tournament(
                                     id = UUID.randomUUID(),
                                     name = name.trim(),
@@ -156,14 +147,14 @@ fun TournamentEditor(
                                     end = end,
                                     useAdaptivePoints = true,
                                 ).apply { this.players = players }
-                            } else if (firstPointsString.toIntOrNull() != null) {
+                            } else if (firstPoints.value != null) {
                                 t = Tournament(
                                     id = UUID.randomUUID(),
                                     name = name.trim(),
                                     start = start,
                                     end = end,
                                     useAdaptivePoints = false,
-                                    firstPoints = firstPointsString.toInt(),
+                                    firstPoints = firstPoints.value!!.toInt(),
                                 ).apply { this.players = players }
                             } else {
                                 scope.launch {
@@ -176,20 +167,20 @@ fun TournamentEditor(
                                 return@IconButton
                             }
                         } else {
-                            if (adaptivePoints) {
+                            if (adaptivePoints.value) {
                                 t = tournament!!.t.copy(
                                     name = name.trim(),
                                     start = start,
                                     end = end,
                                     useAdaptivePoints = true
                                 )
-                            } else if (firstPointsString.toIntOrNull() != null) {
+                            } else if (firstPoints.value != null) {
                                 t = tournament!!.t.copy(
                                     name = name.trim(),
                                     start = start,
                                     end = end,
                                     useAdaptivePoints = false,
-                                    firstPoints = firstPointsString.toInt()
+                                    firstPoints = firstPoints.value!!.toInt()
                                 )
                             } else {
                                 scope.launch {
@@ -270,32 +261,7 @@ fun TournamentEditor(
                     enter = expandVertically(expandFrom = Alignment.Top),
                     exit = shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "${stringResource(R.string.players)}: ${
-                                players.joinToString(", ")
-                            }",
-                            modifier = Modifier
-                                .weight(2f)
-                                .align(Alignment.CenterVertically),
-                        )
-                        IconButton({
-                            navController.navigate(
-                                "${Routes.PLAYERS_EDITOR.route}${
-                                    if (players.isNotEmpty()) {
-                                        "?players=${players.joinToString(";")}"
-                                    } else {
-                                        ""
-                                    }
-                                }"
-                            )
-                        }) {
-                            Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
-                        }
-                    }
+                    PlayersSetting(navController = navController, players = players)
                 }
             }
             AnimatedVisibility(
@@ -303,84 +269,24 @@ fun TournamentEditor(
                 enter = expandVertically(expandFrom = Alignment.Top),
                 exit = shrinkVertically(shrinkTowards = Alignment.Top),
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { adaptivePoints = !adaptivePoints },
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(2f)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Text(
-                            "${stringResource(R.string.point_system)}: ${
-                                stringResource(
-                                    if (adaptivePoints) R.string.adaptive else R.string.classic
+                val context = LocalContext.current
+                TournamentCreationSettings(
+                    adaptivePoints = adaptivePoints,
+                    onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
+                    firstPointsString = firstPoints,
+                    onChangeFirstPoints = {
+                        try {
+                            if (it != "") it.toInt()
+                            firstPoints.value = it.toIntOrNull()
+                        } catch (e: NumberFormatException) {
+                            scope.launch {
+                                hostState.showSnackbar(
+                                    context.resources.getString(R.string.invalid_number)
                                 )
-                            }"
-                        )
-                        Text(
-                            text = stringResource(
-                                if (adaptivePoints) {
-                                    R.string.point_system_adaptive
-                                } else {
-                                    R.string.point_system_classic
-                                }
-                            ),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light,
-                        )
-                    }
-                    Switch(checked = adaptivePoints, onCheckedChange = { adaptivePoints = it })
-                }
-            }
-            AnimatedVisibility(
-                visible = (current != null || !useDefaults) && adaptivePoints,
-                enter = expandVertically(expandFrom = Alignment.Top),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top),
-            ) {
-                Text(
-                    text = stringResource(R.string.point_system_adaptive_desc),
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light,
-                )
-            }
-            AnimatedVisibility(
-                visible = (current != null || !useDefaults) && !adaptivePoints,
-                enter = expandVertically(expandFrom = Alignment.Top),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top),
-            ) {
-                Column {
-                    val context = LocalContext.current
-                    OutlinedTextField(
-                        value = firstPointsString,
-                        onValueChange = {
-                            try {
-                                if (it != "") it.toInt()
-                                firstPointsString = it.trim()
-                            } catch (e: NumberFormatException) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(R.string.invalid_number)
-                                    )
-                                }
                             }
-                        },
-                        singleLine = true,
-                        label = { Text(stringResource(R.string.first_points)) },
-                        trailingIcon = { Icon(Icons.Default.Star, null) },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Text(
-                        text = stringResource(R.string.point_system_classic_desc),
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
-                    )
-                }
+                        }
+                    },
+                )
             }
         }
         if (startDialogOpen) {
