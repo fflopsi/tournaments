@@ -6,7 +6,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,7 +62,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
@@ -237,15 +235,11 @@ fun GameEditor(
                     enter = slideInHorizontally(initialOffsetX = { width -> -width }),
                     exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .verticalScroll(rememberScrollState()),
-                    ) {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(normalDp),
                             verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(normalPadding),
                         ) {
                             Icon(Icons.Default.Event, null)
                             OutlinedButton(
@@ -259,8 +253,9 @@ fun GameEditor(
                             }
                         }
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(normalDp),
                             verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(normalPadding),
                         ) {
                             val context = LocalContext.current
                             OutlinedTextField(
@@ -318,7 +313,9 @@ fun GameEditor(
                             singleLine = true,
                             label = { Text(stringResource(R.string.difficulty)) },
                             placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(normalPadding),
                         )
                     }
                 }
@@ -327,16 +324,13 @@ fun GameEditor(
                     enter = slideInHorizontally(initialOffsetX = { width -> width }),
                     exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
+                    LazyColumn(Modifier.fillMaxWidth()) {
                         items(tournament.t.players) {
                             var expanded by remember { mutableStateOf(false) }
                             ExposedDropdownMenuBox(
                                 expanded = expanded,
                                 onExpandedChange = { expanded = !expanded },
+                                modifier = Modifier.padding(normalPadding),
                             ) {
                                 OutlinedTextField(
                                     value = selectedPlayers[tournament.t.players.indexOf(it)],

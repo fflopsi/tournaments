@@ -2,7 +2,6 @@ package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -83,20 +82,18 @@ fun TournamentList(
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(paddingValues),
-        ) {
+        LazyColumn(Modifier.padding(paddingValues)) {
             if (tournaments.isNotEmpty()) {
                 items(tournaments.values.sortedByDescending { it.t.start }) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            setCurrent(it.t.id)
-                            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                        },
+                        modifier = Modifier
+                            .clickable {
+                                setCurrent(it.t.id)
+                                navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+                            }
+                            .padding(normalPadding),
                     ) {
                         Text(
                             text = stringResource(
@@ -123,6 +120,7 @@ fun TournamentList(
                         text = stringResource(R.string.add_first_tournament_hint),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.ExtraLight,
+                        modifier = Modifier.padding(normalPadding),
                     )
                 }
             }

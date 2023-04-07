@@ -71,21 +71,21 @@ fun GameViewer(
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp),
-        ) {
+        Column(Modifier.padding(paddingValues)) {
             Text(
-                stringResource(R.string.game_details, game.hoopReached, game.hoops, game.difficulty)
+                text = stringResource(
+                    R.string.game_details, game.hoopReached, game.hoops, game.difficulty
+                ),
+                modifier = Modifier.padding(normalPadding),
             )
             Divider()
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(normalDp),
                 horizontalAlignment = Alignment.Start,
                 contentPadding = PaddingValues(32.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(normalPadding),
             ) {
                 item {
                     Row(

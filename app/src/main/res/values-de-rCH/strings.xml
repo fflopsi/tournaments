@@ -29,8 +29,6 @@
     <string name="classic">Klassisch</string>
     <string name="invalid_number">Ganze Zahl eingeben</string>
     <string name="first_points">Punkte für ersten Platz</string>
-    <string name="point_system_adaptive">Empfohlenes Punktesystem. Ausschalten für klassisches System</string>
-    <string name="point_system_classic">Altes Punktesystem. Einschalten für adaptives System</string>
     <string name="point_system_adaptive_desc">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
     <string name="point_system_classic_desc">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="delete_tournament">Turnier löschen</string>

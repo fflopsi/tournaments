@@ -30,8 +30,6 @@
     <string name="classic">Classic</string>
     <string name="invalid_number">Input a valid integer</string>
     <string name="first_points">Points for first place</string>
-    <string name="point_system_adaptive">Recommended point system. Switch off for classic system</string>
-    <string name="point_system_classic">Old point system. Switch on for adaptive system</string>
     <string name="point_system_adaptive_desc">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).</string>
     <string name="point_system_classic_desc">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="delete_tournament">Delete tournament</string>

@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,7 +51,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
@@ -128,19 +126,18 @@ fun TournamentViewer(
                     enter = slideInHorizontally(initialOffsetX = { width -> -width }),
                     exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
+                    LazyColumn {
                         if (tournament.games.isNotEmpty()) {
                             items(tournament.games.sortedByDescending { it.date }) {
                                 Row(
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(normalDp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        tournament.current = it
-                                        navController.navigate(Routes.GAME_VIEWER.route)
-                                    },
+                                    modifier = Modifier
+                                        .clickable {
+                                            tournament.current = it
+                                            navController.navigate(Routes.GAME_VIEWER.route)
+                                        }
+                                        .padding(normalPadding),
                                 ) {
                                     Text(
                                         text = stringResource(
@@ -164,6 +161,7 @@ fun TournamentViewer(
                                     text = stringResource(R.string.add_first_game_hint),
                                     fontStyle = FontStyle.Italic,
                                     fontWeight = FontWeight.ExtraLight,
+                                    modifier = Modifier.padding(normalPadding),
                                 )
                             }
                         }
@@ -174,15 +172,13 @@ fun TournamentViewer(
                     enter = slideInHorizontally(initialOffsetX = { width -> width }),
                     exit = slideOutHorizontally(targetOffsetX = { width -> width }),
                 ) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
+                    LazyColumn {
                         items(tournament.playersByPoints) {
                             var menuExpanded by remember { mutableStateOf(false) }
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(normalDp),
                                 verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(normalPadding),
                             ) {
                                 Text(tournament.getPoints(it).toString())
                                 Text(

@@ -51,7 +51,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
@@ -111,17 +110,17 @@ fun AppSettings(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
             var themeSelectorExpanded by remember { mutableStateOf(false) }
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(normalDp),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { themeSelectorExpanded = true },
+                modifier = Modifier
+                    .clickable { themeSelectorExpanded = true }
+                    .padding(normalPadding),
             ) {
                 Text(
                     text = "${stringResource(R.string.choose_theme)}: ${
@@ -181,9 +180,11 @@ fun AppSettings(
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(normalDp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { updateDynamicColor(!dynamicColor) },
+                    modifier = Modifier
+                        .clickable { updateDynamicColor(!dynamicColor) }
+                        .padding(normalPadding),
                 ) {
                     Text(
                         text = stringResource(R.string.use_dynamic_color),
@@ -197,6 +198,7 @@ fun AppSettings(
                 text = stringResource(R.string.default_tournament_settings),
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(normalPadding),
             )
             PlayersSetting(navController = navController, players = players)
             val scope = rememberCoroutineScope()

@@ -1,14 +1,18 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -56,6 +60,9 @@ import java.text.DateFormat
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 
+val normalDp = 16.dp
+val normalPadding = PaddingValues(normalDp, normalDp)
+
 fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,7 +103,6 @@ fun InfoDialog(showDialog: MutableState<Boolean>) {
 fun SettingsInfoMenu(navController: NavController, showInfoDialog: MutableState<Boolean>) {
     Box {
         var expanded by remember { mutableStateOf(false) }
-
         IconButton({ expanded = true }) {
             Icon(Icons.Default.MoreVert, stringResource(R.string.more_actions))
         }
@@ -127,6 +133,7 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(normalPadding),
     ) {
         Text(
             text = "${stringResource(R.string.players)}: ${players.joinToString(", ")}",
@@ -153,74 +160,58 @@ fun TournamentCreationSettings(
     firstPointsString: MutableState<Int?>,
     onChangeFirstPoints: (String) -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable(onClick = onClickAdaptivePoints),
+            modifier = Modifier
+                .clickable(onClick = onClickAdaptivePoints)
+                .padding(normalPadding),
         ) {
-            Column(
-                Modifier
-                    .weight(2f)
-                    .align(Alignment.CenterVertically)
+            Crossfade(
+                targetState = adaptivePoints.value,
+                modifier = Modifier.weight(2f),
             ) {
                 Text(
                     "${stringResource(R.string.point_system)}: ${
-                        stringResource(
-                            if (adaptivePoints.value) R.string.adaptive else R.string.classic
-                        )
+                        stringResource(if (it) R.string.adaptive else R.string.classic)
                     }"
-
-                )
-                Text(
-                    text = stringResource(
-                        if (adaptivePoints.value) {
-                            R.string.point_system_adaptive
-                        } else {
-                            R.string.point_system_classic
-                        }
-                    ),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light,
                 )
             }
             Switch(checked = adaptivePoints.value, onCheckedChange = null)
-        }
-        AnimatedVisibility(
-            visible = adaptivePoints.value,
-            enter = expandVertically(expandFrom = Alignment.Top),
-            exit = shrinkVertically(shrinkTowards = Alignment.Top),
-        ) {
-            Text(
-                text = stringResource(R.string.point_system_adaptive_desc),
-                fontStyle = FontStyle.Italic,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Light,
-            )
         }
         AnimatedVisibility(
             visible = !adaptivePoints.value,
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
-            Column {
-                TextField(
-                    value = firstPointsString.value.toString(),
-                    onValueChange = onChangeFirstPoints,
-                    singleLine = true,
-                    label = { Text(stringResource(R.string.first_points)) },
-                    trailingIcon = { Icon(Icons.Default.Star, null) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Text(
-                    text = stringResource(R.string.point_system_classic_desc),
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Light,
-                )
-            }
+            TextField(
+                value = firstPointsString.value?.toString() ?: "",
+                onValueChange = onChangeFirstPoints,
+                singleLine = true,
+                label = { Text(stringResource(R.string.first_points)) },
+                trailingIcon = { Icon(Icons.Default.Star, null) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(normalPadding),
+            )
         }
+        Text(
+            text = stringResource(
+                if (adaptivePoints.value) {
+                    R.string.point_system_adaptive_desc
+                } else {
+                    R.string.point_system_classic_desc
+                }
+            ),
+            fontStyle = FontStyle.Italic,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier
+                .padding(normalPadding)
+                .animateContentSize()
+        )
     }
 }
 

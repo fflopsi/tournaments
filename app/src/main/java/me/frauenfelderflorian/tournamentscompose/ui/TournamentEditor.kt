@@ -51,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
@@ -210,10 +209,8 @@ fun TournamentEditor(
         var startDialogOpen by remember { mutableStateOf(false) }
         var endDialogOpen by remember { mutableStateOf(false) }
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
             TextField(
@@ -223,11 +220,14 @@ fun TournamentEditor(
                 label = { Text(stringResource(R.string.name)) },
                 placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
                 trailingIcon = { Icon(Icons.Default.Edit, null) },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(normalPadding),
             )
             Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(normalDp),
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(normalPadding),
             ) {
                 OutlinedButton(
                     onClick = { startDialogOpen = true },
@@ -244,9 +244,11 @@ fun TournamentEditor(
             }
             if (current == null) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(normalDp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { useDefaults = !useDefaults },
+                    modifier = Modifier
+                        .clickable { useDefaults = !useDefaults }
+                        .padding(normalPadding),
                 ) {
                     Text(
                         text = stringResource(R.string.use_defaults),
