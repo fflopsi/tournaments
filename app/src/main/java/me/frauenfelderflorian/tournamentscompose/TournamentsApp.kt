@@ -62,7 +62,7 @@ fun TournamentsApp() {
     val gameDao = db.gameDao()
     val model: TournamentsModel = viewModel()
     model.tournaments = tournamentDao.getTournamentsWithGames()
-        .observeAsState(emptyList()).value.associateBy { it.t.id }
+        .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
     val navController = rememberAnimatedNavController()
 
     LaunchedEffect(Unit) {
