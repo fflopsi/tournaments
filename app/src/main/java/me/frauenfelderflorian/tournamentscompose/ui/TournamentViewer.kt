@@ -4,14 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -43,7 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,11 +54,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalFoundationApi::class,
+)
 @Composable
 fun TournamentViewer(
     navController: NavController,
@@ -64,8 +71,8 @@ fun TournamentViewer(
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val pagerState = rememberPagerState()
     val showInfo = remember { mutableStateOf(false) }
-    var selectedTab by rememberSaveable { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -88,7 +95,7 @@ fun TournamentViewer(
         },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = selectedTab == 0,
+                visible = pagerState.currentPage == 0,
                 enter = scaleIn(),
                 exit = scaleOut(),
             ) {
@@ -107,26 +114,22 @@ fun TournamentViewer(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            TabRow(selectedTab) {
+            TabRow(pagerState.currentPage) {
+                val scope = rememberCoroutineScope()
                 Tab(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
+                    selected = pagerState.currentPage == 0,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
                     text = { Text(stringResource(R.string.details)) },
                 )
                 Tab(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
+                    selected = pagerState.currentPage == 1,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
                     text = { Text(stringResource(R.string.ranking)) },
                 )
             }
-            val columnScope = this
-            Box {
-                columnScope.AnimatedVisibility(
-                    visible = selectedTab == 0,
-                    enter = slideInHorizontally(initialOffsetX = { width -> -width }),
-                    exit = slideOutHorizontally(targetOffsetX = { width -> -width }),
-                ) {
-                    LazyColumn {
+            HorizontalPager(pageCount = 2, state = pagerState) { page ->
+                if (page == 0) {
+                    LazyColumn(Modifier.fillMaxSize()) {
                         if (tournament.games.isNotEmpty()) {
                             items(tournament.games.sortedByDescending { it.date }) {
                                 Row(
@@ -166,13 +169,8 @@ fun TournamentViewer(
                             }
                         }
                     }
-                }
-                columnScope.AnimatedVisibility(
-                    visible = selectedTab == 1,
-                    enter = slideInHorizontally(initialOffsetX = { width -> width }),
-                    exit = slideOutHorizontally(targetOffsetX = { width -> width }),
-                ) {
-                    LazyColumn {
+                } else {
+                    LazyColumn(Modifier.fillMaxSize()) {
                         items(tournament.playersByPoints) {
                             var menuExpanded by remember { mutableStateOf(false) }
                             Row(
