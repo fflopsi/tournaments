@@ -72,4 +72,5 @@
     <string name="adaptive_point_system">Adaptives Punktesystem</string>
     <string name="point_system_adaptive_desc">Empfohlen. Ausschalten für klassisches System</string>
     <string name="point_system_classic_desc">Altes System. Einschalten für adaptives System</string>
+    <string name="link_to_github">Link zum GitHub-Repository</string>
 </resources>

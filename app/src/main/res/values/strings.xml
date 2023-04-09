@@ -73,4 +73,7 @@
     <string name="adaptive_point_system">Adaptive point system</string>
     <string name="point_system_adaptive_desc">Recommended. Switch off for classic system</string>
     <string name="point_system_classic_desc">Old system. Switch on for adaptive system</string>
+    <string name="github_link" translatable="false">https://github.com/fflopsi/tournaments</string>
+    <string name="link_to_github">Link to GitHub repository</string>
+    <string name="github_link_tag" translatable="false">URL</string>
 </resources>

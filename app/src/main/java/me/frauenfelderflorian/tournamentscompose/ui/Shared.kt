@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -48,10 +49,14 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -97,7 +102,38 @@ fun InfoDialog(showDialog: MutableState<Boolean>) {
             title = {
                 Text("${stringResource(R.string.about)} ${stringResource(R.string.app_title)}")
             },
-            text = { Text(stringResource(R.string.built_by_info)) },
+            text = {
+                Column {
+                    Text(stringResource(R.string.built_by_info))
+                    val tag = stringResource(R.string.github_link_tag)
+                    val linkString = buildAnnotatedString {
+                        val string = stringResource(R.string.link_to_github)
+                        append(string)
+                        addStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textDecoration = TextDecoration.Underline,
+                            ),
+                            start = 0,
+                            end = string.length,
+                        )
+                        addStringAnnotation(
+                            tag = tag,
+                            annotation = stringResource(R.string.github_link),
+                            start = 0,
+                            end = string.length,
+                        )
+                    }
+                    val uriHandler = LocalUriHandler.current
+                    ClickableText(
+                        text = linkString,
+                        onClick = { pos ->
+                            linkString.getStringAnnotations(tag, pos, pos).firstOrNull()
+                                ?.let { uriHandler.openUri(it.item) }
+                        },
+                    )
+                }
+            },
             confirmButton = {
                 TextButton({ showDialog.value = false }) { Text(stringResource(R.string.ok)) }
             },
