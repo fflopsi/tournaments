@@ -142,14 +142,23 @@ fun TournamentViewer(
                                         }
                                         .padding(normalPadding),
                                 ) {
-                                    Text(
-                                        text = stringResource(
-                                            R.string.game_title, formatDate(it.date)
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(2f),
-                                    )
+                                    Column(Modifier.weight(2f)) {
+                                        Text(
+                                            text = stringResource(
+                                                R.string.game_title, formatDate(it.date)
+                                            ),
+                                            style = titleStyle,
+                                        )
+                                        Text(
+                                            text = stringResource(
+                                                R.string.game_details,
+                                                it.hoopReached,
+                                                it.hoops,
+                                                it.difficulty,
+                                            ),
+                                            style = detailsStyle,
+                                        )
+                                    }
                                     IconButton({
                                         tournament.current = it
                                         navController.navigate(Routes.GAME_EDITOR.route)
@@ -181,6 +190,7 @@ fun TournamentViewer(
                                 Text(tournament.getPoints(it).toString())
                                 Text(
                                     text = it,
+                                    style = titleStyle,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(2f),

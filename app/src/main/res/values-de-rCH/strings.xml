@@ -16,7 +16,6 @@
     <string name="add_first_tournament_hint">Tippe auf  +  in der unteren rechten Ecke, um dein erstes Turnier zu erstellen</string>
     <string name="ok">OK</string>
     <string name="built_by_info">Erstellt von Florian Frauenfelder mit Jetpack Compose</string>
-    <string name="tournament_list_title">\"%1$s\" von %2$s bis %3$s</string>
     <string name="tournament_title">Turnier \"%1$s\"</string>
     <string name="input_first_points">Punkte für ersten Platz eingeben</string>
     <string name="choose_theme">Theme auswählen</string>
@@ -25,19 +24,16 @@
     <string name="auto">Auto</string>
     <string name="active">Aktiv</string>
     <string name="edit_players">Spieler bearbeiten</string>
-    <string name="adaptive">Adaptiv</string>
-    <string name="classic">Klassisch</string>
     <string name="invalid_number">Ganze Zahl eingeben</string>
     <string name="first_points">Punkte für ersten Platz</string>
-    <string name="point_system_adaptive_desc">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
-    <string name="point_system_classic_desc">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
+    <string name="point_system_adaptive_info">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
+    <string name="point_system_classic_info">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="delete_tournament">Turnier löschen</string>
     <string name="give_meaningful_name">Gib ihm einen aussagekräftigen Namen</string>
     <string name="start_date">Startdatum</string>
     <string name="end_date">Enddatum</string>
     <string name="use_defaults">Standardeinstellungen verwenden</string>
     <string name="players">Spieler</string>
-    <string name="point_system">Punktesystem</string>
     <string name="at_least_two_players">Füge mindestens zwei Spieler hinzu</string>
     <string name="enter_number_first_points">Gültige ganze Zahl für Punkte für ersten Platz eingeben</string>
     <string name="games">Spiele</string>
@@ -69,4 +65,11 @@
     <string name="delete_game_hint">Dieses Spiel wird gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="delete_tournament_hint">Dieses Turnier und alle seine Spiele werden gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="default_tournament_settings">Standardeinstellungen für neue Turniere</string>
+    <string name="game">Spiel</string>
+    <string name="to">bis</string>
+    <string name="dynamic_color_on_desc">Ein Farbschema von deinem Hintergrundbild nutzen</string>
+    <string name="dynamic_color_off_desc">Das Farbschema der App nutzen</string>
+    <string name="adaptive_point_system">Adaptives Punktesystem</string>
+    <string name="point_system_adaptive_desc">Empfohlen. Ausschalten für klassisches System</string>
+    <string name="point_system_classic_desc">Altes System. Einschalten für adaptives System</string>
 </resources>

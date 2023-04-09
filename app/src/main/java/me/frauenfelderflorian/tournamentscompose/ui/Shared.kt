@@ -1,7 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -29,6 +28,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -54,12 +54,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import java.text.DateFormat
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 
+val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
+val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
 val normalDp = 16.dp
 val normalPadding = PaddingValues(normalDp, normalDp)
 
@@ -72,6 +73,11 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
         text = text,
         overflow = TextOverflow.Ellipsis,
         maxLines = if (scrollBehavior.state.collapsedFraction < 0.5f) 2 else 1,
+        style = if (scrollBehavior.state.collapsedFraction < 0.5f) {
+            MaterialTheme.typography.headlineLarge
+        } else {
+            MaterialTheme.typography.headlineSmall
+        },
     )
 }
 
@@ -135,12 +141,13 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(normalPadding),
     ) {
-        Text(
-            text = "${stringResource(R.string.players)}: ${players.joinToString(", ")}",
-            modifier = Modifier
-                .weight(2f)
-                .align(Alignment.CenterVertically),
-        )
+        Column(Modifier.weight(2f)) {
+            Text(
+                text = stringResource(R.string.players),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(text = players.joinToString(", "), style = MaterialTheme.typography.bodyMedium)
+        }
         IconButton({
             navController.navigate(
                 "${Routes.PLAYERS_EDITOR.route}${
@@ -154,7 +161,7 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
 }
 
 @Composable
-fun TournamentCreationSettings(
+fun PointSystemSettings(
     adaptivePoints: MutableState<Boolean>,
     onClickAdaptivePoints: () -> Unit,
     firstPointsString: MutableState<Int?>,
@@ -168,14 +175,17 @@ fun TournamentCreationSettings(
                 .clickable(onClick = onClickAdaptivePoints)
                 .padding(normalPadding),
         ) {
-            Crossfade(
-                targetState = adaptivePoints.value,
-                modifier = Modifier.weight(2f),
-            ) {
+            Column(Modifier.weight(2f)) {
+                Text(text = stringResource(R.string.adaptive_point_system), style = titleStyle)
                 Text(
-                    "${stringResource(R.string.point_system)}: ${
-                        stringResource(if (it) R.string.adaptive else R.string.classic)
-                    }"
+                    text = stringResource(
+                        if (adaptivePoints.value) {
+                            R.string.point_system_adaptive_desc
+                        } else {
+                            R.string.point_system_classic_desc
+                        }
+                    ),
+                    style = detailsStyle,
                 )
             }
             Switch(checked = adaptivePoints.value, onCheckedChange = null)
@@ -200,13 +210,12 @@ fun TournamentCreationSettings(
         Text(
             text = stringResource(
                 if (adaptivePoints.value) {
-                    R.string.point_system_adaptive_desc
+                    R.string.point_system_adaptive_info
                 } else {
-                    R.string.point_system_classic_desc
+                    R.string.point_system_classic_info
                 }
             ),
             fontStyle = FontStyle.Italic,
-            fontSize = 14.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .padding(normalPadding)

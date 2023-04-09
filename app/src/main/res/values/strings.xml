@@ -17,7 +17,6 @@
     <string name="add_first_tournament_hint">Tap  +  in the lower right corner to add your first tournament</string>
     <string name="ok">OK</string>
     <string name="built_by_info">Built by Florian Frauenfelder with Jetpack Compose</string>
-    <string name="tournament_list_title">\"%1$s\" from %2$s to %3$s</string>
     <string name="tournament_title">Tournament \"%1$s\"</string>
     <string name="input_first_points">Input points for first place</string>
     <string name="choose_theme">Choose theme</string>
@@ -26,22 +25,19 @@
     <string name="auto">Auto</string>
     <string name="active">Active</string>
     <string name="edit_players">Edit players</string>
-    <string name="adaptive">Adaptive</string>
-    <string name="classic">Classic</string>
     <string name="invalid_number">Input a valid integer</string>
     <string name="first_points">Points for first place</string>
-    <string name="point_system_adaptive_desc">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).</string>
-    <string name="point_system_classic_desc">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
+    <string name="point_system_adaptive_info">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).</string>
+    <string name="point_system_classic_info">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="delete_tournament">Delete tournament</string>
     <string name="give_meaningful_name">Give it a meaningful name</string>
     <string name="start_date">Start date</string>
     <string name="end_date">End date</string>
     <string name="use_defaults">Use default settings</string>
     <string name="players">Players</string>
-    <string name="point_system">Point system</string>
     <string name="at_least_two_players">Add at least two players</string>
     <string name="enter_number_first_points">Enter a valid integer for points for first place</string>
-    <string name="games">Games</string>
+    <string name="games">games</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="game_title">Game from %1$s</string>
     <string name="edit_game">Edit game</string>
@@ -70,4 +66,11 @@
     <string name="delete_game_hint">This Game will be deleted. This action cannot be undone.</string>
     <string name="delete_tournament_hint">This Tournament and all its Games will be deleted. This action cannot be undone.</string>
     <string name="default_tournament_settings">Default Tournament creation settings</string>
+    <string name="game">game</string>
+    <string name="to">to</string>
+    <string name="dynamic_color_on_desc">Use a color scheme from your wallpaper</string>
+    <string name="dynamic_color_off_desc">Use the application color scheme</string>
+    <string name="adaptive_point_system">Adaptive point system</string>
+    <string name="point_system_adaptive_desc">Recommended. Switch off for classic system</string>
+    <string name="point_system_classic_desc">Old system. Switch on for adaptive system</string>
 </resources>

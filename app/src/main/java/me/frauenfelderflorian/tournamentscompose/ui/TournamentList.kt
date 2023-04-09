@@ -2,9 +2,9 @@ package me.frauenfelderflorian.tournamentscompose.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -95,17 +95,19 @@ fun TournamentList(
                             }
                             .padding(normalPadding),
                     ) {
-                        Text(
-                            text = stringResource(
-                                R.string.tournament_list_title,
-                                it.t.name,
-                                formatDate(it.t.start),
-                                formatDate(it.t.end),
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(2f),
-                        )
+                        Column(Modifier.weight(2f)) {
+                            Text(text = it.t.name, style = titleStyle)
+                            Text(
+                                text = "${formatDate(it.t.start)} ${stringResource(R.string.to)} ${
+                                    formatDate(it.t.end)
+                                }, ${it.games.size} ${
+                                    stringResource(
+                                        if (it.games.size == 1) R.string.game else R.string.games
+                                    )
+                                }",
+                                style = detailsStyle,
+                            )
+                        }
                         IconButton({
                             setCurrent(it.t.id)
                             navController.navigate(Routes.TOURNAMENT_EDITOR.route)
@@ -119,7 +121,7 @@ fun TournamentList(
                     Text(
                         text = stringResource(R.string.add_first_tournament_hint),
                         fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.ExtraLight,
+                        fontWeight = FontWeight.Light,
                         modifier = Modifier.padding(normalPadding),
                     )
                 }

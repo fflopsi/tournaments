@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -50,7 +49,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
@@ -122,24 +120,21 @@ fun AppSettings(
                     .clickable { themeSelectorExpanded = true }
                     .padding(normalPadding),
             ) {
-                Text(
-                    text = "${stringResource(R.string.choose_theme)}: ${
-                        stringResource(
+                Column(Modifier.weight(2f)) {
+                    Text(text = stringResource(R.string.choose_theme), style = titleStyle)
+                    Text(
+                        text = stringResource(
                             when (theme) {
                                 1 -> R.string.light
                                 2 -> R.string.dark
                                 else -> R.string.auto
                             }
-                        )
-                    }",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(2f),
-                )
+                        ),
+                        style = detailsStyle,
+                    )
+                }
                 Box {
-                    IconButton({ themeSelectorExpanded = true }) {
-                        Icon(Icons.Default.MoreVert, null)
-                    }
+                    Icon(Icons.Default.MoreVert, null)
                     DropdownMenu(
                         expanded = themeSelectorExpanded,
                         onDismissRequest = { themeSelectorExpanded = false },
@@ -186,24 +181,32 @@ fun AppSettings(
                         .clickable { updateDynamicColor(!dynamicColor) }
                         .padding(normalPadding),
                 ) {
-                    Text(
-                        text = stringResource(R.string.use_dynamic_color),
-                        modifier = Modifier.weight(2f),
-                    )
+                    Column(Modifier.weight(2f)) {
+                        Text(text = stringResource(R.string.use_dynamic_color), style = titleStyle)
+                        Text(
+                            text = stringResource(
+                                if (dynamicColor) {
+                                    R.string.dynamic_color_on_desc
+                                } else {
+                                    R.string.dynamic_color_off_desc
+                                }
+                            ),
+                            style = detailsStyle,
+                        )
+                    }
                     Switch(checked = dynamicColor, onCheckedChange = null)
                 }
             }
             Divider()
             Text(
                 text = stringResource(R.string.default_tournament_settings),
-                fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic,
                 modifier = Modifier.padding(normalPadding),
             )
             PlayersSetting(navController = navController, players = players)
             val scope = rememberCoroutineScope()
             val context = LocalContext.current
-            TournamentCreationSettings(
+            PointSystemSettings(
                 adaptivePoints = adaptivePoints,
                 onClickAdaptivePoints = {
                     adaptivePoints.value = !adaptivePoints.value

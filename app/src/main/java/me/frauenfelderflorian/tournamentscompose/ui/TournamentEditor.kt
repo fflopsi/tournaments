@@ -272,7 +272,7 @@ fun TournamentEditor(
                 exit = shrinkVertically(shrinkTowards = Alignment.Top),
             ) {
                 val context = LocalContext.current
-                TournamentCreationSettings(
+                PointSystemSettings(
                     adaptivePoints = adaptivePoints,
                     onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
                     firstPointsString = firstPoints,
