@@ -1,7 +1,10 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,33 +16,56 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 import java.util.UUID
 import kotlin.reflect.KFunction1
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
+import me.frauenfelderflorian.tournamentscompose.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,10 +74,78 @@ fun TournamentList(
     navController: NavHostController,
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: KFunction1<UUID?, Unit>,
+    tournamentDao: TournamentDao,
+    gameDao: GameDao,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = rememberSaveable { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val exportToFile = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument(stringResource(R.string.file_mime))
+    ) { uri ->
+        try {
+            if (uri != null) {
+                context.contentResolver.openOutputStream(uri)?.use {
+                    it.write(gson.toJson(tournaments.values).toByteArray())
+                    it.close()
+                }
+            } else {
+                scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+            }
+        } catch (e: java.lang.Exception) {
+            scope.launch {
+                hostState.showSnackbar(
+                    context.getString(
+                        when (e) {
+                            is FileNotFoundException -> R.string.exception_file
+                            is IOException -> R.string.exception_io
+                            else -> R.string.exception
+                        }
+                    )
+                )
+            }
+        }
+    }
+    val importFromFile = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        try {
+            if (uri != null) {
+                context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                    gson.fromJson<Collection<TournamentWithGames>>(
+                        BufferedReader(InputStreamReader(inputStream)).readText(),
+                        object : TypeToken<Collection<TournamentWithGames>>() {}.type,
+                    ).forEach {
+                        scope.launch {
+                            withContext(Dispatchers.IO) {
+                                tournamentDao.upsert(it.t)
+                                gameDao.upsert(*it.games.toTypedArray())
+                            }
+                        }
+                    }
+                    inputStream.close()
+                }
+            } else {
+                scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+            }
+        } catch (e: java.lang.Exception) {
+            scope.launch {
+                hostState.showSnackbar(
+                    context.getString(
+                        when (e) {
+                            is FileNotFoundException -> R.string.exception_file
+                            is JsonSyntaxException -> R.string.exception_json
+                            is IOException -> R.string.exception_io
+                            else -> R.string.exception
+                        }
+                    )
+                )
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -63,6 +157,34 @@ fun TournamentList(
                     }
                     IconButton({ showInfo.value = true }) {
                         Icon(Icons.Outlined.Info, stringResource(R.string.about))
+                    }
+                    Box {
+                        var expanded by remember { mutableStateOf(false) }
+                        IconButton({ expanded = true }) {
+                            Icon(Icons.Default.MoreVert, stringResource(R.string.more_actions))
+                        }
+                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.export_tournaments_to_file)) },
+                                onClick = {
+                                    expanded = false
+                                    exportToFile.launch(
+                                        context.getString(R.string.file_name_tournaments)
+                                    )
+                                },
+                                leadingIcon = { Icon(Icons.Default.ArrowUpward, null) },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.import_from_file)) },
+                                onClick = {
+                                    expanded = false
+                                    importFromFile.launch(
+                                        arrayOf(context.getString(R.string.file_mime))
+                                    )
+                                },
+                                leadingIcon = { Icon(Icons.Default.ArrowDownward, null) },
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -79,6 +201,7 @@ fun TournamentList(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(hostState) },
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->

@@ -73,4 +73,11 @@
     <string name="point_system_adaptive_desc">Empfohlen. Ausschalten für klassisches System</string>
     <string name="point_system_classic_desc">Altes System. Einschalten für adaptives System</string>
     <string name="link_to_github">Link zum GitHub-Repository</string>
+    <string name="share">Alle Turniere teilen</string>
+    <string name="exception">Etwas ist schiefgelaufen</string>
+    <string name="exception_file">Datei nicht gefunden</string>
+    <string name="exception_io">Fehler beim Lesen/Schreiben der Datei</string>
+    <string name="exception_json">Unerwarteter Dateiinhalt</string>
+    <string name="export_tournaments_to_file">Alle Turniere in eine Datei exportieren</string>
+    <string name="import_from_file">Aus einer Datei importieren</string>
 </resources>

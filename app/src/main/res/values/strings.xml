@@ -76,4 +76,13 @@
     <string name="github_link" translatable="false">https://github.com/fflopsi/tournaments</string>
     <string name="link_to_github">Link to GitHub repository</string>
     <string name="github_link_tag" translatable="false">URL</string>
+    <string name="share">Share all tournaments</string>
+    <string name="exception">Something went wrong</string>
+    <string name="exception_file">File not found</string>
+    <string name="exception_io">Error reading/writing the file</string>
+    <string name="exception_json">Unexpected file contents</string>
+    <string name="export_tournaments_to_file">Export all Tournaments to a file</string>
+    <string name="import_from_file">Import from a file</string>
+    <string name="file_mime" translatable="false">application/json</string>
+    <string name="file_name_tournaments" translatable="false">AllTournaments.json</string>
 </resources>

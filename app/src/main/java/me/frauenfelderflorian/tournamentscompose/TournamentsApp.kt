@@ -100,6 +100,8 @@ fun TournamentsApp() {
                     navController = navController,
                     tournaments = model.tournaments,
                     setCurrent = model::current::set,
+                    tournamentDao = tournamentDao,
+                    gameDao = gameDao,
                 )
             }
             composable(

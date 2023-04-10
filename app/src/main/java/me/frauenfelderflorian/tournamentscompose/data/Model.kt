@@ -6,10 +6,9 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import com.google.gson.GsonBuilder
-import com.google.gson.ToNumberPolicy
 import com.google.gson.reflect.TypeToken
 import java.util.UUID
+import me.frauenfelderflorian.tournamentscompose.ui.gson
 
 class TournamentsModel : ViewModel() {
     var current: UUID? = null
@@ -102,14 +101,9 @@ data class Game(
      * Map of the ranking of this game. Use this to modify or read [rankingString]
      */
     var ranking: Map<String, Int>
-        get() {
-            return GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
-                .fromJson(rankingString, object : TypeToken<MutableMap<String, Int>>() {}.type)
-        }
+        get() = gson.fromJson(rankingString, object : TypeToken<MutableMap<String, Int>>() {}.type)
         set(value) {
-            rankingString =
-                GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
-                    .toJson(value)
+            rankingString = gson.toJson(value)
         }
     val absentPlayers get() = ranking.filterValues { it == 0 }.keys
     val playersByRank: List<String>
