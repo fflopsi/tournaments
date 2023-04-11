@@ -58,7 +58,6 @@ import androidx.navigation.NavHostController
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.UUID
-import kotlin.reflect.KFunction1
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
@@ -71,7 +70,7 @@ import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 fun TournamentList(
     navController: NavHostController,
     tournaments: Map<UUID, TournamentWithGames>,
-    setCurrent: KFunction1<UUID?, Unit>,
+    setCurrent: (UUID?) -> Unit,
     tournamentDao: TournamentDao,
     gameDao: GameDao,
     intent: Intent,

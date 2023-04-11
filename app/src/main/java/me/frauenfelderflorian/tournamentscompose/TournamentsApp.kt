@@ -20,6 +20,7 @@ import androidx.room.Room
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentsDatabase
@@ -90,7 +91,7 @@ fun TournamentsApp(intent: Intent) {
                 TournamentList(
                     navController = navController,
                     tournaments = model.tournaments,
-                    setCurrent = model::current::set,
+                    setCurrent = { new: UUID? -> model.current = new },
                     tournamentDao = tournamentDao,
                     gameDao = gameDao,
                     intent = intent,
