@@ -1,5 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,7 +10,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
@@ -20,7 +20,6 @@ import androidx.room.Room
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.data.TournamentsDatabase
@@ -38,7 +37,7 @@ class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent { TournamentsApp() }
+        setContent { TournamentsApp(intent) }
     }
 }
 
@@ -54,9 +53,9 @@ enum class Routes(val route: String) {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun TournamentsApp() {
+fun TournamentsApp(intent: Intent) {
     val context = LocalContext.current
-    val prefs: Prefs = viewModel(factory = PrefsFactory(context))
+    val prefs: Prefs = viewModel<Prefs>(factory = PrefsFactory(context)).apply { Initialize() }
     val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
     val tournamentDao = db.tournamentDao()
     val gameDao = db.gameDao()
@@ -64,14 +63,6 @@ fun TournamentsApp() {
     model.tournaments = tournamentDao.getTournamentsWithGames()
         .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
     val navController = rememberAnimatedNavController()
-
-    LaunchedEffect(Unit) {
-        launch { prefs.themeFlow.collect { prefs.useTheme(it) } }
-        launch { prefs.dynamicColorFlow.collect { prefs.useDynamicColor(it) } }
-        launch { prefs.playersFlow.collect { prefs.useSettings(newPlayers = it.split(";")) } }
-        launch { prefs.adaptivePointsFlow.collect { prefs.useSettings(newAdaptivePoints = it) } }
-        launch { prefs.firstPointsFlow.collect { prefs.useSettings(newFirstPoints = it) } }
-    }
 
     TournamentsTheme(
         darkTheme = when (prefs.theme) {
@@ -102,6 +93,7 @@ fun TournamentsApp() {
                     setCurrent = model::current::set,
                     tournamentDao = tournamentDao,
                     gameDao = gameDao,
+                    intent = intent,
                 )
             }
             composable(

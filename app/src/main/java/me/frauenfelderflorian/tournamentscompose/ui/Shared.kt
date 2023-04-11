@@ -1,5 +1,7 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
@@ -30,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -62,10 +65,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonSyntaxException
 import com.google.gson.ToNumberPolicy
+import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 import java.text.DateFormat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
+import me.frauenfelderflorian.tournamentscompose.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
@@ -285,5 +301,48 @@ fun rememberMutableStateMapOf(vararg elements: Pair<Int, String>): SnapshotState
         ),
     ) {
         elements.toList().map { it.first to it.second }.toMutableStateMap()
+    }
+}
+
+fun importFromUri(
+    uri: Uri?,
+    context: Context,
+    scope: CoroutineScope,
+    hostState: SnackbarHostState,
+    tournamentDao: TournamentDao,
+    gameDao: GameDao,
+) {
+    try {
+        if (uri != null) {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                gson.fromJson<Collection<TournamentWithGames>>(
+                    BufferedReader(InputStreamReader(inputStream)).readText(),
+                    object : TypeToken<Collection<TournamentWithGames>>() {}.type,
+                ).forEach {
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            tournamentDao.upsert(it.t)
+                            gameDao.upsert(*it.games.toTypedArray())
+                        }
+                    }
+                }
+                inputStream.close()
+            }
+        } else {
+            scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+        }
+    } catch (e: java.lang.Exception) {
+        scope.launch {
+            hostState.showSnackbar(
+                context.getString(
+                    when (e) {
+                        is FileNotFoundException -> R.string.exception_file
+                        is JsonSyntaxException -> R.string.exception_json
+                        is IOException -> R.string.exception_io
+                        else -> R.string.exception
+                    }
+                )
+            )
+        }
     }
 }

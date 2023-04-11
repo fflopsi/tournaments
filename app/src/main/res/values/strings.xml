@@ -85,4 +85,6 @@
     <string name="import_from_file">Import from a file</string>
     <string name="file_mime" translatable="false">application/json</string>
     <string name="file_name_tournaments" translatable="false">AllTournaments.json</string>
+    <string name="import_">Import</string>
+    <string name="import_info">Do you want to import the contents of this file into the app?</string>
 </resources>

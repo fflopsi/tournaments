@@ -2,8 +2,9 @@ package me.frauenfelderflorian.tournamentscompose.data
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -13,15 +14,16 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.frauenfelderflorian.tournamentscompose.TournamentsApp
+
+private val Context.dataStore by preferencesDataStore("settings")
 
 @SuppressLint("StaticFieldLeak")
 class Prefs(private val context: Context) : ViewModel() {
-    private val Context.dataStore by preferencesDataStore("settings")
-
     private val themeKey = intPreferencesKey("theme")
     private val dynamicColorKey = booleanPreferencesKey("dynamicColor")
     private val playersKey = stringPreferencesKey("players")
@@ -30,26 +32,37 @@ class Prefs(private val context: Context) : ViewModel() {
 
     var theme by mutableStateOf(0)
         private set
-    val themeFlow = context.dataStore.data.map { it[themeKey] ?: 0 }
     var dynamicColor by mutableStateOf(true)
         private set
-    val dynamicColorFlow = context.dataStore.data.map { it[dynamicColorKey] ?: true }
-
-    var players = mutableStateListOf<String>()
+    var players = listOf<String>()
         private set
-    val playersFlow = context.dataStore.data.map { it[playersKey] ?: "" }
     var adaptivePoints by mutableStateOf(true)
         private set
-    val adaptivePointsFlow = context.dataStore.data.map { it[adaptivePointsKey] ?: true }
     var firstPoints by mutableStateOf(10)
         private set
-    val firstPointsFlow = context.dataStore.data.map { it[firstPointsKey] ?: 10 }
+
+    private val d = context.dataStore.data
+    private val themeFlow = d.map { it[themeKey] ?: 0 }.distinctUntilChanged()
+    private val dynamicColorFlow = d.map { it[dynamicColorKey] ?: true }.distinctUntilChanged()
+    private val playersFlow = d.map { it[playersKey] ?: "" }.distinctUntilChanged()
+    private val adaptivePointsFlow = d.map { it[adaptivePointsKey] ?: true }.distinctUntilChanged()
+    private val firstPointsFlow = d.map { it[firstPointsKey] ?: 10 }.distinctUntilChanged()
 
     /**
-     * Update the theme stored in the settings to [newTheme]
-     *
-     * This will automatically also call [useTheme], if [TournamentsApp] was initialized correctly
+     * Initialize the [Prefs] values [theme], [dynamicColor], [players], [adaptivePoints] and
+     * [firstPoints] with the values stored on disk and observe them for changes
      */
+    @Composable
+    fun Initialize() {
+        theme = themeFlow.asLiveData().observeAsState(theme).value
+        dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
+        players =
+            playersFlow.asLiveData().observeAsState(players.joinToString(";")).value.split(";")
+        adaptivePoints = adaptivePointsFlow.asLiveData().observeAsState(adaptivePoints).value
+        firstPoints = firstPointsFlow.asLiveData().observeAsState(firstPoints).value
+    }
+
+    /** Update the theme stored in the settings to [newTheme] */
     fun saveTheme(newTheme: Int) = runBlocking {
         if (newTheme < 0 || newTheme > 2) {
             throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
@@ -57,39 +70,14 @@ class Prefs(private val context: Context) : ViewModel() {
         launch { context.dataStore.edit { it[themeKey] = newTheme } }
     }
 
-    /**
-     * Use [newTheme] in the app, without changing the value stored in the settings
-     */
-    fun useTheme(newTheme: Int) {
-        if (newTheme < 0 || newTheme > 2) {
-            throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
-        }
-        theme = newTheme
-    }
-
-    /**
-     * Update the dynamicColor value stored in the settings to [newDynamicColor]
-     *
-     * This will automatically also call [useDynamicColor], if [TournamentsApp] was initialized
-     * correctly
-     */
+    /** Update the dynamicColor value stored in the settings to [newDynamicColor] */
     fun saveDynamicColor(newDynamicColor: Boolean) = runBlocking {
         launch { context.dataStore.edit { it[dynamicColorKey] = newDynamicColor } }
     }
 
     /**
-     * Use [newDynamicColor] in the app, without changing the value stored in the settings
-     */
-    fun useDynamicColor(newDynamicColor: Boolean) {
-        dynamicColor = newDynamicColor
-    }
-
-    /**
      * Update the values stored in the settings to [newPlayers], [newAdaptivePoints],
      * [newFirstPoints]
-     *
-     * This will automatically also call [useSettings], if [TournamentsApp] was initialized
-     * correctly
      */
     fun saveSettings(
         newPlayers: List<String> = players,
@@ -105,20 +93,6 @@ class Prefs(private val context: Context) : ViewModel() {
         if (newFirstPoints != firstPoints) {
             launch { context.dataStore.edit { it[firstPointsKey] = newFirstPoints } }
         }
-    }
-
-    /**
-     * Use [newPlayers], [newAdaptivePoints], [newFirstPoints] in the app, without changing the
-     * value stored in the settings
-     */
-    fun useSettings(
-        newPlayers: List<String> = players,
-        newAdaptivePoints: Boolean = adaptivePoints,
-        newFirstPoints: Int = firstPoints,
-    ) {
-        if (newPlayers != players) players = mutableStateListOf(*newPlayers.toTypedArray())
-        if (newAdaptivePoints != adaptivePoints) adaptivePoints = newAdaptivePoints
-        if (newFirstPoints != firstPoints) firstPoints = newFirstPoints
     }
 }
 

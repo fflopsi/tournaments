@@ -80,4 +80,6 @@
     <string name="exception_json">Unerwarteter Dateiinhalt</string>
     <string name="export_tournaments_to_file">Alle Turniere in eine Datei exportieren</string>
     <string name="import_from_file">Aus einer Datei importieren</string>
+    <string name="import_">Importieren</string>
+    <string name="import_info">Willst du den Inhalt dieser Datei in die App importieren?</string>
 </resources>

@@ -1,5 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +35,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,17 +55,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
-import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.IOException
-import java.io.InputStreamReader
 import java.util.UUID
 import kotlin.reflect.KFunction1
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.GameDao
@@ -76,10 +74,13 @@ fun TournamentList(
     setCurrent: KFunction1<UUID?, Unit>,
     tournamentDao: TournamentDao,
     gameDao: GameDao,
+    intent: Intent,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = rememberSaveable { mutableStateOf(false) }
+    var showImport by rememberSaveable { mutableStateOf(false) }
+    var showedImport by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -111,39 +112,20 @@ fun TournamentList(
     }
     val importFromFile = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
-    ) { uri ->
-        try {
-            if (uri != null) {
-                context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                    gson.fromJson<Collection<TournamentWithGames>>(
-                        BufferedReader(InputStreamReader(inputStream)).readText(),
-                        object : TypeToken<Collection<TournamentWithGames>>() {}.type,
-                    ).forEach {
-                        scope.launch {
-                            withContext(Dispatchers.IO) {
-                                tournamentDao.upsert(it.t)
-                                gameDao.upsert(*it.games.toTypedArray())
-                            }
-                        }
-                    }
-                    inputStream.close()
-                }
-            } else {
-                scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
-            }
-        } catch (e: java.lang.Exception) {
-            scope.launch {
-                hostState.showSnackbar(
-                    context.getString(
-                        when (e) {
-                            is FileNotFoundException -> R.string.exception_file
-                            is JsonSyntaxException -> R.string.exception_json
-                            is IOException -> R.string.exception_io
-                            else -> R.string.exception
-                        }
-                    )
-                )
-            }
+    ) {
+        importFromUri(
+            uri = it,
+            context = context,
+            scope = scope,
+            hostState = hostState,
+            tournamentDao = tournamentDao,
+            gameDao = gameDao,
+        )
+    }
+
+    LaunchedEffect(Unit) {
+        if (!showedImport && intent.data != null && intent.action == Intent.ACTION_VIEW && intent.data!!.scheme == "content") {
+            showImport = true
         }
     }
 
@@ -250,6 +232,41 @@ fun TournamentList(
                 }
             }
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
+        if (showImport) {
+            AlertDialog(
+                onDismissRequest = {
+                    showImport = false
+                    showedImport = true
+                },
+                icon = { Icon(Icons.Default.ArrowDownward, null) },
+                title = { Text(stringResource(R.string.import_)) },
+                text = { Text(stringResource(R.string.import_info)) },
+                confirmButton = {
+                    TextButton({
+                        showImport = false
+                        importFromUri(
+                            uri = intent.data,
+                            context = context,
+                            scope = scope,
+                            hostState = hostState,
+                            tournamentDao = tournamentDao,
+                            gameDao = gameDao,
+                        )
+                        showedImport = true
+                    }) {
+                        Text(stringResource(R.string.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton({
+                        showImport = false
+                        showedImport = true
+                    }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                },
+            )
+        }
     }
 }
