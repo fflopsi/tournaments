@@ -372,6 +372,6 @@ fun TournamentEditor(
                 text = { Text(stringResource(R.string.delete_tournament_hint)) },
             )
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
     }
 }

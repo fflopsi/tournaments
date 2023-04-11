@@ -236,6 +236,6 @@ fun AppSettings(
                 },
             )
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
     }
 }

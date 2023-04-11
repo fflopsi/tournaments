@@ -432,6 +432,6 @@ fun GameEditor(
                 text = { Text(stringResource(R.string.delete_game_hint)) },
             )
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
     }
 }

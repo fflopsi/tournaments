@@ -124,6 +124,6 @@ fun GameViewer(
                 }
             }
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
     }
 }

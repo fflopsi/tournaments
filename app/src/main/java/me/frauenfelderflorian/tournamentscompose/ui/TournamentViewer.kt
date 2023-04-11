@@ -224,6 +224,6 @@ fun TournamentViewer(
                 }
             }
         }
-        InfoDialog(showDialog = showInfo)
+        InfoDialog(showInfo)
     }
 }
