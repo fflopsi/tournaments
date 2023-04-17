@@ -5,13 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -79,14 +75,14 @@ fun TournamentsApp(intent: Intent) {
         ) {
             composable(
                 route = Routes.TOURNAMENT_LIST.route,
-                exitTransition = {
-                    if (model.current == null) {
-                        null
-                    } else {
-                        slideOutHorizontally(targetOffsetX = { width -> -width })
-                    }
-                },
-                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+//                exitTransition = {
+//                    if (model.current == null) {
+//                        null
+//                    } else {
+//                        slideOutHorizontally(targetOffsetX = { width -> -width })
+//                    }
+//                },
+//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
             ) {
                 TournamentList(
                     navController = navController,
@@ -99,16 +95,16 @@ fun TournamentsApp(intent: Intent) {
             }
             composable(
                 route = Routes.TOURNAMENT_EDITOR.route,
-                enterTransition = {
-                    if (model.current == null) {
-                        scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
-                    } else {
-                        slideInHorizontally(initialOffsetX = { width -> width })
-                    }
-                },
-                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
+//                enterTransition = {
+//                    if (model.current == null) {
+//                        scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
+//                    } else {
+//                        slideInHorizontally(initialOffsetX = { width -> width })
+//                    }
+//                },
+//                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+//                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
             ) {
                 TournamentEditor(
                     navController = navController,
@@ -123,10 +119,10 @@ fun TournamentsApp(intent: Intent) {
             }
             composable(
                 route = Routes.TOURNAMENT_VIEWER.route,
-                enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
-                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
+//                enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
+//                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
+//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
+//                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
             ) {
                 TournamentViewer(
                     navController = navController,
