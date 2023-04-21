@@ -46,7 +46,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.5"
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
     packaging {
         resources {
@@ -59,7 +59,7 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.10.0")
 
-    val composeBom = platform("androidx.compose:compose-bom:2023.04.00")
+    val composeBom = platform("androidx.compose:compose-bom:2023.04.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
@@ -67,7 +67,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.material3:material3:1.1.0-beta02")
+    implementation("androidx.compose.material3:material3:1.1.0-rc01")
 
 //    implementation("androidx.activity:activity-compose:1.7.0")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
