@@ -1,18 +1,21 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
 import android.os.Build
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.Check
@@ -31,6 +34,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -53,7 +58,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun AppSettings(
     navController: NavController,
@@ -88,6 +93,7 @@ fun AppSettings(
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val pagerState = rememberPagerState()
     val showInfo = rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -107,134 +113,178 @@ fun AppSettings(
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            var themeSelectorExpanded by remember { mutableStateOf(false) }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(normalDp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable { themeSelectorExpanded = true }
-                    .padding(normalPadding),
-            ) {
-                Column(Modifier.weight(2f)) {
-                    Text(text = stringResource(R.string.choose_theme), style = titleStyle)
-                    Text(
-                        text = stringResource(
-                            when (theme) {
-                                1 -> R.string.light
-                                2 -> R.string.dark
-                                else -> R.string.auto
+        Column(Modifier.padding(paddingValues)) {
+            TabRow(pagerState.currentPage) {
+                val scope = rememberCoroutineScope()
+                Tab(
+                    selected = pagerState.currentPage == 0,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
+                    text = { Text(stringResource(R.string.app)) },
+                )
+                Tab(
+                    selected = pagerState.currentPage == 1,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
+                    text = { Text(stringResource(R.string.new_tournaments)) },
+                )
+            }
+            HorizontalPager(pageCount = 2, state = pagerState) { page ->
+                if (page == 0) {
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        item {
+                            var themeSelectorExpanded by remember { mutableStateOf(false) }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(normalDp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clickable { themeSelectorExpanded = true }
+                                    .padding(normalPadding),
+                            ) {
+                                Column(Modifier.weight(2f)) {
+                                    Text(
+                                        text = stringResource(R.string.choose_theme),
+                                        style = titleStyle
+                                    )
+                                    Text(
+                                        text = stringResource(
+                                            when (theme) {
+                                                1 -> R.string.light
+                                                2 -> R.string.dark
+                                                else -> R.string.auto
+                                            }
+                                        ),
+                                        style = detailsStyle,
+                                    )
+                                }
+                                Box {
+                                    Icon(Icons.Default.MoreVert, null)
+                                    DropdownMenu(
+                                        expanded = themeSelectorExpanded,
+                                        onDismissRequest = { themeSelectorExpanded = false },
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.auto)) },
+                                            onClick = { updateTheme(0) },
+                                            leadingIcon = {
+                                                Icon(
+                                                    Icons.Default.BrightnessAuto, null
+                                                )
+                                            },
+                                            trailingIcon = {
+                                                if (theme == 0) {
+                                                    Icon(
+                                                        Icons.Default.Check,
+                                                        stringResource(R.string.active)
+                                                    )
+                                                }
+                                            },
+                                        )
+                                        Divider()
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.light)) },
+                                            onClick = { updateTheme(1) },
+                                            leadingIcon = { Icon(Icons.Default.LightMode, null) },
+                                            trailingIcon = {
+                                                if (theme == 1) {
+                                                    Icon(
+                                                        Icons.Default.Check,
+                                                        stringResource(R.string.active)
+                                                    )
+                                                }
+                                            },
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.dark)) },
+                                            onClick = { updateTheme(2) },
+                                            leadingIcon = { Icon(Icons.Default.DarkMode, null) },
+                                            trailingIcon = {
+                                                if (theme == 2) {
+                                                    Icon(
+                                                        Icons.Default.Check,
+                                                        stringResource(R.string.active)
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    }
+                                }
                             }
-                        ),
-                        style = detailsStyle,
-                    )
-                }
-                Box {
-                    Icon(Icons.Default.MoreVert, null)
-                    DropdownMenu(
-                        expanded = themeSelectorExpanded,
-                        onDismissRequest = { themeSelectorExpanded = false },
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.auto)) },
-                            onClick = { updateTheme(0) },
-                            leadingIcon = { Icon(Icons.Default.BrightnessAuto, null) },
-                            trailingIcon = {
-                                if (theme == 0) {
-                                    Icon(Icons.Default.Check, stringResource(R.string.active))
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            item {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(normalDp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .clickable { updateDynamicColor(!dynamicColor) }
+                                        .padding(normalPadding),
+                                ) {
+                                    Column(Modifier.weight(2f)) {
+                                        Text(
+                                            text = stringResource(R.string.use_dynamic_color),
+                                            style = titleStyle
+                                        )
+                                        Text(
+                                            text = stringResource(
+                                                if (dynamicColor) {
+                                                    R.string.dynamic_color_on_desc
+                                                } else {
+                                                    R.string.dynamic_color_off_desc
+                                                }
+                                            ),
+                                            style = detailsStyle,
+                                        )
+                                    }
+                                    Switch(checked = dynamicColor, onCheckedChange = null)
                                 }
-                            },
-                        )
-                        Divider()
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.light)) },
-                            onClick = { updateTheme(1) },
-                            leadingIcon = { Icon(Icons.Default.LightMode, null) },
-                            trailingIcon = {
-                                if (theme == 1) {
-                                    Icon(Icons.Default.Check, stringResource(R.string.active))
-                                }
-                            },
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.dark)) },
-                            onClick = { updateTheme(2) },
-                            leadingIcon = { Icon(Icons.Default.DarkMode, null) },
-                            trailingIcon = {
-                                if (theme == 2) {
-                                    Icon(Icons.Default.Check, stringResource(R.string.active))
-                                }
-                            },
-                        )
+                            }
+                        }
                     }
-                }
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(normalDp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { updateDynamicColor(!dynamicColor) }
-                        .padding(normalPadding),
-                ) {
-                    Column(Modifier.weight(2f)) {
-                        Text(text = stringResource(R.string.use_dynamic_color), style = titleStyle)
-                        Text(
-                            text = stringResource(
-                                if (dynamicColor) {
-                                    R.string.dynamic_color_on_desc
-                                } else {
-                                    R.string.dynamic_color_off_desc
-                                }
-                            ),
-                            style = detailsStyle,
-                        )
-                    }
-                    Switch(checked = dynamicColor, onCheckedChange = null)
-                }
-            }
-            Divider()
-            Text(
-                text = stringResource(R.string.default_tournament_settings),
-                fontStyle = FontStyle.Italic,
-                modifier = Modifier.padding(normalPadding),
-            )
-            PlayersSetting(navController = navController, players = players)
-            val scope = rememberCoroutineScope()
-            val context = LocalContext.current
-            PointSystemSettings(
-                adaptivePoints = adaptivePoints,
-                onClickAdaptivePoints = {
-                    adaptivePoints.value = !adaptivePoints.value
-                    if (adaptivePoints.value || firstPoints.value == null) {
-                        savePrefs(players, adaptivePoints.value, 10)
-                    } else {
-                        savePrefs(players, false, firstPoints.value!!)
-                    }
-                },
-                firstPointsString = firstPoints,
-                onChangeFirstPoints = {
-                    try {
-                        if (it != "") it.toInt()
-                        firstPoints.value = it.toIntOrNull()
-                    } catch (e: NumberFormatException) {
-                        scope.launch {
-                            hostState.showSnackbar(
-                                context.resources.getString(R.string.invalid_number)
+                } else {
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.default_tournament_settings),
+                                fontStyle = FontStyle.Italic,
+                                modifier = Modifier.padding(normalPadding),
+                            )
+                        }
+                        item { PlayersSetting(navController = navController, players = players) }
+                        item {
+                            val scope = rememberCoroutineScope()
+                            val context = LocalContext.current
+                            PointSystemSettings(
+                                adaptivePoints = adaptivePoints,
+                                onClickAdaptivePoints = {
+                                    adaptivePoints.value = !adaptivePoints.value
+                                    if (adaptivePoints.value || firstPoints.value == null) {
+                                        savePrefs(players, adaptivePoints.value, 10)
+                                    } else {
+                                        savePrefs(players, false, firstPoints.value!!)
+                                    }
+                                },
+                                firstPoints = firstPoints,
+                                onChangeFirstPoints = {
+                                    try {
+                                        if (it != "") it.toInt()
+                                        firstPoints.value = it.toIntOrNull()
+                                    } catch (e: NumberFormatException) {
+                                        scope.launch {
+                                            hostState.showSnackbar(
+                                                context.resources.getString(R.string.invalid_number)
+                                            )
+                                        }
+                                    }
+                                    if (adaptivePoints.value || firstPoints.value == null) {
+                                        savePrefs(players, adaptivePoints.value, 10)
+                                    } else {
+                                        savePrefs(players, false, firstPoints.value!!)
+                                    }
+                                },
                             )
                         }
                     }
-                    if (adaptivePoints.value || firstPoints.value == null) {
-                        savePrefs(players, adaptivePoints.value, 10)
-                    } else {
-                        savePrefs(players, false, firstPoints.value!!)
-                    }
-                },
-            )
+                }
+            }
         }
         InfoDialog(showInfo)
     }

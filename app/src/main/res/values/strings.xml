@@ -30,7 +30,7 @@
     <string name="point_system_adaptive_info">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).</string>
     <string name="point_system_classic_info">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="delete_tournament">Delete tournament</string>
-    <string name="give_meaningful_name">Give it a meaningful name</string>
+    <string name="give_meaningful_name">Give the tournament a meaningful name</string>
     <string name="start_date">Start date</string>
     <string name="end_date">End date</string>
     <string name="use_defaults">Use default settings</string>
@@ -63,9 +63,9 @@
     <string name="game_overview">Game overview</string>
     <string name="use_dynamic_color">Use Dynamic Color</string>
     <string name="more_actions">More actions</string>
-    <string name="delete_game_hint">This Game will be deleted. This action cannot be undone.</string>
+    <string name="delete_game_hint">This game will be deleted. This action cannot be undone.</string>
     <string name="delete_tournament_hint">This Tournament and all its Games will be deleted. This action cannot be undone.</string>
-    <string name="default_tournament_settings">Default Tournament creation settings</string>
+    <string name="default_tournament_settings">Default settings for new tournaments</string>
     <string name="game">game</string>
     <string name="to">to</string>
     <string name="dynamic_color_on_desc">Use a color scheme from your wallpaper</string>
@@ -81,10 +81,14 @@
     <string name="exception_file">File not found</string>
     <string name="exception_io">Error reading/writing the file</string>
     <string name="exception_json">Unexpected file contents</string>
-    <string name="export_tournaments_to_file">Export all Tournaments to a file</string>
+    <string name="export_tournaments_to_file">Export all tournaments to a file</string>
     <string name="import_from_file">Import from a file</string>
     <string name="file_mime" translatable="false">application/json</string>
     <string name="file_name_tournaments" translatable="false">AllTournaments.json</string>
     <string name="import_">Import</string>
     <string name="import_info">Do you want to import the contents of this file into the app?</string>
+    <string name="app">App</string>
+    <string name="new_tournaments">New tournaments</string>
+    <string name="no_players">No players</string>
+    <string name="use_defaults_desc">Default settings can be changed in Settigns under \"New tournaments\"</string>
 </resources>

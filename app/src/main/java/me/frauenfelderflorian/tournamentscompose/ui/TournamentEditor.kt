@@ -80,7 +80,7 @@ fun TournamentEditor(
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
     var start by rememberSaveable { mutableStateOf(tournament?.t?.start ?: today) }
     var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
-    var useDefaults by rememberSaveable { mutableStateOf(true) }
+    var useDefaults by rememberSaveable { mutableStateOf(false) }
     val players = rememberMutableStateListOf<String>()
     val adaptivePoints = rememberSaveable {
         mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
@@ -250,12 +250,13 @@ fun TournamentEditor(
                         .clickable { useDefaults = !useDefaults }
                         .padding(normalPadding),
                 ) {
-                    Text(
-                        text = stringResource(R.string.use_defaults),
-                        modifier = Modifier
-                            .weight(2f)
-                            .align(Alignment.CenterVertically),
-                    )
+                    Column(Modifier.weight(2f)) {
+                        Text(text = stringResource(R.string.use_defaults), style = titleStyle)
+                        Text(
+                            text = stringResource(R.string.use_defaults_desc),
+                            style = detailsStyle,
+                        )
+                    }
                     Switch(checked = useDefaults, onCheckedChange = null)
                 }
                 AnimatedVisibility(
@@ -275,7 +276,7 @@ fun TournamentEditor(
                 PointSystemSettings(
                     adaptivePoints = adaptivePoints,
                     onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
-                    firstPointsString = firstPoints,
+                    firstPoints = firstPoints,
                     onChangeFirstPoints = {
                         try {
                             if (it != "") it.toInt()

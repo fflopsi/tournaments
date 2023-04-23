@@ -29,7 +29,7 @@
     <string name="point_system_adaptive_info">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
     <string name="point_system_classic_info">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="delete_tournament">Turnier löschen</string>
-    <string name="give_meaningful_name">Gib ihm einen aussagekräftigen Namen</string>
+    <string name="give_meaningful_name">Gib dem Turnier einen aussagekräftigen Namen</string>
     <string name="start_date">Startdatum</string>
     <string name="end_date">Enddatum</string>
     <string name="use_defaults">Standardeinstellungen verwenden</string>
@@ -82,4 +82,8 @@
     <string name="import_from_file">Aus einer Datei importieren</string>
     <string name="import_">Importieren</string>
     <string name="import_info">Willst du den Inhalt dieser Datei in die App importieren?</string>
+    <string name="app">App</string>
+    <string name="new_tournaments">Neue Turniere</string>
+    <string name="no_players">Keine Spieler</string>
+    <string name="use_defaults_desc">Standardeinstellungen können in den Einstellungen unter \"Neue Turniere\" angepasst werden</string>
 </resources>

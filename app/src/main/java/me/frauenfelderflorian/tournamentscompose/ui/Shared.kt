@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
@@ -32,11 +31,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -99,7 +98,7 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
         overflow = TextOverflow.Ellipsis,
         maxLines = if (scrollBehavior.state.collapsedFraction < 0.5f) 2 else 1,
         style = if (scrollBehavior.state.collapsedFraction < 0.5f) {
-            MaterialTheme.typography.headlineLarge
+            MaterialTheme.typography.headlineMedium
         } else {
             MaterialTheme.typography.headlineSmall
         },
@@ -200,9 +199,17 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
         Column(Modifier.weight(2f)) {
             Text(
                 text = stringResource(R.string.players),
-                style = MaterialTheme.typography.titleLarge,
+                style = titleStyle,
             )
-            Text(text = players.joinToString(", "), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = if (players.isNotEmpty()) {
+                    players.joinToString(", ")
+                } else {
+                    stringResource(R.string.no_players)
+                },
+                style = detailsStyle,
+                fontStyle = if (players.isNotEmpty()) FontStyle.Normal else FontStyle.Italic,
+            )
         }
         IconButton({
             navController.navigate(
@@ -220,7 +227,7 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
 fun PointSystemSettings(
     adaptivePoints: MutableState<Boolean>,
     onClickAdaptivePoints: () -> Unit,
-    firstPointsString: MutableState<Int?>,
+    firstPoints: MutableState<Int?>,
     onChangeFirstPoints: (String) -> Unit,
 ) {
     Column {
@@ -251,12 +258,12 @@ fun PointSystemSettings(
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
-            TextField(
-                value = firstPointsString.value?.toString() ?: "",
+            OutlinedTextField(
+                value = firstPoints.value?.toString() ?: "",
                 onValueChange = onChangeFirstPoints,
                 singleLine = true,
                 label = { Text(stringResource(R.string.first_points)) },
-                trailingIcon = { Icon(Icons.Default.Star, null) },
+                trailingIcon = { Icon(Icons.Default.Edit, null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
