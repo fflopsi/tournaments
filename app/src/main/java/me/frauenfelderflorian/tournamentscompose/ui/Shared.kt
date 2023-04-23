@@ -282,7 +282,21 @@ fun PointSystemSettings(
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .padding(normalPadding)
-                .animateContentSize()
+                .animateContentSize(),
+        )
+        Text(
+            text = stringResource(
+                if (adaptivePoints.value) {
+                    R.string.point_system_adaptive_expl
+                } else {
+                    R.string.point_system_classic_expl
+                }
+            ),
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier
+                .padding(normalPadding)
+                .animateContentSize(),
         )
     }
 }

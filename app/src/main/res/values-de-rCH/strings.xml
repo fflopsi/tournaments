@@ -26,7 +26,7 @@
     <string name="edit_players">Spieler bearbeiten</string>
     <string name="invalid_number">Ganze Zahl eingeben</string>
     <string name="first_points">Punkte für ersten Platz</string>
-    <string name="point_system_adaptive_info">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz (falls möglich).</string>
+    <string name="point_system_adaptive_info">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Nachher gibt es pro Platz einen Punkt weniger.</string>
     <string name="point_system_classic_info">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="delete_tournament">Turnier löschen</string>
     <string name="give_meaningful_name">Gib dem Turnier einen aussagekräftigen Namen</string>
@@ -86,4 +86,7 @@
     <string name="new_tournaments">Neue Turniere</string>
     <string name="no_players">Keine Spieler</string>
     <string name="use_defaults_desc">Standardeinstellungen können in den Einstellungen unter \"Neue Turniere\" angepasst werden</string>
+    <string name="point_system_adaptive_expl">Beispiel: 5 Spieler, erster Platz bekommt 10 Punkte, zweiter Platz bekommt 10–3=7 Punkte, dritter Platz bekommt 7–2=5 Punkte, vierter Platz bekommt 5–2=3 Punkte, fünfter Platz bekommt 3–1=2 Punkte. Abwesende Spieler würden 0 Punkte erhalten.</string>
+    <string name="point_system_classic_expl">Beispiel: 5 Spieler, erster Platz erhält 5 Punkte (kann verändert werden), zweiter Platz erhält 5–3=2 Punkte, dritter Platz erhält 2–2=0 Punkte, vierter Platz erhält 0–2=–2 Punkte, fünfter Platz erhält –2–1=–3 Punkte. Abwesende Spieler würden –3–2=-5 Punkte erhalten.</string>
+    <string name="player">Spieler</string>
 </resources>

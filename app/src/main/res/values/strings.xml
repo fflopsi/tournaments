@@ -27,7 +27,7 @@
     <string name="edit_players">Edit players</string>
     <string name="invalid_number">Input a valid integer</string>
     <string name="first_points">Points for first place</string>
-    <string name="point_system_adaptive_info">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place (if applicable).</string>
+    <string name="point_system_adaptive_info">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. After that, there is one point less for each place.</string>
     <string name="point_system_classic_info">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="delete_tournament">Delete tournament</string>
     <string name="give_meaningful_name">Give the tournament a meaningful name</string>
@@ -90,5 +90,8 @@
     <string name="app">App</string>
     <string name="new_tournaments">New tournaments</string>
     <string name="no_players">No players</string>
-    <string name="use_defaults_desc">Default settings can be changed in Settigns under \"New tournaments\"</string>
+    <string name="use_defaults_desc">Default settings can be changed in Settings under \"New tournaments\"</string>
+    <string name="point_system_adaptive_expl">Example: 5 players, first place gets 10 points, second place gets 10–3=7 points, third place gets 7–2=5 points, fourth place gets 5–2=3 points, fifth place gets 3–1=2 points. Absent players would get 0 points.</string>
+    <string name="point_system_classic_expl">Example: 5 Players, first place gets 5 points (can be adjusted), second place gets 5–3=2 points, thirs place gets 2–2=0 points, fourth place gets 0–2=–2 points, fifth place gets –2–1=–3 points. Absent players would get –3–2=-5 points.</string>
+    <string name="player">Player</string>
 </resources>
