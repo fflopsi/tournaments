@@ -72,6 +72,8 @@ fun AppSettings(
     savePrefs: (List<String>, Boolean, Int) -> Unit,
 ) {
     val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
+    // ugly, but LaunchedEffect does not seem to work
+    if (players.joinToString("").trim() == "") players.clear()
     val adaptivePoints = rememberSaveable { mutableStateOf(formerAdaptivePoints) }
     val firstPoints: MutableState<Int?> = rememberSaveable { mutableStateOf(formerFirstPoints) }
 

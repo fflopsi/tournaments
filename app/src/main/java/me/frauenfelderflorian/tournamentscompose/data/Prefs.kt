@@ -34,7 +34,7 @@ class Prefs(private val context: Context) : ViewModel() {
         private set
     var dynamicColor by mutableStateOf(true)
         private set
-    var players = listOf<String>()
+    var players by mutableStateOf(listOf<String>())
         private set
     var adaptivePoints by mutableStateOf(true)
         private set
@@ -58,6 +58,7 @@ class Prefs(private val context: Context) : ViewModel() {
         dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
         players =
             playersFlow.asLiveData().observeAsState(players.joinToString(";")).value.split(";")
+        if (players == listOf("")) players = emptyList()
         adaptivePoints = adaptivePointsFlow.asLiveData().observeAsState(adaptivePoints).value
         firstPoints = firstPointsFlow.asLiveData().observeAsState(firstPoints).value
     }

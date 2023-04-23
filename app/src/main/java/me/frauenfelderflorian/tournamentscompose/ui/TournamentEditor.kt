@@ -82,6 +82,8 @@ fun TournamentEditor(
     var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(false) }
     val players = rememberMutableStateListOf<String>()
+    // ugly, but LaunchedEffect does not seem to work
+    if (players.joinToString("").trim() == "") players.clear()
     val adaptivePoints = rememberSaveable {
         mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
     }
