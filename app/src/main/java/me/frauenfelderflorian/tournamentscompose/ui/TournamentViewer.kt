@@ -1,5 +1,7 @@
 package me.frauenfelderflorian.tournamentscompose.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
@@ -23,6 +25,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
@@ -36,6 +39,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -50,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +79,20 @@ fun TournamentViewer(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val pagerState = rememberPagerState()
     val showInfo = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val exportToFile = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument(stringResource(R.string.file_mime))
+    ) {
+        exportToUri(
+            uri = it,
+            context = context,
+            scope = scope,
+            hostState = hostState,
+            content = setOf(tournament),
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -87,6 +107,12 @@ fun TournamentViewer(
                 actions = {
                     IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
                         Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                    }
+                    IconButton({ exportToFile.launch(context.resources.getString(R.string.file_name_tournament)) }) {
+                        Icon(
+                            Icons.Default.ArrowUpward,
+                            stringResource(R.string.export_tournament_to_file)
+                        )
                     }
                     SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
                 },
@@ -110,12 +136,12 @@ fun TournamentViewer(
                 )
             }
         },
+        snackbarHost = { SnackbarHost(hostState) },
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             TabRow(pagerState.currentPage) {
-                val scope = rememberCoroutineScope()
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },

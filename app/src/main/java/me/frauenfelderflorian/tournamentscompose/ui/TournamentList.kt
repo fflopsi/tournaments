@@ -55,10 +55,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import java.io.FileNotFoundException
-import java.io.IOException
 import java.util.UUID
-import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
 import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.GameDao
@@ -85,29 +82,14 @@ fun TournamentList(
     val context = LocalContext.current
     val exportToFile = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument(stringResource(R.string.file_mime))
-    ) { uri ->
-        try {
-            if (uri != null) {
-                context.contentResolver.openOutputStream(uri)?.use {
-                    it.write(gson.toJson(tournaments.values).toByteArray())
-                    it.close()
-                }
-            } else {
-                scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
-            }
-        } catch (e: java.lang.Exception) {
-            scope.launch {
-                hostState.showSnackbar(
-                    context.getString(
-                        when (e) {
-                            is FileNotFoundException -> R.string.exception_file
-                            is IOException -> R.string.exception_io
-                            else -> R.string.exception
-                        }
-                    )
-                )
-            }
-        }
+    ) {
+        exportToUri(
+            uri = it,
+            context = context,
+            scope = scope,
+            hostState = hostState,
+            content = tournaments.values,
+        )
     }
     val importFromFile = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()

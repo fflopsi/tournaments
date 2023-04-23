@@ -325,6 +325,38 @@ fun rememberMutableStateMapOf(vararg elements: Pair<Int, String>): SnapshotState
     }
 }
 
+fun exportToUri(
+    uri: Uri?,
+    context: Context,
+    scope: CoroutineScope,
+    hostState: SnackbarHostState,
+    content: Any,
+) {
+    try {
+        if (uri != null) {
+            context.contentResolver.openOutputStream(uri)?.use {
+                it.write(gson.toJson(content, content::class.java).toByteArray())
+                it.close()
+            }
+        } else {
+            scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+        }
+    } catch (e: java.lang.Exception) {
+        scope.launch {
+            hostState.showSnackbar(
+                context.getString(
+                    when (e) {
+                        is FileNotFoundException -> R.string.exception_file
+                        is IOException -> R.string.exception_io
+                        else -> R.string.exception
+                    }
+                )
+            )
+        }
+    }
+
+}
+
 fun importFromUri(
     uri: Uri?,
     context: Context,
