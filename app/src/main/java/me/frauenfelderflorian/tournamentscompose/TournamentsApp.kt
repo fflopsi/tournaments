@@ -93,6 +93,7 @@ fun TournamentsApp(intent: Intent) {
                     defaultPlayers = prefs.players.toList(),
                     defaultAdaptivePoints = prefs.adaptivePoints,
                     defaultFirstPoints = prefs.firstPoints,
+                    experimentalFeatures = prefs.experimentalFeatures,
                 )
             }
             composable(Routes.TOURNAMENT_VIEWER.route) {
@@ -134,6 +135,8 @@ fun TournamentsApp(intent: Intent) {
                     updateTheme = prefs::saveTheme,
                     dynamicColor = prefs.dynamicColor,
                     updateDynamicColor = prefs::saveDynamicColor,
+                    experimentalFeatures = prefs.experimentalFeatures,
+                    updateExperimentalFeatures = prefs::saveExperimentalFeatures,
                     formerPlayers = prefs.players,
                     formerAdaptivePoints = prefs.adaptivePoints,
                     formerFirstPoints = prefs.firstPoints,

@@ -96,4 +96,7 @@
     <string name="player">Player</string>
     <string name="file_name_tournament" translatable="false">Tournament.json</string>
     <string name="export_tournament_to_file">Export this tournament to a file</string>
+    <string name="create_tournament">Create tournament</string>
+    <string name="experimental_features">Enable experimental features</string>
+    <string name="experimental_features_desc">Add certain features that may not completely work or look like expected, but should not break anything</string>
 </resources>

@@ -66,6 +66,8 @@ fun AppSettings(
     updateTheme: (Int) -> Unit,
     dynamicColor: Boolean,
     updateDynamicColor: (Boolean) -> Unit,
+    experimentalFeatures: Boolean,
+    updateExperimentalFeatures: (Boolean) -> Unit,
     formerPlayers: List<String>,
     formerAdaptivePoints: Boolean,
     formerFirstPoints: Int,
@@ -238,6 +240,28 @@ fun AppSettings(
                                     }
                                     Switch(checked = dynamicColor, onCheckedChange = null)
                                 }
+                            }
+                        }
+                        item { Divider() }
+                        item {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(normalDp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clickable { updateExperimentalFeatures(!experimentalFeatures) }
+                                    .padding(normalPadding),
+                            ) {
+                                Column(Modifier.weight(2f)) {
+                                    Text(
+                                        text = stringResource(R.string.experimental_features),
+                                        style = titleStyle
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.experimental_features_desc),
+                                        style = detailsStyle,
+                                    )
+                                }
+                                Switch(checked = experimentalFeatures, onCheckedChange = null)
                             }
                         }
                     }

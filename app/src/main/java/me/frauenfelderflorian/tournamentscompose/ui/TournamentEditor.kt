@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,6 +77,7 @@ fun TournamentEditor(
     defaultPlayers: List<String>,
     defaultAdaptivePoints: Boolean,
     defaultFirstPoints: Int,
+    experimentalFeatures: Boolean,
 ) {
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
@@ -109,12 +111,88 @@ fun TournamentEditor(
         }
     }
 
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
+
+    fun save() {
+        val t: Tournament
+        if (current == null) {
+            if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
+                scope.launch {
+                    hostState.showSnackbar(
+                        context.resources.getString(R.string.at_least_two_players)
+                    )
+                }
+                return
+            }
+            if (useDefaults) {
+                t = Tournament(
+                    id = UUID.randomUUID(),
+                    name = name.trim(),
+                    start = start,
+                    end = end,
+                    useAdaptivePoints = defaultAdaptivePoints,
+                    firstPoints = defaultFirstPoints,
+                ).apply { this.players = defaultPlayers }
+            } else if (adaptivePoints.value) {
+                t = Tournament(
+                    id = UUID.randomUUID(),
+                    name = name.trim(),
+                    start = start,
+                    end = end,
+                    useAdaptivePoints = true,
+                ).apply { this.players = players }
+            } else if (firstPoints.value != null) {
+                t = Tournament(
+                    id = UUID.randomUUID(),
+                    name = name.trim(),
+                    start = start,
+                    end = end,
+                    useAdaptivePoints = false,
+                    firstPoints = firstPoints.value!!.toInt(),
+                ).apply { this.players = players }
+            } else {
+                scope.launch {
+                    hostState.showSnackbar(
+                        context.resources.getString(R.string.enter_number_first_points)
+                    )
+                }
+                return
+            }
+        } else {
+            if (adaptivePoints.value) {
+                t = tournament!!.t.copy(
+                    name = name.trim(), start = start, end = end, useAdaptivePoints = true
+                )
+            } else if (firstPoints.value != null) {
+                t = tournament!!.t.copy(
+                    name = name.trim(),
+                    start = start,
+                    end = end,
+                    useAdaptivePoints = false,
+                    firstPoints = firstPoints.value!!.toInt()
+                )
+            } else {
+                scope.launch {
+                    hostState.showSnackbar(
+                        context.resources.getString(R.string.enter_number_first_points)
+                    )
+                }
+                return
+            }
+        }
+        scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
+        if (navController.previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
+            navController.popBackStack()
+        } else {
+            uuid = t.id
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -129,88 +207,7 @@ fun TournamentEditor(
                             Icon(Icons.Default.Delete, stringResource(R.string.delete_tournament))
                         }
                     }
-                    val context = LocalContext.current
-                    IconButton({
-                        val t: Tournament
-                        if (current == null) {
-                            if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(R.string.at_least_two_players)
-                                    )
-                                }
-                                return@IconButton
-                            }
-                            if (useDefaults) {
-                                t = Tournament(
-                                    id = UUID.randomUUID(),
-                                    name = name.trim(),
-                                    start = start,
-                                    end = end,
-                                    useAdaptivePoints = defaultAdaptivePoints,
-                                    firstPoints = defaultFirstPoints,
-                                ).apply { this.players = defaultPlayers }
-                            } else if (adaptivePoints.value) {
-                                t = Tournament(
-                                    id = UUID.randomUUID(),
-                                    name = name.trim(),
-                                    start = start,
-                                    end = end,
-                                    useAdaptivePoints = true,
-                                ).apply { this.players = players }
-                            } else if (firstPoints.value != null) {
-                                t = Tournament(
-                                    id = UUID.randomUUID(),
-                                    name = name.trim(),
-                                    start = start,
-                                    end = end,
-                                    useAdaptivePoints = false,
-                                    firstPoints = firstPoints.value!!.toInt(),
-                                ).apply { this.players = players }
-                            } else {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(
-                                            R.string.enter_number_first_points
-                                        )
-                                    )
-                                }
-                                return@IconButton
-                            }
-                        } else {
-                            if (adaptivePoints.value) {
-                                t = tournament!!.t.copy(
-                                    name = name.trim(),
-                                    start = start,
-                                    end = end,
-                                    useAdaptivePoints = true
-                                )
-                            } else if (firstPoints.value != null) {
-                                t = tournament!!.t.copy(
-                                    name = name.trim(),
-                                    start = start,
-                                    end = end,
-                                    useAdaptivePoints = false,
-                                    firstPoints = firstPoints.value!!.toInt()
-                                )
-                            } else {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        context.resources.getString(
-                                            R.string.enter_number_first_points
-                                        )
-                                    )
-                                }
-                                return@IconButton
-                            }
-                        }
-                        scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
-                        if (navController.previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
-                            navController.popBackStack()
-                        } else {
-                            uuid = t.id
-                        }
-                    }) {
+                    IconButton(::save) {
                         Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                     }
                     SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
@@ -224,88 +221,99 @@ fun TournamentEditor(
     ) { paddingValues ->
         var startDialogOpen by remember { mutableStateOf(false) }
         var endDialogOpen by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState()),
-        ) {
-            TextField(
-                value = name,
-                onValueChange = { if (it.length < 100) name = it },
-                singleLine = true,
-                label = { Text(stringResource(R.string.name)) },
-                placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
-                trailingIcon = { Icon(Icons.Default.Edit, null) },
+        Column(Modifier.padding(paddingValues)) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(normalPadding),
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(normalDp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(normalPadding),
+                    .weight(2f)
+                    .verticalScroll(rememberScrollState()),
             ) {
-                OutlinedButton(
-                    onClick = { startDialogOpen = true },
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
-                }
-                OutlinedButton(
-                    onClick = { endDialogOpen = true },
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
-                }
-            }
-            if (current == null) {
+                TextField(
+                    value = name,
+                    onValueChange = { if (it.length < 100) name = it },
+                    singleLine = true,
+                    label = { Text(stringResource(R.string.name)) },
+                    placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
+                    trailingIcon = { Icon(Icons.Default.Edit, null) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(normalPadding),
+                )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(normalDp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { useDefaults = !useDefaults }
-                        .padding(normalPadding),
+                    modifier = Modifier.padding(normalPadding),
                 ) {
-                    Column(Modifier.weight(2f)) {
-                        Text(text = stringResource(R.string.use_defaults), style = titleStyle)
-                        Text(
-                            text = stringResource(R.string.use_defaults_desc),
-                            style = detailsStyle,
-                        )
+                    OutlinedButton(
+                        onClick = { startDialogOpen = true },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
                     }
-                    Switch(checked = useDefaults, onCheckedChange = null)
+                    OutlinedButton(
+                        onClick = { endDialogOpen = true },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
+                    }
+                }
+                if (current == null) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(normalDp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .clickable { useDefaults = !useDefaults }
+                            .padding(normalPadding),
+                    ) {
+                        Column(Modifier.weight(2f)) {
+                            Text(text = stringResource(R.string.use_defaults), style = titleStyle)
+                            Text(
+                                text = stringResource(R.string.use_defaults_desc),
+                                style = detailsStyle,
+                            )
+                        }
+                        Switch(checked = useDefaults, onCheckedChange = null)
+                    }
+                    AnimatedVisibility(
+                        visible = !useDefaults,
+                        enter = expandVertically(expandFrom = Alignment.Top),
+                        exit = shrinkVertically(shrinkTowards = Alignment.Top),
+                    ) {
+                        PlayersSetting(navController = navController, players = players)
+                    }
                 }
                 AnimatedVisibility(
-                    visible = !useDefaults,
+                    visible = current != null || !useDefaults,
                     enter = expandVertically(expandFrom = Alignment.Top),
                     exit = shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
-                    PlayersSetting(navController = navController, players = players)
+                    PointSystemSettings(
+                        adaptivePoints = adaptivePoints,
+                        onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
+                        firstPoints = firstPoints,
+                        onChangeFirstPoints = {
+                            try {
+                                if (it != "") it.toInt()
+                                firstPoints.value = it.toIntOrNull()
+                            } catch (e: NumberFormatException) {
+                                scope.launch {
+                                    hostState.showSnackbar(
+                                        context.resources.getString(R.string.invalid_number)
+                                    )
+                                }
+                            }
+                        },
+                    )
                 }
             }
-            AnimatedVisibility(
-                visible = current != null || !useDefaults,
-                enter = expandVertically(expandFrom = Alignment.Top),
-                exit = shrinkVertically(shrinkTowards = Alignment.Top),
-            ) {
-                val context = LocalContext.current
-                PointSystemSettings(
-                    adaptivePoints = adaptivePoints,
-                    onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
-                    firstPoints = firstPoints,
-                    onChangeFirstPoints = {
-                        try {
-                            if (it != "") it.toInt()
-                            firstPoints.value = it.toIntOrNull()
-                        } catch (e: NumberFormatException) {
-                            scope.launch {
-                                hostState.showSnackbar(
-                                    context.resources.getString(R.string.invalid_number)
-                                )
-                            }
-                        }
-                    },
-                )
+            if (experimentalFeatures && current == null) {
+                Button(
+                    onClick = ::save,
+                    modifier = Modifier
+                        .padding(normalPadding)
+                        .fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.create_tournament))
+                }
             }
         }
         if (startDialogOpen) {

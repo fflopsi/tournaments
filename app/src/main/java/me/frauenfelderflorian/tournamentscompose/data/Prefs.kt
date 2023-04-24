@@ -26,6 +26,7 @@ private val Context.dataStore by preferencesDataStore("settings")
 class Prefs(private val context: Context) : ViewModel() {
     private val themeKey = intPreferencesKey("theme")
     private val dynamicColorKey = booleanPreferencesKey("dynamicColor")
+    private val experimentalFeaturesKey = booleanPreferencesKey("experimentalFeatures")
     private val playersKey = stringPreferencesKey("players")
     private val adaptivePointsKey = booleanPreferencesKey("adaptivePoints")
     private val firstPointsKey = intPreferencesKey("firstPoints")
@@ -33,6 +34,8 @@ class Prefs(private val context: Context) : ViewModel() {
     var theme by mutableStateOf(0)
         private set
     var dynamicColor by mutableStateOf(true)
+        private set
+    var experimentalFeatures by mutableStateOf(false)
         private set
     var players by mutableStateOf(listOf<String>())
         private set
@@ -44,6 +47,8 @@ class Prefs(private val context: Context) : ViewModel() {
     private val d = context.dataStore.data
     private val themeFlow = d.map { it[themeKey] ?: 0 }.distinctUntilChanged()
     private val dynamicColorFlow = d.map { it[dynamicColorKey] ?: true }.distinctUntilChanged()
+    private val experimentalFeaturesFlow =
+        d.map { it[experimentalFeaturesKey] ?: false }.distinctUntilChanged()
     private val playersFlow = d.map { it[playersKey] ?: "" }.distinctUntilChanged()
     private val adaptivePointsFlow = d.map { it[adaptivePointsKey] ?: true }.distinctUntilChanged()
     private val firstPointsFlow = d.map { it[firstPointsKey] ?: 10 }.distinctUntilChanged()
@@ -56,6 +61,8 @@ class Prefs(private val context: Context) : ViewModel() {
     fun Initialize() {
         theme = themeFlow.asLiveData().observeAsState(theme).value
         dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
+        experimentalFeatures =
+            experimentalFeaturesFlow.asLiveData().observeAsState(experimentalFeatures).value
         players =
             playersFlow.asLiveData().observeAsState(players.joinToString(";")).value.split(";")
         if (players == listOf("")) players = emptyList()
@@ -63,7 +70,7 @@ class Prefs(private val context: Context) : ViewModel() {
         firstPoints = firstPointsFlow.asLiveData().observeAsState(firstPoints).value
     }
 
-    /** Update the theme stored in the settings to [newTheme] */
+    /** Update the [theme] stored in the settings to [newTheme] */
     fun saveTheme(newTheme: Int) = runBlocking {
         if (newTheme < 0 || newTheme > 2) {
             throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
@@ -71,9 +78,14 @@ class Prefs(private val context: Context) : ViewModel() {
         launch { context.dataStore.edit { it[themeKey] = newTheme } }
     }
 
-    /** Update the dynamicColor value stored in the settings to [newDynamicColor] */
+    /** Update the [dynamicColor] value stored in the settings to [newDynamicColor] */
     fun saveDynamicColor(newDynamicColor: Boolean) = runBlocking {
         launch { context.dataStore.edit { it[dynamicColorKey] = newDynamicColor } }
+    }
+
+    /** Update the [experimentalFeatures] value stored in the settings to [newExperimentalFeatures] */
+    fun saveExperimentalFeatures(newExperimentalFeatures: Boolean) = runBlocking {
+        launch { context.dataStore.edit { it[experimentalFeaturesKey] = newExperimentalFeatures } }
     }
 
     /**
