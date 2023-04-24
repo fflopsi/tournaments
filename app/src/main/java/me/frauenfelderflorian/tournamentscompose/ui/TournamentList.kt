@@ -91,9 +91,7 @@ fun TournamentList(
             content = tournaments.values,
         )
     }
-    val importFromFile = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
-    ) {
+    val importFromFile = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
         importFromUri(
             uri = it,
             context = context,
