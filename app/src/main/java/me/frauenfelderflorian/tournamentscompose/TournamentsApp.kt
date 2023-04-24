@@ -4,18 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.room.Room
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
@@ -48,7 +47,6 @@ enum class Routes(val route: String) {
     SETTINGS_EDITOR("se"),
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TournamentsApp(intent: Intent) {
     val context = LocalContext.current
@@ -59,7 +57,7 @@ fun TournamentsApp(intent: Intent) {
     val model: TournamentsModel = viewModel()
     model.tournaments = tournamentDao.getTournamentsWithGames()
         .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
-    val navController = rememberAnimatedNavController()
+    val navController = rememberNavController()
 
     TournamentsTheme(
         darkTheme = when (prefs.theme) {
@@ -69,21 +67,11 @@ fun TournamentsApp(intent: Intent) {
         },
         dynamicColor = prefs.dynamicColor,
     ) {
-        AnimatedNavHost(
+        NavHost(
             navController = navController,
             startDestination = Routes.TOURNAMENT_LIST.route,
         ) {
-            composable(
-                route = Routes.TOURNAMENT_LIST.route,
-//                exitTransition = {
-//                    if (model.current == null) {
-//                        null
-//                    } else {
-//                        slideOutHorizontally(targetOffsetX = { width -> -width })
-//                    }
-//                },
-//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-            ) {
+            composable(Routes.TOURNAMENT_LIST.route) {
                 TournamentList(
                     navController = navController,
                     tournaments = model.tournaments,
@@ -93,23 +81,13 @@ fun TournamentsApp(intent: Intent) {
                     intent = intent,
                 )
             }
-            composable(
-                route = Routes.TOURNAMENT_EDITOR.route,
-//                enterTransition = {
-//                    if (model.current == null) {
-//                        scaleIn(transformOrigin = TransformOrigin(0.9f, 0.95f))
-//                    } else {
-//                        slideInHorizontally(initialOffsetX = { width -> width })
-//                    }
-//                },
-//                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-//                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
-            ) {
+            composable(Routes.TOURNAMENT_EDITOR.route) {
                 TournamentEditor(
                     navController = navController,
                     tournament = model.tournaments[model.current],
                     current = model.current,
+                    setCurrent = { new: UUID? -> model.current = new },
+                    tournaments = model.tournaments,
                     dao = tournamentDao,
                     gameDao = gameDao,
                     defaultPlayers = prefs.players.toList(),
@@ -117,13 +95,7 @@ fun TournamentsApp(intent: Intent) {
                     defaultFirstPoints = prefs.firstPoints,
                 )
             }
-            composable(
-                route = Routes.TOURNAMENT_VIEWER.route,
-//                enterTransition = { slideInHorizontally(initialOffsetX = { width -> width }) },
-//                exitTransition = { slideOutHorizontally(targetOffsetX = { width -> -width }) },
-//                popEnterTransition = { slideInHorizontally(initialOffsetX = { width -> -width }) },
-//                popExitTransition = { slideOutHorizontally(targetOffsetX = { width -> width }) },
-            ) {
+            composable(Routes.TOURNAMENT_VIEWER.route) {
                 TournamentViewer(
                     navController = navController,
                     tournament = model.tournaments[model.current]!!,

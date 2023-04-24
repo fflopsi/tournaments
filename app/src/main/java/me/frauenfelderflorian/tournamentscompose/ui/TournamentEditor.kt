@@ -69,6 +69,8 @@ fun TournamentEditor(
     navController: NavController,
     tournament: TournamentWithGames?,
     current: UUID?,
+    setCurrent: (UUID) -> Unit,
+    tournaments: Map<UUID, TournamentWithGames>,
     dao: TournamentDao,
     gameDao: GameDao,
     defaultPlayers: List<String>,
@@ -84,10 +86,10 @@ fun TournamentEditor(
     val players = rememberMutableStateListOf<String>()
     // ugly, but LaunchedEffect does not seem to work
     if (players.joinToString("").trim() == "") players.clear()
-    val adaptivePoints = rememberSaveable {
-        mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
-    }
+    val adaptivePoints =
+        rememberSaveable { mutableStateOf(tournament?.t?.useAdaptivePoints ?: true) }
     val firstPoints = rememberSaveable { mutableStateOf(tournament?.t?.firstPoints) }
+    var uuid: UUID? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
         val newPlayers =
@@ -96,6 +98,14 @@ fun TournamentEditor(
             players.clear()
             newPlayers.split(";").forEach { players.add(it) }
             navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
+        }
+    }
+
+    LaunchedEffect(tournaments[uuid]) {
+        if (tournaments[uuid] != null) {
+            setCurrent(uuid!!)
+            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+            navController.backQueue.remove(navController.previousBackStackEntry)
         }
     }
 
@@ -195,7 +205,11 @@ fun TournamentEditor(
                             }
                         }
                         scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
-                        navController.popBackStack()
+                        if (navController.previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
+                            navController.popBackStack()
+                        } else {
+                            uuid = t.id
+                        }
                     }) {
                         Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                     }
