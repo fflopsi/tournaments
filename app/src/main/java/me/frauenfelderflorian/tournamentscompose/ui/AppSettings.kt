@@ -74,14 +74,14 @@ fun AppSettings(
     val showInfo = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<String>(
+        val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<Array<String>>(
             context.getString(R.string.saved_state_players_key)
         )
         if (newPlayers != null) {
-            navController.currentBackStackEntry?.savedStateHandle?.remove<String>(
+            navController.currentBackStackEntry?.savedStateHandle?.remove<Array<String>>(
                 context.getString(R.string.saved_state_players_key)
             )
-            prefs.players = if (newPlayers.trim() == "") emptyList() else newPlayers.split(";")
+            prefs.players = newPlayers.toList()
         }
     }
 
