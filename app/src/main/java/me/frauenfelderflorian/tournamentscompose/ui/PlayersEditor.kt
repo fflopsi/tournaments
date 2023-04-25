@@ -63,6 +63,7 @@ fun PlayersEditor(
         players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
     }
 
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
@@ -74,13 +75,12 @@ fun PlayersEditor(
                 title = { TopAppBarTitle(stringResource(R.string.edit_players), scrollBehavior) },
                 navigationIcon = { BackButton(navController) },
                 actions = {
-                    val context = LocalContext.current
                     IconButton({
                         for (player1 in players) {
                             if (player1.value.isBlank()) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(R.string.no_nameless_players)
+                                        context.getString(R.string.no_nameless_players)
                                     )
                                 }
                                 return@IconButton
@@ -89,7 +89,7 @@ fun PlayersEditor(
                                 if (player1.key != player2.key && player1.value.trim() == player2.value.trim()) {
                                     scope.launch {
                                         hostState.showSnackbar(
-                                            context.resources.getString(
+                                            context.getString(
                                                 R.string.no_same_name_players, player1.value
                                             )
                                         )
@@ -99,7 +99,8 @@ fun PlayersEditor(
                             }
                         }
                         navController.previousBackStackEntry?.savedStateHandle?.set(
-                            "players", players.values.joinToString(";")
+                            context.getString(R.string.saved_state_players_key),
+                            players.values.joinToString(";"),
                         )
                         navController.popBackStack()
                     }) {
@@ -129,14 +130,13 @@ fun PlayersEditor(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(normalPadding),
                 ) {
-                    val context = LocalContext.current
                     OutlinedTextField(
                         value = it.second,
                         onValueChange = { value ->
                             if (value.contains(";")) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(R.string.invalid_name)
+                                        context.getString(R.string.invalid_name)
                                     )
                                 }
                             } else if (value.length < 100) {

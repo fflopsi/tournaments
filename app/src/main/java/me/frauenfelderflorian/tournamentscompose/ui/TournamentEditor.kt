@@ -86,20 +86,30 @@ fun TournamentEditor(
     var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(false) }
     val players = rememberMutableStateListOf<String>()
-    // ugly, but LaunchedEffect does not seem to work
-    if (players.joinToString("").trim() == "") players.clear()
-    val adaptivePoints =
-        rememberSaveable { mutableStateOf(tournament?.t?.useAdaptivePoints ?: true) }
-    val firstPoints = rememberSaveable { mutableStateOf(tournament?.t?.firstPoints) }
+    var adaptivePoints by rememberSaveable {
+        mutableStateOf(tournament?.t?.useAdaptivePoints ?: true)
+    }
+    var firstPoints by rememberSaveable { mutableStateOf(tournament?.t?.firstPoints) }
     var uuid: UUID? by remember { mutableStateOf(null) }
 
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val hostState = remember { SnackbarHostState() }
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val showInfo = remember { mutableStateOf(false) }
+    var deleteDialogOpen by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        val newPlayers =
-            navController.currentBackStackEntry?.savedStateHandle?.get<String>("players")
+        val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<String>(
+            context.getString(R.string.saved_state_players_key)
+        )
         if (newPlayers != null) {
             players.clear()
-            newPlayers.split(";").forEach { players.add(it) }
-            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
+            if (newPlayers.trim() != "") newPlayers.split(";").forEach { players.add(it) }
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>(
+                context.getString(R.string.saved_state_players_key)
+            )
         }
     }
 
@@ -110,14 +120,6 @@ fun TournamentEditor(
             navController.backQueue.remove(navController.previousBackStackEntry)
         }
     }
-
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val hostState = remember { SnackbarHostState() }
-    val scrollBehavior =
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val showInfo = remember { mutableStateOf(false) }
-    var deleteDialogOpen by remember { mutableStateOf(false) }
 
     fun save() {
         val t: Tournament
@@ -139,7 +141,7 @@ fun TournamentEditor(
                     useAdaptivePoints = defaultAdaptivePoints,
                     firstPoints = defaultFirstPoints,
                 ).apply { this.players = defaultPlayers }
-            } else if (adaptivePoints.value) {
+            } else if (adaptivePoints) {
                 t = Tournament(
                     id = UUID.randomUUID(),
                     name = name.trim(),
@@ -147,14 +149,14 @@ fun TournamentEditor(
                     end = end,
                     useAdaptivePoints = true,
                 ).apply { this.players = players }
-            } else if (firstPoints.value != null) {
+            } else if (firstPoints != null) {
                 t = Tournament(
                     id = UUID.randomUUID(),
                     name = name.trim(),
                     start = start,
                     end = end,
                     useAdaptivePoints = false,
-                    firstPoints = firstPoints.value!!.toInt(),
+                    firstPoints = firstPoints!!.toInt(),
                 ).apply { this.players = players }
             } else {
                 scope.launch {
@@ -165,17 +167,17 @@ fun TournamentEditor(
                 return
             }
         } else {
-            if (adaptivePoints.value) {
+            if (adaptivePoints) {
                 t = tournament!!.t.copy(
                     name = name.trim(), start = start, end = end, useAdaptivePoints = true
                 )
-            } else if (firstPoints.value != null) {
+            } else if (firstPoints != null) {
                 t = tournament!!.t.copy(
                     name = name.trim(),
                     start = start,
                     end = end,
                     useAdaptivePoints = false,
-                    firstPoints = firstPoints.value!!.toInt()
+                    firstPoints = firstPoints!!.toInt()
                 )
             } else {
                 scope.launch {
@@ -288,12 +290,12 @@ fun TournamentEditor(
                 ) {
                     PointSystemSettings(
                         adaptivePoints = adaptivePoints,
-                        onClickAdaptivePoints = { adaptivePoints.value = !adaptivePoints.value },
+                        onClickAdaptivePoints = { adaptivePoints = !adaptivePoints },
                         firstPoints = firstPoints,
                         onChangeFirstPoints = {
                             try {
                                 if (it != "") it.toInt()
-                                firstPoints.value = it.toIntOrNull()
+                                firstPoints = it.toIntOrNull()
                             } catch (e: NumberFormatException) {
                                 scope.launch {
                                     hostState.showSnackbar(

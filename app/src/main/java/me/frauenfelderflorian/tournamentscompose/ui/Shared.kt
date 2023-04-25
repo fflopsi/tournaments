@@ -107,7 +107,7 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
 
 @Composable
 fun BackButton(navController: NavController) {
-    IconButton({ navController.popBackStack() }) {
+    IconButton({ navController.navigateUp() }) {
         Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
     }
 }
@@ -194,7 +194,15 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(normalPadding),
+        modifier = Modifier
+            .clickable {
+                navController.navigate(
+                    "${Routes.PLAYERS_EDITOR.route}${
+                        if (players.isNotEmpty()) "?players=${players.joinToString(";")}" else ""
+                    }"
+                )
+            }
+            .padding(normalPadding),
     ) {
         Column(Modifier.weight(2f)) {
             Text(
@@ -211,23 +219,15 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
                 fontStyle = if (players.isNotEmpty()) FontStyle.Normal else FontStyle.Italic,
             )
         }
-        IconButton({
-            navController.navigate(
-                "${Routes.PLAYERS_EDITOR.route}${
-                    if (players.isNotEmpty()) "?players=${players.joinToString(";")}" else ""
-                }"
-            )
-        }) {
-            Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
-        }
+        Icon(Icons.Default.Edit, stringResource(R.string.edit_players))
     }
 }
 
 @Composable
 fun PointSystemSettings(
-    adaptivePoints: MutableState<Boolean>,
+    adaptivePoints: Boolean,
     onClickAdaptivePoints: () -> Unit,
-    firstPoints: MutableState<Int?>,
+    firstPoints: Int?,
     onChangeFirstPoints: (String) -> Unit,
 ) {
     Column {
@@ -242,7 +242,7 @@ fun PointSystemSettings(
                 Text(text = stringResource(R.string.adaptive_point_system), style = titleStyle)
                 Text(
                     text = stringResource(
-                        if (adaptivePoints.value) {
+                        if (adaptivePoints) {
                             R.string.point_system_adaptive_desc
                         } else {
                             R.string.point_system_classic_desc
@@ -251,15 +251,15 @@ fun PointSystemSettings(
                     style = detailsStyle,
                 )
             }
-            Switch(checked = adaptivePoints.value, onCheckedChange = null)
+            Switch(checked = adaptivePoints, onCheckedChange = null)
         }
         AnimatedVisibility(
-            visible = !adaptivePoints.value,
+            visible = !adaptivePoints,
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top),
         ) {
             OutlinedTextField(
-                value = firstPoints.value?.toString() ?: "",
+                value = firstPoints?.toString() ?: "",
                 onValueChange = onChangeFirstPoints,
                 singleLine = true,
                 label = { Text(stringResource(R.string.first_points)) },
@@ -272,7 +272,7 @@ fun PointSystemSettings(
         }
         Text(
             text = stringResource(
-                if (adaptivePoints.value) {
+                if (adaptivePoints) {
                     R.string.point_system_adaptive_info
                 } else {
                     R.string.point_system_classic_info
@@ -286,7 +286,7 @@ fun PointSystemSettings(
         )
         Text(
             text = stringResource(
-                if (adaptivePoints.value) {
+                if (adaptivePoints) {
                     R.string.point_system_adaptive_expl
                 } else {
                     R.string.point_system_classic_expl
