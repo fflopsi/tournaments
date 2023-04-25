@@ -99,5 +99,5 @@
     <string name="create_tournament">Create tournament</string>
     <string name="experimental_features">Enable experimental features</string>
     <string name="experimental_features_desc">Add certain features that may not completely work or look like expected, but should not break anything</string>
-    <string name="saved_state_players_key" translatable="false">players</string>
+    <string name="players_key" translatable="false">players</string>
 </resources>

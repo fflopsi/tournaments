@@ -102,13 +102,13 @@ fun TournamentEditor(
 
     LaunchedEffect(Unit) {
         val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<Array<String>>(
-            context.getString(R.string.saved_state_players_key)
+            context.getString(R.string.players_key)
         )
         if (newPlayers != null) {
             players.clear()
             newPlayers.forEach { players.add(it) }
             navController.currentBackStackEntry?.savedStateHandle?.remove<Array<String>>(
-                context.getString(R.string.saved_state_players_key)
+                context.getString(R.string.players_key)
             )
         }
     }

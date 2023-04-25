@@ -75,11 +75,11 @@ fun AppSettings(
 
     LaunchedEffect(Unit) {
         val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<Array<String>>(
-            context.getString(R.string.saved_state_players_key)
+            context.getString(R.string.players_key)
         )
         if (newPlayers != null) {
             navController.currentBackStackEntry?.savedStateHandle?.remove<Array<String>>(
-                context.getString(R.string.saved_state_players_key)
+                context.getString(R.string.players_key)
             )
             prefs.players = newPlayers.toList()
         }

@@ -51,6 +51,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -191,6 +192,7 @@ fun SettingsInfoMenu(navController: NavController, showInfoDialog: MutableState<
 
 @Composable
 fun PlayersSetting(navController: NavController, players: List<String>) {
+    val context = LocalContext.current
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -198,7 +200,13 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
             .clickable {
                 navController.navigate(
                     "${Routes.PLAYERS_EDITOR.route}${
-                        if (players.isNotEmpty()) "?players=${players.joinToString(";")}" else ""
+                        if (players.isNotEmpty()) {
+                            "?${context.getString(R.string.players_key)}=${
+                                players.joinToString(";")
+                            }"
+                        } else {
+                            ""
+                        }
                     }"
                 )
             }

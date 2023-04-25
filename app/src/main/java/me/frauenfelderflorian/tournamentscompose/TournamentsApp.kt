@@ -116,8 +116,10 @@ fun TournamentsApp(intent: Intent) {
                 )
             }
             composable(
-                route = "${Routes.PLAYERS_EDITOR.route}?players={players}",
-                arguments = listOf(navArgument("players") {
+                route = "${Routes.PLAYERS_EDITOR.route}?${
+                    context.getString(R.string.players_key)
+                }={${context.getString(R.string.players_key)}}",
+                arguments = listOf(navArgument(context.getString(R.string.players_key)) {
                     defaultValue = "${context.resources.getString(R.string.player)} 1;${
                         context.resources.getString(R.string.player)
                     } 2"
@@ -125,7 +127,9 @@ fun TournamentsApp(intent: Intent) {
             ) {
                 PlayersEditor(
                     navController = navController,
-                    formerPlayers = it.arguments?.getString("players"),
+                    formerPlayers = it.arguments?.getString(
+                        context.getString(R.string.players_key)
+                    ),
                 )
             }
             composable(Routes.SETTINGS_EDITOR.route) {

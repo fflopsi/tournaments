@@ -99,8 +99,7 @@ fun PlayersEditor(
                             }
                         }
                         navController.previousBackStackEntry?.savedStateHandle?.set(
-                            context.getString(R.string.saved_state_players_key),
-                            players.values.toTypedArray(),
+                            context.getString(R.string.players_key), players.values.toTypedArray()
                         )
                         navController.popBackStack()
                     }) {
