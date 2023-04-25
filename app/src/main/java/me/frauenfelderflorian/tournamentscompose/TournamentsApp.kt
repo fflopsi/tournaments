@@ -90,7 +90,7 @@ fun TournamentsApp(intent: Intent) {
                     tournaments = model.tournaments,
                     dao = tournamentDao,
                     gameDao = gameDao,
-                    defaultPlayers = prefs.players.toList(),
+                    defaultPlayers = prefs.players,
                     defaultAdaptivePoints = prefs.adaptivePoints,
                     defaultFirstPoints = prefs.firstPoints,
                     experimentalFeatures = prefs.experimentalFeatures,
@@ -131,16 +131,7 @@ fun TournamentsApp(intent: Intent) {
             composable(Routes.SETTINGS_EDITOR.route) {
                 AppSettings(
                     navController = navController,
-                    theme = prefs.theme,
-                    updateTheme = prefs::saveTheme,
-                    dynamicColor = prefs.dynamicColor,
-                    updateDynamicColor = prefs::saveDynamicColor,
-                    experimentalFeatures = prefs.experimentalFeatures,
-                    updateExperimentalFeatures = prefs::saveExperimentalFeatures,
-                    formerPlayers = prefs.players,
-                    formerAdaptivePoints = prefs.adaptivePoints,
-                    formerFirstPoints = prefs.firstPoints,
-                    savePrefs = prefs::saveSettings,
+                    prefs = prefs,
                 )
             }
         }

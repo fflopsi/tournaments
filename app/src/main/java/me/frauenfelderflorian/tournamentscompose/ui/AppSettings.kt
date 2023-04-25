@@ -41,7 +41,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,48 +56,34 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.R
+import me.frauenfelderflorian.tournamentscompose.data.Prefs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun AppSettings(
     navController: NavController,
-    theme: Int,
-    updateTheme: (Int) -> Unit,
-    dynamicColor: Boolean,
-    updateDynamicColor: (Boolean) -> Unit,
-    experimentalFeatures: Boolean,
-    updateExperimentalFeatures: (Boolean) -> Unit,
-    formerPlayers: List<String>,
-    formerAdaptivePoints: Boolean,
-    formerFirstPoints: Int,
-    savePrefs: (List<String>, Boolean, Int) -> Unit,
+    prefs: Prefs,
 ) {
-    val players = rememberMutableStateListOf(*formerPlayers.toTypedArray())
-    // ugly, but LaunchedEffect does not seem to work
-    if (players.joinToString("").trim() == "") players.clear()
-    val adaptivePoints = rememberSaveable { mutableStateOf(formerAdaptivePoints) }
-    val firstPoints: MutableState<Int?> = rememberSaveable { mutableStateOf(formerFirstPoints) }
+    var firstPoints: Int? by rememberSaveable { mutableStateOf(prefs.firstPoints) }
 
-    LaunchedEffect(Unit) {
-        val newPlayers =
-            navController.currentBackStackEntry?.savedStateHandle?.get<String>("players")
-        if (newPlayers != null) {
-            players.clear()
-            newPlayers.split(";").forEach { players.add(it) }
-            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("players")
-            if (adaptivePoints.value || firstPoints.value == null) {
-                savePrefs(players, adaptivePoints.value, 10)
-            } else {
-                savePrefs(players, false, firstPoints.value!!)
-            }
-        }
-    }
-
+    val context = LocalContext.current
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val pagerState = rememberPagerState()
     val showInfo = rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<String>(
+            context.getString(R.string.saved_state_players_key)
+        )
+        if (newPlayers != null) {
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>(
+                context.getString(R.string.saved_state_players_key)
+            )
+            prefs.players = if (newPlayers.trim() == "") emptyList() else newPlayers.split(";")
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -150,7 +135,7 @@ fun AppSettings(
                                     )
                                     Text(
                                         text = stringResource(
-                                            when (theme) {
+                                            when (prefs.theme) {
                                                 1 -> R.string.light
                                                 2 -> R.string.dark
                                                 else -> R.string.auto
@@ -167,14 +152,14 @@ fun AppSettings(
                                     ) {
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.auto)) },
-                                            onClick = { updateTheme(0) },
+                                            onClick = { prefs.theme = 0 },
                                             leadingIcon = {
                                                 Icon(
                                                     Icons.Default.BrightnessAuto, null
                                                 )
                                             },
                                             trailingIcon = {
-                                                if (theme == 0) {
+                                                if (prefs.theme == 0) {
                                                     Icon(
                                                         Icons.Default.Check,
                                                         stringResource(R.string.active)
@@ -185,10 +170,10 @@ fun AppSettings(
                                         Divider()
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.light)) },
-                                            onClick = { updateTheme(1) },
+                                            onClick = { prefs.theme = 1 },
                                             leadingIcon = { Icon(Icons.Default.LightMode, null) },
                                             trailingIcon = {
-                                                if (theme == 1) {
+                                                if (prefs.theme == 1) {
                                                     Icon(
                                                         Icons.Default.Check,
                                                         stringResource(R.string.active)
@@ -198,10 +183,10 @@ fun AppSettings(
                                         )
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.dark)) },
-                                            onClick = { updateTheme(2) },
+                                            onClick = { prefs.theme = 2 },
                                             leadingIcon = { Icon(Icons.Default.DarkMode, null) },
                                             trailingIcon = {
-                                                if (theme == 2) {
+                                                if (prefs.theme == 2) {
                                                     Icon(
                                                         Icons.Default.Check,
                                                         stringResource(R.string.active)
@@ -219,7 +204,9 @@ fun AppSettings(
                                     horizontalArrangement = Arrangement.spacedBy(normalDp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
-                                        .clickable { updateDynamicColor(!dynamicColor) }
+                                        .clickable {
+                                            prefs.dynamicColor = !prefs.dynamicColor
+                                        }
                                         .padding(normalPadding),
                                 ) {
                                     Column(Modifier.weight(2f)) {
@@ -229,7 +216,7 @@ fun AppSettings(
                                         )
                                         Text(
                                             text = stringResource(
-                                                if (dynamicColor) {
+                                                if (prefs.dynamicColor) {
                                                     R.string.dynamic_color_on_desc
                                                 } else {
                                                     R.string.dynamic_color_off_desc
@@ -238,7 +225,7 @@ fun AppSettings(
                                             style = detailsStyle,
                                         )
                                     }
-                                    Switch(checked = dynamicColor, onCheckedChange = null)
+                                    Switch(checked = prefs.dynamicColor, onCheckedChange = null)
                                 }
                             }
                         }
@@ -248,7 +235,9 @@ fun AppSettings(
                                 horizontalArrangement = Arrangement.spacedBy(normalDp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .clickable { updateExperimentalFeatures(!experimentalFeatures) }
+                                    .clickable {
+                                        prefs.experimentalFeatures = !prefs.experimentalFeatures
+                                    }
                                     .padding(normalPadding),
                             ) {
                                 Column(Modifier.weight(2f)) {
@@ -261,7 +250,7 @@ fun AppSettings(
                                         style = detailsStyle,
                                     )
                                 }
-                                Switch(checked = experimentalFeatures, onCheckedChange = null)
+                                Switch(checked = prefs.experimentalFeatures, onCheckedChange = null)
                             }
                         }
                     }
@@ -274,25 +263,21 @@ fun AppSettings(
                                 modifier = Modifier.padding(normalPadding),
                             )
                         }
-                        item { PlayersSetting(navController = navController, players = players) }
+                        item {
+                            PlayersSetting(navController = navController, players = prefs.players)
+                        }
                         item {
                             val scope = rememberCoroutineScope()
-                            val context = LocalContext.current
                             PointSystemSettings(
-                                adaptivePoints = adaptivePoints,
+                                adaptivePoints = prefs.adaptivePoints,
                                 onClickAdaptivePoints = {
-                                    adaptivePoints.value = !adaptivePoints.value
-                                    if (adaptivePoints.value || firstPoints.value == null) {
-                                        savePrefs(players, adaptivePoints.value, 10)
-                                    } else {
-                                        savePrefs(players, false, firstPoints.value!!)
-                                    }
+                                    prefs.adaptivePoints = !prefs.adaptivePoints
                                 },
                                 firstPoints = firstPoints,
                                 onChangeFirstPoints = {
                                     try {
                                         if (it != "") it.toInt()
-                                        firstPoints.value = it.toIntOrNull()
+                                        firstPoints = it.toIntOrNull()
                                     } catch (e: NumberFormatException) {
                                         scope.launch {
                                             hostState.showSnackbar(
@@ -300,11 +285,7 @@ fun AppSettings(
                                             )
                                         }
                                     }
-                                    if (adaptivePoints.value || firstPoints.value == null) {
-                                        savePrefs(players, adaptivePoints.value, 10)
-                                    } else {
-                                        savePrefs(players, false, firstPoints.value!!)
-                                    }
+                                    prefs.firstPoints = firstPoints ?: 10
                                 },
                             )
                         }

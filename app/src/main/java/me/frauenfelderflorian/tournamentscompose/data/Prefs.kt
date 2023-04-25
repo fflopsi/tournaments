@@ -31,18 +31,45 @@ class Prefs(private val context: Context) : ViewModel() {
     private val adaptivePointsKey = booleanPreferencesKey("adaptivePoints")
     private val firstPointsKey = intPreferencesKey("firstPoints")
 
-    var theme by mutableStateOf(0)
-        private set
-    var dynamicColor by mutableStateOf(true)
-        private set
-    var experimentalFeatures by mutableStateOf(false)
-        private set
-    var players by mutableStateOf(listOf<String>())
-        private set
-    var adaptivePoints by mutableStateOf(true)
-        private set
-    var firstPoints by mutableStateOf(10)
-        private set
+    private var _theme by mutableStateOf(0)
+    var theme
+        set(value) = runBlocking {
+            if (value < 0 || value > 2) {
+                throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
+            }
+            launch { context.dataStore.edit { it[themeKey] = value } }
+        }
+        get() = _theme
+    private var _dynamicColor by mutableStateOf(true)
+    var dynamicColor
+        set(value) = runBlocking {
+            launch { context.dataStore.edit { it[dynamicColorKey] = value } }
+        }
+        get() = _dynamicColor
+    private var _experimentalFeatures by mutableStateOf(false)
+    var experimentalFeatures
+        set(value) = runBlocking {
+            launch { context.dataStore.edit { it[experimentalFeaturesKey] = value } }
+        }
+        get() = _experimentalFeatures
+    private var _players by mutableStateOf(listOf<String>())
+    var players
+        set(value) = runBlocking {
+            launch { context.dataStore.edit { it[playersKey] = value.joinToString(";") } }
+        }
+        get() = _players
+    private var _adaptivePoints by mutableStateOf(true)
+    var adaptivePoints
+        set(value) = runBlocking {
+            launch { context.dataStore.edit { it[adaptivePointsKey] = value } }
+        }
+        get() = _adaptivePoints
+    private var _firstPoints by mutableStateOf(10)
+    var firstPoints
+        set(value) = runBlocking {
+            launch { context.dataStore.edit { it[firstPointsKey] = value } }
+        }
+        get() = _firstPoints
 
     private val d = context.dataStore.data
     private val themeFlow = d.map { it[themeKey] ?: 0 }.distinctUntilChanged()
@@ -59,56 +86,17 @@ class Prefs(private val context: Context) : ViewModel() {
      */
     @Composable
     fun Initialize() {
-        theme = themeFlow.asLiveData().observeAsState(theme).value
-        dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
-        experimentalFeatures =
+        _theme = themeFlow.asLiveData().observeAsState(theme).value
+        _dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
+        _experimentalFeatures =
             experimentalFeaturesFlow.asLiveData().observeAsState(experimentalFeatures).value
-        players =
+        _players =
             playersFlow.asLiveData().observeAsState(players.joinToString(";")).value.split(";")
-        if (players == listOf("")) players = emptyList()
-        adaptivePoints = adaptivePointsFlow.asLiveData().observeAsState(adaptivePoints).value
-        firstPoints = firstPointsFlow.asLiveData().observeAsState(firstPoints).value
-    }
-
-    /** Update the [theme] stored in the settings to [newTheme] */
-    fun saveTheme(newTheme: Int) = runBlocking {
-        if (newTheme < 0 || newTheme > 2) {
-            throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
-        }
-        launch { context.dataStore.edit { it[themeKey] = newTheme } }
-    }
-
-    /** Update the [dynamicColor] value stored in the settings to [newDynamicColor] */
-    fun saveDynamicColor(newDynamicColor: Boolean) = runBlocking {
-        launch { context.dataStore.edit { it[dynamicColorKey] = newDynamicColor } }
-    }
-
-    /** Update the [experimentalFeatures] value stored in the settings to [newExperimentalFeatures] */
-    fun saveExperimentalFeatures(newExperimentalFeatures: Boolean) = runBlocking {
-        launch { context.dataStore.edit { it[experimentalFeaturesKey] = newExperimentalFeatures } }
-    }
-
-    /**
-     * Update the values stored in the settings to [newPlayers], [newAdaptivePoints],
-     * [newFirstPoints]
-     */
-    fun saveSettings(
-        newPlayers: List<String> = players,
-        newAdaptivePoints: Boolean = adaptivePoints,
-        newFirstPoints: Int = firstPoints,
-    ) = runBlocking {
-        if (newPlayers != players) {
-            launch { context.dataStore.edit { it[playersKey] = newPlayers.joinToString(";") } }
-        }
-        if (newAdaptivePoints != adaptivePoints) {
-            launch { context.dataStore.edit { it[adaptivePointsKey] = newAdaptivePoints } }
-        }
-        if (newFirstPoints != firstPoints) {
-            launch { context.dataStore.edit { it[firstPointsKey] = newFirstPoints } }
-        }
+        if (players == listOf("")) _players = emptyList()
+        _adaptivePoints = adaptivePointsFlow.asLiveData().observeAsState(adaptivePoints).value
+        _firstPoints = firstPointsFlow.asLiveData().observeAsState(firstPoints).value
     }
 }
-
 
 class PrefsFactory(private val context: Context) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
