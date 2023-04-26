@@ -8,14 +8,13 @@
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_title"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TournamentsCompose"
+        android:theme="@android:style/Theme.Material.NoActionBar.TranslucentDecor"
         tools:targetApi="33">
         <activity
             android:name=".TournamentsAppActivity"
             android:exported="true"
-            android:theme="@style/Theme.TournamentsCompose"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
