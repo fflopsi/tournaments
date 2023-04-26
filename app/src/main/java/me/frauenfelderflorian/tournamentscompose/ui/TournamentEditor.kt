@@ -101,15 +101,12 @@ fun TournamentEditor(
     var deleteDialogOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val newPlayers = navController.currentBackStackEntry?.savedStateHandle?.get<Array<String>>(
-            context.getString(R.string.players_key)
-        )
-        if (newPlayers != null) {
+        val stateHandle = navController.currentBackStackEntry?.savedStateHandle
+        if (stateHandle?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
             players.clear()
-            newPlayers.forEach { players.add(it) }
-            navController.currentBackStackEntry?.savedStateHandle?.remove<Array<String>>(
-                context.getString(R.string.players_key)
-            )
+            stateHandle.get<Array<String>>(context.getString(R.string.players_key))!!
+                .forEach { players.add(it) }
+            stateHandle.remove<Array<String>>(context.getString(R.string.players_key))
         }
     }
 

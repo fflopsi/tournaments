@@ -62,11 +62,11 @@ fun PlayersEditor(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     LaunchedEffect(Unit) {
-        val state = navController.previousBackStackEntry?.savedStateHandle
-        if (state?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
-            state.get<Array<String>>(context.getString(R.string.players_key))!!
+        val stateHandle = navController.previousBackStackEntry?.savedStateHandle
+        if (stateHandle?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
+            stateHandle.get<Array<String>>(context.getString(R.string.players_key))!!
                 .forEach { players[playersIdCounter++] = it }
-            state.remove<Array<String>>(context.getString(R.string.players_key))
+            stateHandle.remove<Array<String>>(context.getString(R.string.players_key))
         }
     }
 
