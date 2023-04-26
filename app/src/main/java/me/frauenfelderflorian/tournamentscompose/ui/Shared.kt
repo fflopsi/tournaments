@@ -198,17 +198,10 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
-                navController.navigate(
-                    "${Routes.PLAYERS_EDITOR.route}${
-                        if (players.isNotEmpty()) {
-                            "?${context.getString(R.string.players_key)}=${
-                                players.joinToString(";")
-                            }"
-                        } else {
-                            ""
-                        }
-                    }"
+                navController.currentBackStackEntry?.savedStateHandle?.set(
+                    context.getString(R.string.players_key), players.toTypedArray()
                 )
+                navController.navigate(Routes.PLAYERS_EDITOR.route)
             }
             .padding(normalPadding),
     ) {

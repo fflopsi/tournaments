@@ -13,7 +13,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.room.Room
 import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.data.Prefs
@@ -115,21 +114,9 @@ fun TournamentsApp(intent: Intent) {
                     game = model.tournaments[model.current]!!.current!!,
                 )
             }
-            composable(
-                route = "${Routes.PLAYERS_EDITOR.route}?${
-                    context.getString(R.string.players_key)
-                }={${context.getString(R.string.players_key)}}",
-                arguments = listOf(navArgument(context.getString(R.string.players_key)) {
-                    defaultValue = "${context.resources.getString(R.string.player)} 1;${
-                        context.resources.getString(R.string.player)
-                    } 2"
-                }),
-            ) {
+            composable(Routes.PLAYERS_EDITOR.route) {
                 PlayersEditor(
                     navController = navController,
-                    formerPlayers = it.arguments?.getString(
-                        context.getString(R.string.players_key)
-                    ),
                 )
             }
             composable(Routes.SETTINGS_EDITOR.route) {

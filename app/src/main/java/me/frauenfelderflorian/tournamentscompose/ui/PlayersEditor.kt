@@ -51,23 +51,24 @@ import me.frauenfelderflorian.tournamentscompose.R
 @Composable
 fun PlayersEditor(
     navController: NavController,
-    formerPlayers: String?,
 ) {
     val players = rememberMutableStateMapOf()
     var playersIdCounter by rememberSaveable { mutableStateOf(0) }
-
-    LaunchedEffect(Unit) {
-        if (formerPlayers != null && formerPlayers.trim() != "") {
-            for (player in formerPlayers.split(";")) players[playersIdCounter++] = player
-        }
-        players.entries.sortedBy { it.value }.forEach { players[it.key] = it.value }
-    }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    LaunchedEffect(Unit) {
+        val state = navController.previousBackStackEntry?.savedStateHandle
+        if (state?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
+            state.get<Array<String>>(context.getString(R.string.players_key))!!
+                .forEach { players[playersIdCounter++] = it }
+            state.remove<Array<String>>(context.getString(R.string.players_key))
+        }
+    }
 
     Scaffold(
         topBar = {
