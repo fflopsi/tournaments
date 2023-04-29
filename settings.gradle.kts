@@ -30,4 +30,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "TournamentsCompose"
-include(":androidApp")
+include(":androidApp", ":desktopApp", ":common")
