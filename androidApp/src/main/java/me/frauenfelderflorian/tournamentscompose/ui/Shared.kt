@@ -68,11 +68,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.google.gson.ToNumberPolicy
 import com.google.gson.reflect.TypeToken
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
-import java.text.DateFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -82,6 +77,11 @@ import me.frauenfelderflorian.tournamentscompose.Routes
 import me.frauenfelderflorian.tournamentscompose.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
+import java.text.DateFormat
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
@@ -199,7 +199,14 @@ fun PlayersSetting(navController: NavController, players: List<String>) {
         modifier = Modifier
             .clickable {
                 navController.currentBackStackEntry?.savedStateHandle?.set(
-                    context.getString(R.string.players_key), players.toTypedArray()
+                    context.getString(R.string.players_key), if (players.isNotEmpty()) {
+                        players.toTypedArray()
+                    } else {
+                        arrayOf(
+                            "${context.getString(R.string.player)} 1",
+                            "${context.getString(R.string.player)} 2",
+                        )
+                    }
                 )
                 navController.navigate(Routes.PLAYERS_EDITOR.route)
             }
