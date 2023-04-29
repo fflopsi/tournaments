@@ -101,7 +101,7 @@ data class Game(
      * Map of the ranking of this game. Use this to modify or read [rankingString]
      */
     var ranking: Map<String, Int>
-        get() = gson.fromJson(rankingString, object : TypeToken<MutableMap<String, Int>>() {}.type)
+        get() = gson.fromJson(rankingString, object : TypeToken<Map<String, Int>>() {}.type)
         set(value) {
             rankingString = gson.toJson(value)
         }
