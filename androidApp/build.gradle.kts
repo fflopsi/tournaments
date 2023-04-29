@@ -4,6 +4,10 @@ plugins {
     id("kotlin-kapt")
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose"
     compileSdk = 33
