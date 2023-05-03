@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose
+package me.frauenfelderflorian.tournamentscompose.android
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,18 +15,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.data.Prefs
-import me.frauenfelderflorian.tournamentscompose.data.PrefsFactory
-import me.frauenfelderflorian.tournamentscompose.data.TournamentsDatabase
-import me.frauenfelderflorian.tournamentscompose.data.TournamentsModel
-import me.frauenfelderflorian.tournamentscompose.ui.AppSettings
-import me.frauenfelderflorian.tournamentscompose.ui.GameEditor
-import me.frauenfelderflorian.tournamentscompose.ui.GameViewer
-import me.frauenfelderflorian.tournamentscompose.ui.PlayersEditor
-import me.frauenfelderflorian.tournamentscompose.ui.TournamentEditor
-import me.frauenfelderflorian.tournamentscompose.ui.TournamentList
-import me.frauenfelderflorian.tournamentscompose.ui.TournamentViewer
-import me.frauenfelderflorian.tournamentscompose.ui.theme.TournamentsTheme
+import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.android.data.PrefsFactory
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentsDatabase
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentsModel
+import me.frauenfelderflorian.tournamentscompose.android.ui.AppSettings
+import me.frauenfelderflorian.tournamentscompose.android.ui.GameEditor
+import me.frauenfelderflorian.tournamentscompose.android.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.android.ui.PlayersEditor
+import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentEditor
+import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentList
+import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentViewer
+import me.frauenfelderflorian.tournamentscompose.android.ui.theme.TournamentsTheme
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

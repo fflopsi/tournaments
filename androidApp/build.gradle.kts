@@ -9,7 +9,7 @@ kotlin {
 }
 
 android {
-    namespace = "me.frauenfelderflorian.tournamentscompose"
+    namespace = "me.frauenfelderflorian.tournamentscompose.android"
     compileSdk = 33
 
     defaultConfig {
@@ -85,6 +85,8 @@ dependencies {
     kapt("androidx.room:room-compiler:$roomVersion")
 
     implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation(project(":common"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

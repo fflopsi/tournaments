@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui
+package me.frauenfelderflorian.tournamentscompose.android.ui
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,11 +56,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.Routes
+import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

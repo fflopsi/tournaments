@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui
+package me.frauenfelderflorian.tournamentscompose.android.ui
 
 import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -55,8 +55,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

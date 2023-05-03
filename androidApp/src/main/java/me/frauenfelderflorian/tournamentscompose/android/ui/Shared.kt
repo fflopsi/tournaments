@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui
+package me.frauenfelderflorian.tournamentscompose.android.ui
 
 import android.content.Context
 import android.net.Uri
@@ -72,11 +72,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.Routes
+import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.IOException

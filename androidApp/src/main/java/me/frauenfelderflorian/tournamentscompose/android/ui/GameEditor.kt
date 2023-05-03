@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui
+package me.frauenfelderflorian.tournamentscompose.android.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -65,11 +65,11 @@ import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.Game
-import me.frauenfelderflorian.tournamentscompose.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.Routes
+import me.frauenfelderflorian.tournamentscompose.android.data.Game
+import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

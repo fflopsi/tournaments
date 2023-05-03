@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.data
+package me.frauenfelderflorian.tournamentscompose.android.data
 
 import androidx.lifecycle.ViewModel
 import androidx.room.Embedded
@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.google.gson.reflect.TypeToken
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.ui.gson
+import me.frauenfelderflorian.tournamentscompose.android.ui.gson
 
 class TournamentsModel : ViewModel() {
     var current: UUID? = null

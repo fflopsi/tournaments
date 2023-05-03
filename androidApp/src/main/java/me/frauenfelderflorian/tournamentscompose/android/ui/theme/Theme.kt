@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui.theme
+package me.frauenfelderflorian.tournamentscompose.android.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

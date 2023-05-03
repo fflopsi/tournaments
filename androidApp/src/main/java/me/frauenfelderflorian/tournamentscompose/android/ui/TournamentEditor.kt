@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.ui
+package me.frauenfelderflorian.tournamentscompose.android.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -57,12 +57,12 @@ import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.R
-import me.frauenfelderflorian.tournamentscompose.Routes
-import me.frauenfelderflorian.tournamentscompose.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.data.TournamentDao
-import me.frauenfelderflorian.tournamentscompose.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.Routes
+import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.android.data.Tournament
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

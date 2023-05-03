@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.data
+package me.frauenfelderflorian.tournamentscompose.android.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
