@@ -5,10 +5,20 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(17)
     android()
     jvm()
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.material3)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.components.resources)
+            }
+        }
         val androidMain by getting
 //        val desktopMain by getting {
 //            dependencies {
@@ -19,6 +29,6 @@ kotlin {
 }
 
 android {
-    namespace = "me.frauenfelderflorian.tournamentscompose"
+    namespace = "me.frauenfelderflorian.tournamentscompose.common"
     compileSdk = 33
 }
