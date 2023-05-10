@@ -11,14 +11,16 @@ pluginManagement {
         val agpVersion = "8.0.1"
         val composeVersion = "1.4.0"
 
-        kotlin("jvm").version(kotlinVersion)
-        kotlin("multiplatform").version(kotlinVersion)
-        kotlin("android").version(kotlinVersion)
+        kotlin("jvm") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion
+        kotlin("android") version kotlinVersion
 
-        id("com.android.application").version(agpVersion)
-        id("com.android.library").version(agpVersion)
+        id("com.android.application") version agpVersion
+        id("com.android.library") version agpVersion
 
-        id("org.jetbrains.compose").version(composeVersion)
+        id("org.jetbrains.compose") version composeVersion
+
+        id("dev.icerock.mobile.multiplatform-resources") version "0.22.0"
     }
 }
 dependencyResolutionManagement {

@@ -5,4 +5,5 @@ plugins {
     id("com.android.library") apply false
     id("org.jetbrains.kotlin.android") apply false
     id("org.jetbrains.compose") apply false
+    id("dev.icerock.mobile.multiplatform-resources") apply false
 }
