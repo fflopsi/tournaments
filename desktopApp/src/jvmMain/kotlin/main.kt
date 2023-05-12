@@ -11,7 +11,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.GameViewerContent
+import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
 import me.frauenfelderflorian.tournamentscompose.common.TestComposable
 import me.frauenfelderflorian.tournamentscompose.common.data.normalPadding
 

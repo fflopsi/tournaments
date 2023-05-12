@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.GameViewerContent
+import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

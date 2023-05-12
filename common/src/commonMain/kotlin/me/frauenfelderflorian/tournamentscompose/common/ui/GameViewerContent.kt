@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.common
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.data.normalDp
 import me.frauenfelderflorian.tournamentscompose.common.data.normalPadding
