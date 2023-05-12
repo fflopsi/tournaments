@@ -60,7 +60,7 @@ import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

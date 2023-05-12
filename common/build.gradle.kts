@@ -16,8 +16,9 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.material3)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class) implementation(
+                    compose.components.resources
+                )
                 implementation("dev.icerock.moko:resources:0.22.0")
                 implementation("dev.icerock.moko:resources-compose:0.22.0")
                 implementation("com.google.code.gson:gson:2.10.1")
@@ -25,6 +26,8 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
                 val roomVersion = "2.5.1"
                 implementation("androidx.room:room-runtime:$roomVersion")
                 implementation("androidx.room:room-ktx:$roomVersion")

@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.data
+package me.frauenfelderflorian.tournamentscompose.common.data
 
 import androidx.lifecycle.ViewModel
 import androidx.room.Embedded
@@ -6,24 +6,24 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.google.gson.reflect.TypeToken
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.common.Game
 
 class TournamentsModel : ViewModel() {
     var current: UUID? = null
     var tournaments = mapOf<UUID, TournamentWithGames>()
 }
 
-data class TournamentWithGames(
-    @Embedded val t: Tournament,
-    @Relation(parentColumn = "id", entityColumn = "tournamentId") val games: List<Game>,
+actual data class TournamentWithGames actual constructor(
+    @Embedded actual val t: Tournament,
+    @Relation(parentColumn = "id", entityColumn = "tournamentId") actual val games: List<Game>,
 ) {
     @Ignore
-    var current: Game? = null
+    actual var current: Game? = null
+    actual val playersByPoints
+        get() = t.playersString.split(";").sortedByDescending { getPoints(it) }
 
-    val playersByPoints get() = t.playersString.split(";").sortedByDescending { getPoints(it) }
-
-    fun getPoints(player: String): Int {
+    actual fun getPoints(player: String): Int {
         var points = 0
         for (game in games) {
             var present = 0
@@ -57,26 +57,60 @@ data class TournamentWithGames(
 }
 
 @Entity
-data class Tournament(
-    @PrimaryKey val id: UUID,
-    val name: String,
-    val start: Long,
-    val end: Long,
-    val useAdaptivePoints: Boolean,
-    val firstPoints: Int = 10,
+actual data class Tournament actual constructor(
+    @PrimaryKey actual val id: UUID,
+    actual val name: String,
+    actual val start: Long,
+    actual val end: Long,
+    actual val useAdaptivePoints: Boolean,
+    actual val firstPoints: Int,
     /**
      * Concatenated list of all players in this tournament. Use [players] to access.
      *
      * Leave this empty upon instantiation, and modify it afterwards using [players]
      */
-    var playersString: String = "",
+    actual var playersString: String,
 ) {
     /**
      * List of all players in this tournament. Use this to modify or read [playersString]
      */
-    var players: List<String>
+    actual var players: List<String>
         get() = playersString.split(";")
         set(value) {
             playersString = value.joinToString(";")
+        }
+}
+
+@Entity
+actual data class Game actual constructor(
+    @PrimaryKey actual val id: UUID,
+    actual val tournamentId: UUID,
+    actual val date: Long,
+    actual val hoops: Int,
+    actual val hoopReached: Int,
+    actual val difficulty: String,
+    /**
+     * JSON version of the map of the ranking of this game. Use [ranking] to access
+     *
+     * Leave this empty upon instantiation, and modify it afterwards using [ranking]
+     */
+    actual var rankingString: String,
+) {
+    /**
+     * Map of the ranking of this game. Use this to modify or read [rankingString]
+     */
+    actual var ranking: Map<String, Int>
+        get() = gson.fromJson(rankingString, object : TypeToken<Map<String, Int>>() {}.type)
+        set(value) {
+            rankingString = gson.toJson(value)
+        }
+    actual val absentPlayers get() = ranking.filterValues { it == 0 }.keys
+    actual val playersByRank: List<String>
+        get() {
+            val players = mutableListOf<String>()
+            for (i in 0 until ranking.size - absentPlayers.size) {
+                players.add(ranking.filterValues { it == i + 1 }.keys.first())
+            }
+            return players.toList()
         }
 }

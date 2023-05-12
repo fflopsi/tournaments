@@ -63,7 +63,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 @OptIn(
     ExperimentalMaterial3Api::class,

@@ -18,7 +18,6 @@ import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.android.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.android.data.TournamentsDatabase
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.android.ui.AppSettings
 import me.frauenfelderflorian.tournamentscompose.android.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.GameViewer
@@ -27,6 +26,7 @@ import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentViewer
 import me.frauenfelderflorian.tournamentscompose.android.ui.theme.TournamentsTheme
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

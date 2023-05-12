@@ -68,6 +68,11 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.google.gson.ToNumberPolicy
 import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
+import java.text.DateFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,12 +81,7 @@ import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
-import java.text.DateFormat
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
