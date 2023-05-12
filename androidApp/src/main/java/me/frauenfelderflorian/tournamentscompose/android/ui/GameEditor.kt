@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
-import me.frauenfelderflorian.tournamentscompose.android.data.Game
+import me.frauenfelderflorian.tournamentscompose.common.Game
 import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.android.data.TournamentWithGames
 

@@ -10,6 +10,7 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
+import me.frauenfelderflorian.tournamentscompose.common.Game
 
 @Dao
 interface TournamentDao {

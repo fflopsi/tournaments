@@ -6,9 +6,8 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import com.google.gson.reflect.TypeToken
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.android.ui.gson
+import me.frauenfelderflorian.tournamentscompose.common.Game
 
 class TournamentsModel : ViewModel() {
     var current: UUID? = null
@@ -79,39 +78,5 @@ data class Tournament(
         get() = playersString.split(";")
         set(value) {
             playersString = value.joinToString(";")
-        }
-}
-
-@Entity
-data class Game(
-    @PrimaryKey val id: UUID,
-    val tournamentId: UUID,
-    val date: Long,
-    val hoops: Int,
-    val hoopReached: Int,
-    val difficulty: String,
-    /**
-     * JSON version of the map of the ranking of this game. Use [ranking] to access
-     *
-     * Leave this empty upon instantiation, and modify it afterwards using [ranking]
-     */
-    var rankingString: String = "",
-) {
-    /**
-     * Map of the ranking of this game. Use this to modify or read [rankingString]
-     */
-    var ranking: Map<String, Int>
-        get() = gson.fromJson(rankingString, object : TypeToken<Map<String, Int>>() {}.type)
-        set(value) {
-            rankingString = gson.toJson(value)
-        }
-    val absentPlayers get() = ranking.filterValues { it == 0 }.keys
-    val playersByRank: List<String>
-        get() {
-            val players = mutableListOf<String>()
-            for (i in 0 until ranking.size - absentPlayers.size) {
-                players.add(ranking.filterValues { it == i + 1 }.keys.first())
-            }
-            return players.toList()
         }
 }
