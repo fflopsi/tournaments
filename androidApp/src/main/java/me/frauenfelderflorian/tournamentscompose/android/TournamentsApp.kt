@@ -25,8 +25,8 @@ import me.frauenfelderflorian.tournamentscompose.android.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentViewer
-import me.frauenfelderflorian.tournamentscompose.android.ui.theme.TournamentsTheme
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
+import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 
 class TournamentsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
