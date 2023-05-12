@@ -14,20 +14,29 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
-                implementation(compose.material)
+                implementation(compose.materialIconsExtended)
                 implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation("dev.icerock.moko:resources:0.22.0")
                 implementation("dev.icerock.moko:resources-compose:0.22.0")
+                implementation("com.google.code.gson:gson:2.10.1")
             }
         }
-        val androidMain by getting
-//        val desktopMain by getting {
-//            dependencies {
-//                implementation(compose.desktop.common)
-//            }
-//        }
+        val androidMain by getting {
+            dependencies {
+                val roomVersion = "2.5.1"
+                implementation("androidx.room:room-runtime:$roomVersion")
+                implementation("androidx.room:room-ktx:$roomVersion")
+                //annotationProcessor("androidx.room:room-compiler:$roomVersion")
+                //kapt("androidx.room:room-compiler:$roomVersion")
+            }
+        }
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.common)
+            }
+        }
     }
 }
 
