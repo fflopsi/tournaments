@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.data
+package me.frauenfelderflorian.tournamentscompose.common.data
 
 import android.annotation.SuppressLint
 import android.content.Context

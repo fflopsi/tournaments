@@ -27,6 +27,9 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("androidx.compose.runtime:runtime-livedata")
+                implementation("androidx.datastore:datastore-preferences:1.0.0")
+                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
                 val roomVersion = "2.5.1"
@@ -39,6 +42,9 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
+                implementation(compose.foundation)
+                implementation(compose.desktop.currentOs)
+                implementation("moe.tlaster:precompose:1.4.1")
             }
         }
     }

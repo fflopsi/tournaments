@@ -5,19 +5,19 @@ import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.android.R
-import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.ui.gson
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
 
 fun exportToUri(
     uri: Uri?,

@@ -56,8 +56,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.android.R
-import me.frauenfelderflorian.tournamentscompose.android.Routes
-import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.common.Routes
+import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
 import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
 import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersSetting

@@ -53,14 +53,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.android.R
-import me.frauenfelderflorian.tournamentscompose.android.Routes
-import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.common.Routes
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
 import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
@@ -74,7 +75,6 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
 import me.frauenfelderflorian.tournamentscompose.common.ui.rememberMutableStateListOf
 import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

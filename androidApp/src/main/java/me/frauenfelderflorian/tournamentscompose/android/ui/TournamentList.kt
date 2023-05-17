@@ -55,10 +55,11 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.android.R
-import me.frauenfelderflorian.tournamentscompose.android.Routes
-import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.common.Routes
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
 import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
@@ -66,7 +67,6 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
 import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
 import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

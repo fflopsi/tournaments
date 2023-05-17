@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.data
+package me.frauenfelderflorian.tournamentscompose.common.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -10,9 +10,6 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
-import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
-import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 @Dao
 interface TournamentDao {

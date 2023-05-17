@@ -15,9 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
-import me.frauenfelderflorian.tournamentscompose.android.data.PrefsFactory
-import me.frauenfelderflorian.tournamentscompose.android.data.TournamentsDatabase
 import me.frauenfelderflorian.tournamentscompose.android.ui.AppSettings
 import me.frauenfelderflorian.tournamentscompose.android.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.GameViewer
@@ -25,6 +22,10 @@ import me.frauenfelderflorian.tournamentscompose.android.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentViewer
+import me.frauenfelderflorian.tournamentscompose.common.Routes
+import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsDatabase
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 
@@ -34,16 +35,6 @@ class TournamentsAppActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent { TournamentsApp(intent) }
     }
-}
-
-enum class Routes(val route: String) {
-    TOURNAMENT_LIST("tl"),
-    TOURNAMENT_EDITOR("te"),
-    TOURNAMENT_VIEWER("tv"),
-    GAME_EDITOR("ge"),
-    GAME_VIEWER("gv"),
-    PLAYERS_EDITOR("pe"),
-    SETTINGS_EDITOR("se"),
 }
 
 @Composable
