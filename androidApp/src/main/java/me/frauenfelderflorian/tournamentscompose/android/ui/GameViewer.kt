@@ -24,7 +24,12 @@ import androidx.navigation.NavController
 import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
+import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
+import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,12 +50,17 @@ fun GameViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({ navController.navigate(Routes.GAME_EDITOR.route) }) {
                         Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
                     }
-                    SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
+                    SettingsInfoMenu(
+                        navigateToSettings = {
+                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                        },
+                        showInfoDialog = showInfo,
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )

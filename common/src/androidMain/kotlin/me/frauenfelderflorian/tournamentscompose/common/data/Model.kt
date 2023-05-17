@@ -7,6 +7,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.google.gson.reflect.TypeToken
+import me.frauenfelderflorian.tournamentscompose.common.ui.gson
 import java.util.UUID
 
 class TournamentsModel : ViewModel() {

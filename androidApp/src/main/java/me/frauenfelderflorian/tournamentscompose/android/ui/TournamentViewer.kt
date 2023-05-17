@@ -64,6 +64,15 @@ import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.android.R
 import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
+import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
+import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
+import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
+import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -103,7 +112,7 @@ fun TournamentViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
                         Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
@@ -114,7 +123,12 @@ fun TournamentViewer(
                             stringResource(R.string.export_tournament_to_file)
                         )
                     }
-                    SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
+                    SettingsInfoMenu(
+                        navigateToSettings = {
+                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                        },
+                        showInfoDialog = showInfo,
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )

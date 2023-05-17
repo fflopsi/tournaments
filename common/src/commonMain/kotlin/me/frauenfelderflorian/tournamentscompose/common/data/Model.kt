@@ -1,15 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.common.data
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.ToNumberPolicy
 import java.util.UUID
-
-val gson: Gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
-val normalDp = 16.dp
-val normalPadding = PaddingValues(normalDp, normalDp)
 
 expect class TournamentWithGames(t: Tournament, games: List<Game>) {
     val t: Tournament

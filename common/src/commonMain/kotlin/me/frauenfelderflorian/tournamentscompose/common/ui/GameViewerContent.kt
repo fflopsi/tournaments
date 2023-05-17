@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.data.normalDp
-import me.frauenfelderflorian.tournamentscompose.common.data.normalPadding
 
 @Composable
 fun GameViewerContent(game: Game, modifier: Modifier) {

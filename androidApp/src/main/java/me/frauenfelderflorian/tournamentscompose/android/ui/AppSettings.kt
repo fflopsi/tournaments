@@ -56,7 +56,17 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.android.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
+import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
+import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersSetting
+import me.frauenfelderflorian.tournamentscompose.common.ui.PointSystemSettings
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
+import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -86,7 +96,7 @@ fun AppSettings(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(R.string.settings), scrollBehavior) },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({ showInfo.value = true }) {
                         Icon(Icons.Outlined.Info, stringResource(R.string.about))
@@ -261,7 +271,20 @@ fun AppSettings(
                             )
                         }
                         item {
-                            PlayersSetting(navController = navController, players = prefs.players)
+                            PlayersSetting(prefs.players) {
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    context.getString(R.string.players_key),
+                                    if (prefs.players.isNotEmpty()) {
+                                        prefs.players.toTypedArray()
+                                    } else {
+                                        arrayOf(
+                                            "${context.getString(R.string.player)} 1",
+                                            "${context.getString(R.string.player)} 2",
+                                        )
+                                    },
+                                )
+                                navController.navigate(Routes.PLAYERS_EDITOR.route)
+                            }
                         }
                         item {
                             val scope = rememberCoroutineScope()

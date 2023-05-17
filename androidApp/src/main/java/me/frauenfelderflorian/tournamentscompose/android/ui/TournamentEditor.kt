@@ -53,7 +53,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,6 +62,19 @@ import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.android.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
+import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
+import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersSetting
+import me.frauenfelderflorian.tournamentscompose.common.ui.PointSystemSettings
+import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
+import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
+import me.frauenfelderflorian.tournamentscompose.common.ui.rememberMutableStateListOf
+import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -199,7 +211,7 @@ fun TournamentEditor(
                 title = {
                     TopAppBarTitle(stringResource(R.string.edit_tournament), scrollBehavior)
                 },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -209,7 +221,12 @@ fun TournamentEditor(
                     IconButton(::save) {
                         Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                     }
-                    SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
+                    SettingsInfoMenu(
+                        navigateToSettings = {
+                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                        },
+                        showInfoDialog = showInfo,
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )
@@ -277,7 +294,20 @@ fun TournamentEditor(
                         enter = expandVertically(expandFrom = Alignment.Top),
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
-                        PlayersSetting(navController = navController, players = players)
+                        PlayersSetting(players) {
+                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                context.getString(R.string.players_key),
+                                if (players.isNotEmpty()) {
+                                    players.toTypedArray()
+                                } else {
+                                    arrayOf(
+                                        "${context.getString(R.string.player)} 1",
+                                        "${context.getString(R.string.player)} 2",
+                                    )
+                                },
+                            )
+                            navController.navigate(Routes.PLAYERS_EDITOR.route)
+                        }
                     }
                 }
                 AnimatedVisibility(

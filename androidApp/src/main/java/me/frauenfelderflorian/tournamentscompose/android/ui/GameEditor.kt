@@ -61,7 +61,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,6 +69,14 @@ import me.frauenfelderflorian.tournamentscompose.android.Routes
 import me.frauenfelderflorian.tournamentscompose.android.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
+import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
+import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -119,7 +126,7 @@ fun GameEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(R.string.edit_game), scrollBehavior) },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     if (tournament.current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -200,7 +207,12 @@ fun GameEditor(
                     }) {
                         Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
                     }
-                    SettingsInfoMenu(navController = navController, showInfoDialog = showInfo)
+                    SettingsInfoMenu(
+                        navigateToSettings = {
+                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                        },
+                        showInfoDialog = showInfo,
+                    )
                 },
                 scrollBehavior = scrollBehavior,
             )

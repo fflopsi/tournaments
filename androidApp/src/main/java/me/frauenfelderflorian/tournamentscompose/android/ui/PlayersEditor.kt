@@ -46,6 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
+import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
+import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
+import me.frauenfelderflorian.tournamentscompose.common.ui.rememberMutableStateMapOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +79,7 @@ fun PlayersEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(R.string.edit_players), scrollBehavior) },
-                navigationIcon = { BackButton(navController) },
+                navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({
                         for (player1 in players) {

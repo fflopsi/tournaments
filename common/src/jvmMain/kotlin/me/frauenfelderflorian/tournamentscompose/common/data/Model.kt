@@ -1,6 +1,7 @@
 package me.frauenfelderflorian.tournamentscompose.common.data
 
 import com.google.gson.reflect.TypeToken
+import me.frauenfelderflorian.tournamentscompose.common.ui.gson
 import java.util.UUID
 
 actual data class TournamentWithGames actual constructor(
