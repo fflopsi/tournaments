@@ -5,15 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.application
 import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
-import me.frauenfelderflorian.tournamentscompose.common.ui.TestComposable
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
 import moe.tlaster.precompose.PreComposeWindow
 import moe.tlaster.precompose.navigation.NavHost
@@ -30,12 +26,8 @@ fun DesktopAppContent() {
     val navigator = rememberNavigator()
     NavHost(navigator = navigator, initialRoute = "/home") {
         scene(route = "/home") {
-            Column {
-                val text by remember { mutableStateOf("Hello, World!") }
-                Button({ navigator.navigate("/game") }) {
-                    Text(text)
-                }
-                TestComposable()
+            Button({ navigator.navigate("/game") }) {
+                Text("Hello, World! Go to Game")
             }
         }
         scene(route = "/game") {
