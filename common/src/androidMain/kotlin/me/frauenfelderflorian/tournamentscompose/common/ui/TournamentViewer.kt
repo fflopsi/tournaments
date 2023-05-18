@@ -109,7 +109,11 @@ fun TournamentViewer(
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }
                     IconButton({
-                        exportToFile.launch(MR.strings.file_name_tournament.getString(context))
+                        exportToFile.launch(
+                            "${tournament.t.name}${
+                                MR.strings.file_ending_tournament.getString(context)
+                            }"
+                        )
                     }) {
                         Icon(
                             Icons.Default.ArrowUpward,
