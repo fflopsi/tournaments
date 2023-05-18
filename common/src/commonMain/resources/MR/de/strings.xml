@@ -95,8 +95,8 @@
     <string name="use_dynamic_color">Dynamische Farben verwenden</string>
     <string name="app_name" translatable="false">TournamentsCompose</string>
     <string name="app_title" translatable="false">Tournaments</string>
-    <string name="file_mime" translatable="false">application/json</string>
     <string name="file_ending_tournament" translatable="false">.json</string>
+    <string name="file_mime" translatable="false">application/json</string>
     <string name="file_name_tournaments" translatable="false">AllTournaments.json</string>
     <string name="github_link" translatable="false">https://github.com/fflopsi/tournaments</string>
     <string name="github_link_tag" translatable="false">URL</string>
