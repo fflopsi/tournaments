@@ -69,11 +69,16 @@ android {
     defaultConfig {
         minSdk = 21
     }
-        kotlin {
+    kotlin {
         jvmToolchain(17)
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 }
