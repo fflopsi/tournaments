@@ -1,41 +1,28 @@
-package me.frauenfelderflorian.tournamentscompose.android
+package me.frauenfelderflorian.tournamentscompose.common
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.android.ui.AppSettings
-import me.frauenfelderflorian.tournamentscompose.android.ui.GameEditor
-import me.frauenfelderflorian.tournamentscompose.android.ui.PlayersEditor
-import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentEditor
-import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentList
-import me.frauenfelderflorian.tournamentscompose.android.ui.TournamentViewer
-import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsDatabase
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
+import me.frauenfelderflorian.tournamentscompose.common.ui.AppSettings
+import me.frauenfelderflorian.tournamentscompose.common.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersEditor
+import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentEditor
+import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentList
+import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentViewer
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
-
-class TournamentsAppActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent { TournamentsApp(intent) }
-    }
-}
 
 @Composable
 fun TournamentsApp(intent: Intent) {

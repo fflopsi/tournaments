@@ -27,6 +27,14 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
+                implementation(composeBom)
+                implementation("androidx.compose.ui:ui")
+                //implementation("androidx.compose.ui:ui-tooling-preview")
+                //implementation("androidx.compose.runtime:runtime-livedata")
+                //implementation("androidx.compose.material:material-icons-extended")
+                implementation("androidx.compose.material3:material3")
+
                 implementation("androidx.compose.runtime:runtime-livedata")
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
                 implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
@@ -58,7 +66,10 @@ multiplatformResources {
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose.common"
     compileSdk = 33
-    kotlin {
+    defaultConfig {
+        minSdk = 21
+    }
+        kotlin {
         jvmToolchain(17)
     }
     compileOptions {

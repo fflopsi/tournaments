@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -51,30 +51,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
-import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
-import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersSetting
-import me.frauenfelderflorian.tournamentscompose.common.ui.PointSystemSettings
-import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
-import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
-import me.frauenfelderflorian.tournamentscompose.common.ui.rememberMutableStateListOf
-import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,11 +102,11 @@ fun TournamentEditor(
 
     LaunchedEffect(Unit) {
         val stateHandle = navController.currentBackStackEntry?.savedStateHandle
-        if (stateHandle?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
+        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
             players.clear()
-            stateHandle.get<Array<String>>(context.getString(R.string.players_key))!!
+            stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
                 .forEach { players.add(it) }
-            stateHandle.remove<Array<String>>(context.getString(R.string.players_key))
+            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
         }
     }
 
@@ -135,9 +123,7 @@ fun TournamentEditor(
         if (current == null) {
             if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
                 scope.launch {
-                    hostState.showSnackbar(
-                        context.resources.getString(R.string.at_least_two_players)
-                    )
+                    hostState.showSnackbar(MR.strings.at_least_two_players.getString(context))
                 }
                 return
             }
@@ -169,9 +155,7 @@ fun TournamentEditor(
                 ).apply { this.players = players }
             } else {
                 scope.launch {
-                    hostState.showSnackbar(
-                        context.resources.getString(R.string.enter_number_first_points)
-                    )
+                    hostState.showSnackbar(MR.strings.enter_number_first_points.getString(context))
                 }
                 return
             }
@@ -190,9 +174,7 @@ fun TournamentEditor(
                 )
             } else {
                 scope.launch {
-                    hostState.showSnackbar(
-                        context.resources.getString(R.string.enter_number_first_points)
-                    )
+                    hostState.showSnackbar(MR.strings.enter_number_first_points.getString(context))
                 }
                 return
             }
@@ -209,17 +191,17 @@ fun TournamentEditor(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    TopAppBarTitle(stringResource(R.string.edit_tournament), scrollBehavior)
+                    TopAppBarTitle(stringResource(MR.strings.edit_tournament), scrollBehavior)
                 },
                 navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
-                            Icon(Icons.Default.Delete, stringResource(R.string.delete_tournament))
+                            Icon(Icons.Default.Delete, stringResource(MR.strings.delete_tournament))
                         }
                     }
                     IconButton(::save) {
-                        Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
@@ -239,20 +221,16 @@ fun TournamentEditor(
         var endDialogOpen by remember { mutableStateOf(false) }
         Column(Modifier.padding(paddingValues)) {
             Column(
-                modifier = Modifier
-                    .weight(2f)
-                    .verticalScroll(rememberScrollState()),
+                modifier = Modifier.weight(2f).verticalScroll(rememberScrollState()),
             ) {
                 TextField(
                     value = name,
                     onValueChange = { if (it.length < 100) name = it },
                     singleLine = true,
-                    label = { Text(stringResource(R.string.name)) },
-                    placeholder = { Text(stringResource(R.string.give_meaningful_name)) },
+                    label = { Text(stringResource(MR.strings.name)) },
+                    placeholder = { Text(stringResource(MR.strings.give_meaningful_name)) },
                     trailingIcon = { Icon(Icons.Default.Edit, null) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(normalPadding),
+                    modifier = Modifier.fillMaxWidth().padding(normalPadding),
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(normalDp),
@@ -263,27 +241,26 @@ fun TournamentEditor(
                         onClick = { startDialogOpen = true },
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text("${stringResource(R.string.start_date)}: ${formatDate(start)}")
+                        Text("${stringResource(MR.strings.start_date)}: ${formatDate(start)}")
                     }
                     OutlinedButton(
                         onClick = { endDialogOpen = true },
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text("${stringResource(R.string.end_date)}: ${formatDate(end)}")
+                        Text("${stringResource(MR.strings.end_date)}: ${formatDate(end)}")
                     }
                 }
                 if (current == null) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(normalDp),
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clickable { useDefaults = !useDefaults }
+                        modifier = Modifier.clickable { useDefaults = !useDefaults }
                             .padding(normalPadding),
                     ) {
                         Column(Modifier.weight(2f)) {
-                            Text(text = stringResource(R.string.use_defaults), style = titleStyle)
+                            Text(text = stringResource(MR.strings.use_defaults), style = titleStyle)
                             Text(
-                                text = stringResource(R.string.use_defaults_desc),
+                                text = stringResource(MR.strings.use_defaults_desc),
                                 style = detailsStyle,
                             )
                         }
@@ -296,13 +273,13 @@ fun TournamentEditor(
                     ) {
                         PlayersSetting(players) {
                             navController.currentBackStackEntry?.savedStateHandle?.set(
-                                context.getString(R.string.players_key),
+                                MR.strings.players_key.getString(context),
                                 if (players.isNotEmpty()) {
                                     players.toTypedArray()
                                 } else {
                                     arrayOf(
-                                        "${context.getString(R.string.player)} 1",
-                                        "${context.getString(R.string.player)} 2",
+                                        "${MR.strings.player.getString(context)} 1",
+                                        "${MR.strings.player.getString(context)} 2",
                                     )
                                 },
                             )
@@ -326,7 +303,7 @@ fun TournamentEditor(
                             } catch (e: NumberFormatException) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(R.string.invalid_number)
+                                        MR.strings.invalid_number.getString(context)
                                     )
                                 }
                             }
@@ -337,11 +314,9 @@ fun TournamentEditor(
             if (experimentalFeatures && current == null) {
                 Button(
                     onClick = ::save,
-                    modifier = Modifier
-                        .padding(normalPadding)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(normalPadding).fillMaxWidth(),
                 ) {
-                    Text(stringResource(R.string.create_tournament))
+                    Text(stringResource(MR.strings.create_tournament))
                 }
             }
         }
@@ -360,12 +335,12 @@ fun TournamentEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(R.string.ok))
+                        Text(stringResource(MR.strings.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ startDialogOpen = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
             ) {
@@ -387,12 +362,12 @@ fun TournamentEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(R.string.ok))
+                        Text(stringResource(MR.strings.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ endDialogOpen = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
             ) {
@@ -413,17 +388,17 @@ fun TournamentEditor(
                         }
                         navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
                     }) {
-                        Text(stringResource(R.string.delete_tournament))
+                        Text(stringResource(MR.strings.delete_tournament))
                     }
                 },
                 dismissButton = {
                     TextButton({ deleteDialogOpen = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
                 icon = { Icon(Icons.Default.Delete, null) },
-                title = { Text("${stringResource(R.string.delete_tournament)}?") },
-                text = { Text(stringResource(R.string.delete_tournament_hint)) },
+                title = { Text("${stringResource(MR.strings.delete_tournament)}?") },
+                text = { Text(stringResource(MR.strings.delete_tournament_hint)) },
             )
         }
         InfoDialog(showInfo)

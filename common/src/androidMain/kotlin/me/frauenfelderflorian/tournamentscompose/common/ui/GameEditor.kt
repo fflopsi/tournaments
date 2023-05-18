@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -57,26 +57,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
-import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
-import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -125,12 +118,12 @@ fun GameEditor(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(R.string.edit_game), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(MR.strings.edit_game), scrollBehavior) },
                 navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     if (tournament.current != null) {
                         IconButton({ deleteDialogOpen = true }) {
-                            Icon(Icons.Default.Delete, stringResource(R.string.delete_game))
+                            Icon(Icons.Default.Delete, stringResource(MR.strings.delete_game))
                         }
                     }
                     val context = LocalContext.current
@@ -139,25 +132,21 @@ fun GameEditor(
                             if (hoopsString.toInt() < 1) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(R.string.number_hoops_too_small)
+                                        MR.strings.number_hoops_too_small.getString(context)
                                     )
                                 }
                                 return@IconButton
                             } else if (hoopReachedString.toInt() < 1) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(
-                                            R.string.number_hoops_reached_too_small
-                                        )
+                                        MR.strings.number_hoops_reached_too_small.getString(context)
                                     )
                                 }
                                 return@IconButton
                             } else if (hoopReachedString.toInt() > hoopsString.toInt()) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(
-                                            R.string.number_hoops_reached_too_big
-                                        )
+                                        MR.strings.number_hoops_reached_too_big.getString(context)
                                     )
                                 }
                                 return@IconButton
@@ -168,7 +157,7 @@ fun GameEditor(
                             if (ranks.size < 2) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.resources.getString(R.string.ranking_invalid)
+                                        MR.strings.ranking_invalid.getString(context)
                                     )
                                 }
                                 return@IconButton
@@ -199,13 +188,11 @@ fun GameEditor(
                             navController.popBackStack()
                         } catch (e: NumberFormatException) {
                             scope.launch {
-                                hostState.showSnackbar(
-                                    context.resources.getString(R.string.invalid_number)
-                                )
+                                hostState.showSnackbar(MR.strings.invalid_number.getString(context))
                             }
                         }
                     }) {
-                        Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
@@ -228,12 +215,12 @@ fun GameEditor(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(R.string.details)) },
+                    text = { Text(stringResource(MR.strings.details)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(R.string.ranking)) },
+                    text = { Text(stringResource(MR.strings.ranking)) },
                 )
             }
             HorizontalPager(pageCount = 2, state = pagerState) { page ->
@@ -251,7 +238,9 @@ fun GameEditor(
                                     modifier = Modifier.fillMaxWidth(),
                                 ) {
                                     Text(
-                                        text = "${stringResource(R.string.date)}: ${formatDate(date)}",
+                                        text = "${stringResource(MR.strings.date)}: ${
+                                            formatDate(date)
+                                        }",
                                         textAlign = TextAlign.Center,
                                     )
                                 }
@@ -273,14 +262,14 @@ fun GameEditor(
                                         } catch (e: NumberFormatException) {
                                             scope.launch {
                                                 hostState.showSnackbar(
-                                                    context.resources.getString(R.string.invalid_number)
+                                                    MR.strings.invalid_number.getString(context)
                                                 )
                                             }
                                         }
                                     },
                                     singleLine = true,
-                                    label = { Text(stringResource(R.string.hoops)) },
-                                    supportingText = { Text(stringResource(R.string.hoops_desc)) },
+                                    label = { Text(stringResource(MR.strings.hoops)) },
+                                    supportingText = { Text(stringResource(MR.strings.hoops_desc)) },
                                     leadingIcon = { Icon(Icons.Default.Flag, null) },
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Number
@@ -296,15 +285,15 @@ fun GameEditor(
                                         } catch (e: NumberFormatException) {
                                             scope.launch {
                                                 hostState.showSnackbar(
-                                                    context.resources.getString(R.string.invalid_number)
+                                                    MR.strings.invalid_number.getString(context)
                                                 )
                                             }
                                         }
                                     },
                                     singleLine = true,
-                                    label = { Text(stringResource(R.string.hoop_reached)) },
+                                    label = { Text(stringResource(MR.strings.hoop_reached)) },
                                     supportingText = {
-                                        Text(stringResource(R.string.hoop_reached_desc))
+                                        Text(stringResource(MR.strings.hoop_reached_desc))
                                     },
                                     trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
                                     keyboardOptions = KeyboardOptions(
@@ -319,11 +308,9 @@ fun GameEditor(
                                 value = difficulty,
                                 onValueChange = { if (it.length < 100) difficulty = it },
                                 singleLine = true,
-                                label = { Text(stringResource(R.string.difficulty)) },
-                                placeholder = { Text(stringResource(R.string.difficulty_placeholder)) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(normalPadding),
+                                label = { Text(stringResource(MR.strings.difficulty)) },
+                                placeholder = { Text(stringResource(MR.strings.difficulty_placeholder)) },
+                                modifier = Modifier.fillMaxWidth().padding(normalPadding),
                             )
                         }
                     }
@@ -343,9 +330,7 @@ fun GameEditor(
                                     trailingIcon = {
                                         ExposedDropdownMenuDefaults.TrailingIcon(expanded)
                                     },
-                                    modifier = Modifier
-                                        .menuAnchor()
-                                        .fillMaxWidth(),
+                                    modifier = Modifier.menuAnchor().fillMaxWidth(),
                                 )
                                 DropdownMenu(
                                     expanded = expanded,
@@ -405,12 +390,12 @@ fun GameEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(R.string.ok))
+                        Text(stringResource(MR.strings.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ dateDialogOpen = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
             ) {
@@ -431,17 +416,17 @@ fun GameEditor(
                         }
                         navController.popBackStack(Routes.TOURNAMENT_VIEWER.route, false)
                     }) {
-                        Text(stringResource(R.string.delete_game))
+                        Text(stringResource(MR.strings.delete_game))
                     }
                 },
                 dismissButton = {
                     TextButton({ deleteDialogOpen = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
                 icon = { Icon(Icons.Default.Delete, null) },
-                title = { Text("${stringResource(R.string.delete_game)}?") },
-                text = { Text(stringResource(R.string.delete_game_hint)) },
+                title = { Text("${stringResource(MR.strings.delete_game)}?") },
+                text = { Text(stringResource(MR.strings.delete_game_hint)) },
             )
         }
         InfoDialog(showInfo)

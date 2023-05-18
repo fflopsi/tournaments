@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,24 +56,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
-import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
-import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
-import me.frauenfelderflorian.tournamentscompose.common.ui.exportToUri
-import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
-import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -93,7 +83,7 @@ fun TournamentViewer(
     val hostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val exportToFile = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument(stringResource(R.string.file_mime))
+        ActivityResultContracts.CreateDocument(stringResource(MR.strings.file_mime))
     ) {
         exportToUri(
             uri = it,
@@ -109,19 +99,21 @@ fun TournamentViewer(
             LargeTopAppBar(
                 title = {
                     TopAppBarTitle(
-                        text = stringResource(R.string.tournament_title, tournament.t.name),
+                        text = stringResource(MR.strings.tournament_title, tournament.t.name),
                         scrollBehavior = scrollBehavior,
                     )
                 },
                 navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
-                        Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }
-                    IconButton({ exportToFile.launch(context.resources.getString(R.string.file_name_tournament)) }) {
+                    IconButton({
+                        exportToFile.launch(MR.strings.file_name_tournament.getString(context))
+                    }) {
                         Icon(
                             Icons.Default.ArrowUpward,
-                            stringResource(R.string.export_tournament_to_file)
+                            stringResource(MR.strings.export_tournament_to_file)
                         )
                     }
                     SettingsInfoMenu(
@@ -142,7 +134,7 @@ fun TournamentViewer(
             ) {
                 ExtendedFloatingActionButton(
                     icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text(stringResource(R.string.new_game)) },
+                    text = { Text(stringResource(MR.strings.new_game)) },
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
                         tournament.current = null
@@ -160,12 +152,12 @@ fun TournamentViewer(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(R.string.details)) },
+                    text = { Text(stringResource(MR.strings.details)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(R.string.ranking)) },
+                    text = { Text(stringResource(MR.strings.ranking)) },
                 )
             }
             HorizontalPager(pageCount = 2, state = pagerState) { page ->
@@ -176,23 +168,21 @@ fun TournamentViewer(
                                 Row(
                                     horizontalArrangement = Arrangement.spacedBy(normalDp),
                                     verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .clickable {
-                                            tournament.current = it
-                                            navController.navigate(Routes.GAME_VIEWER.route)
-                                        }
-                                        .padding(normalPadding),
+                                    modifier = Modifier.clickable {
+                                        tournament.current = it
+                                        navController.navigate(Routes.GAME_VIEWER.route)
+                                    }.padding(normalPadding),
                                 ) {
                                     Column(Modifier.weight(2f)) {
                                         Text(
                                             text = stringResource(
-                                                R.string.game_title, formatDate(it.date)
+                                                MR.strings.game_title, formatDate(it.date)
                                             ),
                                             style = titleStyle,
                                         )
                                         Text(
                                             text = stringResource(
-                                                R.string.game_details,
+                                                MR.strings.game_details,
                                                 it.hoopReached,
                                                 it.hoops,
                                                 it.difficulty,
@@ -204,14 +194,16 @@ fun TournamentViewer(
                                         tournament.current = it
                                         navController.navigate(Routes.GAME_EDITOR.route)
                                     }) {
-                                        Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                                        Icon(
+                                            Icons.Default.Edit, stringResource(MR.strings.edit_game)
+                                        )
                                     }
                                 }
                             }
                         } else {
                             item {
                                 Text(
-                                    text = stringResource(R.string.add_first_game_hint),
+                                    text = stringResource(MR.strings.add_first_game_hint),
                                     fontStyle = FontStyle.Italic,
                                     fontWeight = FontWeight.ExtraLight,
                                     modifier = Modifier.padding(normalPadding),
@@ -232,9 +224,7 @@ fun TournamentViewer(
                                 Text(
                                     text = it,
                                     style = titleStyle,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(2f),
+                                    modifier = Modifier.fillMaxWidth().weight(2f),
                                 )
                                 Box {
                                     IconButton({ menuExpanded = true }) {
@@ -246,14 +236,14 @@ fun TournamentViewer(
                                     ) {
                                         DropdownMenuItem(
                                             enabled = false,
-                                            text = { Text(stringResource(R.string.game_overview)) },
+                                            text = { Text(stringResource(MR.strings.game_overview)) },
                                             onClick = { /*TODO*/ },
                                             leadingIcon = { Icon(Icons.Default.EmojiEvents, null) },
                                         )
                                         Divider()
                                         DropdownMenuItem(
                                             enabled = false,
-                                            text = { Text(stringResource(R.string.delete_player)) },
+                                            text = { Text(stringResource(MR.strings.delete_player)) },
                                             onClick = { /*TODO*/ },
                                             leadingIcon = { Icon(Icons.Default.Delete, null) },
                                         )

@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -50,25 +50,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import dev.icerock.moko.resources.compose.stringResource
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
-import me.frauenfelderflorian.tournamentscompose.common.ui.exportToUri
-import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
-import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
-import me.frauenfelderflorian.tournamentscompose.common.ui.titleStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,7 +81,7 @@ fun TournamentList(
     val hostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val exportToFile = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument(stringResource(R.string.file_mime))
+        ActivityResultContracts.CreateDocument(stringResource(MR.strings.file_mime))
     ) {
         exportToUri(
             uri = it,
@@ -119,36 +111,38 @@ fun TournamentList(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(R.string.app_title), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(MR.strings.app_title), scrollBehavior) },
                 actions = {
                     IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
-                        Icon(Icons.Default.Settings, stringResource(R.string.settings))
+                        Icon(Icons.Default.Settings, stringResource(MR.strings.settings))
                     }
                     IconButton({ showInfo.value = true }) {
-                        Icon(Icons.Outlined.Info, stringResource(R.string.about))
+                        Icon(Icons.Outlined.Info, stringResource(MR.strings.about))
                     }
                     Box {
                         var expanded by remember { mutableStateOf(false) }
                         IconButton({ expanded = true }) {
-                            Icon(Icons.Default.MoreVert, stringResource(R.string.more_actions))
+                            Icon(Icons.Default.MoreVert, stringResource(MR.strings.more_actions))
                         }
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.export_tournaments_to_file)) },
+                                text = {
+                                    Text(stringResource(MR.strings.export_tournaments_to_file))
+                                },
                                 onClick = {
                                     expanded = false
                                     exportToFile.launch(
-                                        context.getString(R.string.file_name_tournaments)
+                                        MR.strings.file_name_tournaments.getString(context)
                                     )
                                 },
                                 leadingIcon = { Icon(Icons.Default.ArrowUpward, null) },
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.import_from_file)) },
+                                text = { Text(stringResource(MR.strings.import_from_file)) },
                                 onClick = {
                                     expanded = false
                                     importFromFile.launch(
-                                        arrayOf(context.getString(R.string.file_mime))
+                                        arrayOf(MR.strings.file_mime.getString(context))
                                     )
                                 },
                                 leadingIcon = { Icon(Icons.Default.ArrowDownward, null) },
@@ -162,7 +156,7 @@ fun TournamentList(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 icon = { Icon(Icons.Default.Add, null) },
-                text = { Text(stringResource(R.string.new_tournament)) },
+                text = { Text(stringResource(MR.strings.new_tournament)) },
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = {
                     setCurrent(null)
@@ -180,21 +174,23 @@ fun TournamentList(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clickable {
-                                setCurrent(it.t.id)
-                                navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                            }
-                            .padding(normalPadding),
+                        modifier = Modifier.clickable {
+                            setCurrent(it.t.id)
+                            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
+                        }.padding(normalPadding),
                     ) {
                         Column(Modifier.weight(2f)) {
                             Text(text = it.t.name, style = titleStyle)
                             Text(
-                                text = "${formatDate(it.t.start)} ${stringResource(R.string.to)} ${
+                                text = "${formatDate(it.t.start)} ${stringResource(MR.strings.to_)} ${
                                     formatDate(it.t.end)
                                 }, ${it.games.size} ${
                                     stringResource(
-                                        if (it.games.size == 1) R.string.game else R.string.games
+                                        if (it.games.size == 1) {
+                                            MR.strings.game_
+                                        } else {
+                                            MR.strings.games_
+                                        }
                                     )
                                 }",
                                 style = detailsStyle,
@@ -204,14 +200,14 @@ fun TournamentList(
                             setCurrent(it.t.id)
                             navController.navigate(Routes.TOURNAMENT_EDITOR.route)
                         }) {
-                            Icon(Icons.Default.Edit, stringResource(R.string.edit_tournament))
+                            Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                         }
                     }
                 }
             } else {
                 item {
                     Text(
-                        text = stringResource(R.string.add_first_tournament_hint),
+                        text = stringResource(MR.strings.add_first_tournament_hint),
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Light,
                         modifier = Modifier.padding(normalPadding),
@@ -227,8 +223,8 @@ fun TournamentList(
                     showedImport = true
                 },
                 icon = { Icon(Icons.Default.ArrowDownward, null) },
-                title = { Text(stringResource(R.string.import_)) },
-                text = { Text(stringResource(R.string.import_info)) },
+                title = { Text(stringResource(MR.strings.import_)) },
+                text = { Text(stringResource(MR.strings.import_info)) },
                 confirmButton = {
                     TextButton({
                         showImport = false
@@ -242,7 +238,7 @@ fun TournamentList(
                         )
                         showedImport = true
                     }) {
-                        Text(stringResource(R.string.ok))
+                        Text(stringResource(MR.strings.ok))
                     }
                 },
                 dismissButton = {
@@ -250,7 +246,7 @@ fun TournamentList(
                         showImport = false
                         showedImport = true
                     }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
             )

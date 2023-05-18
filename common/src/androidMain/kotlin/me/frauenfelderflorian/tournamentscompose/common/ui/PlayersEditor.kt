@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -41,16 +41,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.format
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.android.R
-import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
-import me.frauenfelderflorian.tournamentscompose.common.ui.rememberMutableStateMapOf
+import me.frauenfelderflorian.tournamentscompose.common.MR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,17 +64,17 @@ fun PlayersEditor(
 
     LaunchedEffect(Unit) {
         val stateHandle = navController.previousBackStackEntry?.savedStateHandle
-        if (stateHandle?.get<Array<String>>(context.getString(R.string.players_key)) != null) {
-            stateHandle.get<Array<String>>(context.getString(R.string.players_key))!!
+        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
+            stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
                 .forEach { players[playersIdCounter++] = it }
-            stateHandle.remove<Array<String>>(context.getString(R.string.players_key))
+            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
         }
     }
 
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(R.string.edit_players), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
                 navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({
@@ -86,7 +82,7 @@ fun PlayersEditor(
                             if (player1.value.isBlank()) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.getString(R.string.no_nameless_players)
+                                        MR.strings.no_nameless_players.getString(context)
                                     )
                                 }
                                 return@IconButton
@@ -95,9 +91,8 @@ fun PlayersEditor(
                                 if (player1.key != player2.key && player1.value.trim() == player2.value.trim()) {
                                     scope.launch {
                                         hostState.showSnackbar(
-                                            context.getString(
-                                                R.string.no_same_name_players, player1.value
-                                            )
+                                            MR.strings.no_same_name_players.format(player1.value)
+                                                .toString(context)
                                         )
                                     }
                                     return@IconButton
@@ -105,11 +100,11 @@ fun PlayersEditor(
                             }
                         }
                         navController.previousBackStackEntry?.savedStateHandle?.set(
-                            context.getString(R.string.players_key), players.values.toTypedArray()
+                            MR.strings.players_key.getString(context), players.values.toTypedArray()
                         )
                         navController.popBackStack()
                     }) {
-                        Icon(Icons.Default.Check, stringResource(R.string.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -118,7 +113,7 @@ fun PlayersEditor(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 icon = { Icon(Icons.Default.Add, null) },
-                text = { Text(stringResource(R.string.add_new_player)) },
+                text = { Text(stringResource(MR.strings.add_new_player)) },
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = { players[playersIdCounter++] = "" },
             )
@@ -141,7 +136,7 @@ fun PlayersEditor(
                             if (value.contains(";")) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        context.getString(R.string.invalid_name)
+                                        MR.strings.invalid_name.getString(context)
                                     )
                                 }
                             } else if (value.length < 100) {
@@ -151,18 +146,16 @@ fun PlayersEditor(
                         singleLine = true,
                         label = {
                             Text(
-                                "${stringResource(R.string.name)} ${
+                                "${stringResource(MR.strings.name)} ${
                                     players.toList().indexOf(it) + 1
                                 }"
                             )
                         },
-                        placeholder = { Text(stringResource(R.string.name_unique)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(2f),
+                        placeholder = { Text(stringResource(MR.strings.name_unique)) },
+                        modifier = Modifier.fillMaxWidth().weight(2f),
                     )
                     IconButton({ players.remove(it.first) }) {
-                        Icon(Icons.Default.Delete, stringResource(R.string.delete_player))
+                        Icon(Icons.Default.Delete, stringResource(MR.strings.delete_player))
                     }
                 }
             }
