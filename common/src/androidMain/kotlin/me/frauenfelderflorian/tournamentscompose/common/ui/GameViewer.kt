@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -19,17 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import me.frauenfelderflorian.tournamentscompose.android.R
+import dev.icerock.moko.resources.compose.stringResource
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.ui.BackButton
-import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
-import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
-import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
-import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
-import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,14 +40,14 @@ fun GameViewer(
             LargeTopAppBar(
                 title = {
                     TopAppBarTitle(
-                        text = stringResource(R.string.game_title, formatDate(game.date)),
+                        text = stringResource(MR.strings.game_title, formatDate(game.date)),
                         scrollBehavior = scrollBehavior,
                     )
                 },
                 navigationIcon = { BackButton { navController.navigateUp() } },
                 actions = {
                     IconButton({ navController.navigate(Routes.GAME_EDITOR.route) }) {
-                        Icon(Icons.Default.Edit, stringResource(R.string.edit_game))
+                        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_game))
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
