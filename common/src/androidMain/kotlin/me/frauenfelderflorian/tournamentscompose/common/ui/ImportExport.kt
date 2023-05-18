@@ -1,4 +1,4 @@
-package me.frauenfelderflorian.tournamentscompose.android.ui
+package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import android.content.Context
 import android.net.Uri
@@ -13,11 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.android.R
+import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.ui.gson
 
 fun exportToUri(
     uri: Uri?,
@@ -33,18 +32,16 @@ fun exportToUri(
                 it.close()
             }
         } else {
-            scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+            scope.launch { hostState.showSnackbar(MR.strings.exception_file.getString(context)) }
         }
     } catch (e: java.lang.Exception) {
         scope.launch {
             hostState.showSnackbar(
-                context.getString(
-                    when (e) {
-                        is FileNotFoundException -> R.string.exception_file
-                        is IOException -> R.string.exception_io
-                        else -> R.string.exception
-                    }
-                )
+                when (e) {
+                    is FileNotFoundException -> MR.strings.exception_file.getString(context)
+                    is IOException -> MR.strings.exception_io.getString(context)
+                    else -> MR.strings.exception.getString(context)
+                }
             )
         }
     }
@@ -76,19 +73,17 @@ fun importFromUri(
                 inputStream.close()
             }
         } else {
-            scope.launch { hostState.showSnackbar(context.getString(R.string.exception_file)) }
+            scope.launch { hostState.showSnackbar(MR.strings.exception_file.getString(context)) }
         }
     } catch (e: java.lang.Exception) {
         scope.launch {
             hostState.showSnackbar(
-                context.getString(
-                    when (e) {
-                        is FileNotFoundException -> R.string.exception_file
-                        is JsonSyntaxException -> R.string.exception_json
-                        is IOException -> R.string.exception_io
-                        else -> R.string.exception
-                    }
-                )
+                when (e) {
+                    is FileNotFoundException -> MR.strings.exception_file.getString(context)
+                    is JsonSyntaxException -> MR.strings.exception_json.getString(context)
+                    is IOException -> MR.strings.exception_io.getString(context)
+                    else -> MR.strings.exception.getString(context)
+                }
             )
         }
     }

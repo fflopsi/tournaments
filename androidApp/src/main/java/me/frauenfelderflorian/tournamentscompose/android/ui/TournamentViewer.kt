@@ -69,6 +69,7 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.InfoDialog
 import me.frauenfelderflorian.tournamentscompose.common.ui.SettingsInfoMenu
 import me.frauenfelderflorian.tournamentscompose.common.ui.TopAppBarTitle
 import me.frauenfelderflorian.tournamentscompose.common.ui.detailsStyle
+import me.frauenfelderflorian.tournamentscompose.common.ui.exportToUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.formatDate
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalDp
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
