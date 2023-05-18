@@ -36,7 +36,7 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class kotlin.collections.Map { <fields>; }
 -keep class kotlin.collections.Collection { <fields>; }
--keep class me.frauenfelderflorian.tournamentscompose.data.** { <fields>; }
+-keep class me.frauenfelderflorian.tournamentscompose.common.data.** { <fields>; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
