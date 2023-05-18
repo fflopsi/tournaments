@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.compose")
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
+    id("kotlin-kapt")
 }
 
 kotlin {
@@ -16,7 +17,6 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.material3)
-                implementation(compose.material)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class) implementation(
                     compose.components.resources
                 )
@@ -36,7 +36,7 @@ kotlin {
                 implementation("androidx.room:room-runtime:$roomVersion")
                 implementation("androidx.room:room-ktx:$roomVersion")
                 //annotationProcessor("androidx.room:room-compiler:$roomVersion")
-                //kapt("androidx.room:room-compiler:$roomVersion")
+                configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
             }
         }
         val jvmMain by getting {

@@ -12,10 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
@@ -32,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -48,21 +44,17 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import dev.icerock.moko.resources.compose.stringResource
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import java.text.DateFormat
+import me.frauenfelderflorian.tournamentscompose.common.MR
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
@@ -94,54 +86,8 @@ fun BackButton(navigateUp: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun InfoDialog(showDialog: MutableState<Boolean>) {
-    if (showDialog.value) {
-        AlertDialog(
-            onDismissRequest = { showDialog.value = false },
-            //icon = { Icon(Icons.Default.Info, null) }, // TODO: uncomment when AlertDialog is M3
-            title = {
-                Text("${stringResource(MR.strings.about)} ${stringResource(MR.strings.app_title)}")
-            },
-            text = {
-                Column {
-                    Text(stringResource(MR.strings.built_by_info))
-                    val tag = stringResource(MR.strings.github_link_tag)
-                    val linkString = buildAnnotatedString {
-                        val string = stringResource(MR.strings.link_to_github)
-                        append(string)
-                        addStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                textDecoration = TextDecoration.Underline,
-                            ),
-                            start = 0,
-                            end = string.length,
-                        )
-                        addStringAnnotation(
-                            tag = tag,
-                            annotation = stringResource(MR.strings.github_link),
-                            start = 0,
-                            end = string.length,
-                        )
-                    }
-                    val uriHandler = LocalUriHandler.current
-                    ClickableText(
-                        text = linkString,
-                        onClick = { pos ->
-                            linkString.getStringAnnotations(tag, pos, pos).firstOrNull()
-                                ?.let { uriHandler.openUri(it.item) }
-                        },
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton({ showDialog.value = false }) { Text(stringResource(MR.strings.ok)) }
-            },
-        )
-    }
-}
+expect fun InfoDialog(showDialog: MutableState<Boolean>)
 
 @Composable
 fun SettingsInfoMenu(navigateToSettings: () -> Unit, showInfoDialog: MutableState<Boolean>) {
