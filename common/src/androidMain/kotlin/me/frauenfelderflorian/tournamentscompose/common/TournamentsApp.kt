@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,7 +33,7 @@ fun TournamentsApp(intent: Intent) {
     val tournamentDao = db.tournamentDao()
     val gameDao = db.gameDao()
     val model: TournamentsModel = viewModel()
-    model.tournaments = tournamentDao.getTournamentsWithGames()
+    model.tournaments = tournamentDao.getTournamentsWithGames().asLiveData()
         .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
     val navController = rememberNavController()
 

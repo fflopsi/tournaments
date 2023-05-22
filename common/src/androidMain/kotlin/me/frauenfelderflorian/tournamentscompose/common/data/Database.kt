@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.common.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -10,12 +9,13 @@ import androidx.room.RoomDatabase
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TournamentDao {
     @Transaction
     @Query("SELECT * FROM tournament")
-    fun getTournamentsWithGames(): LiveData<List<TournamentWithGames>>
+    fun getTournamentsWithGames(): Flow<List<TournamentWithGames>>
 
     @Insert
     suspend fun insert(vararg tournaments: Tournament)
