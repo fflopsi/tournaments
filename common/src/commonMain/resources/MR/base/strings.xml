@@ -84,6 +84,8 @@
     <string name="point_system_classic_info">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="ranking">Ranking</string>
     <string name="ranking_invalid">Ranking invalid</string>
+    <string name="restart">Restart</string>
+    <string name="restart_desc">Restarts the whole app. Use in case of problems</string>
     <string name="save_and_exit">Save and exit</string>
     <string name="settings">Settings</string>
     <string name="share">Share all tournaments</string>

@@ -84,6 +84,8 @@
     <string name="point_system_classic_info">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="ranking">Rangliste</string>
     <string name="ranking_invalid">Rangliste ungültig</string>
+    <string name="restart">Neustart</string>
+    <string name="restart_desc">Startet die ganze App neu. Bei Problemen verwenden</string>
     <string name="save_and_exit">Speichern und schliessen</string>
     <string name="settings">Einstellungen</string>
     <string name="share">Alle Turniere teilen</string>

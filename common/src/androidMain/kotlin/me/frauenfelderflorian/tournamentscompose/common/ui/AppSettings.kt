@@ -1,5 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
+import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -244,6 +246,25 @@ fun AppSettings(
                                     )
                                 }
                                 Switch(checked = prefs.experimentalFeatures, onCheckedChange = null)
+                            }
+                        }
+                        item { Divider() }
+                        item {
+                            Column(Modifier.clickable {
+                                context.startActivity(
+                                    Intent.makeRestartActivityTask(
+                                        context.packageManager.getLaunchIntentForPackage(
+                                            context.packageName
+                                        )!!.component!!
+                                    )
+                                )
+                                Runtime.getRuntime().exit(0)
+                            }.fillMaxWidth().padding(normalPadding)) {
+                                Text(text = stringResource(MR.strings.restart), style = titleStyle)
+                                Text(
+                                    text = stringResource(MR.strings.restart_desc),
+                                    style = detailsStyle,
+                                )
                             }
                         }
                     }
