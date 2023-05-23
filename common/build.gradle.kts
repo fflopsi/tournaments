@@ -11,7 +11,7 @@ kotlin {
     android()
     jvm()
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -54,6 +54,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.desktop.currentOs)
                 implementation("moe.tlaster:precompose:1.4.1")
+                implementation("moe.tlaster:precompose-viewmodel:1.4.1")
             }
         }
     }

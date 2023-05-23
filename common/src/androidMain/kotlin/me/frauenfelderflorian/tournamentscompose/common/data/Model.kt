@@ -10,9 +10,9 @@ import com.google.gson.reflect.TypeToken
 import me.frauenfelderflorian.tournamentscompose.common.ui.gson
 import java.util.UUID
 
-class TournamentsModel : ViewModel() {
-    var current: UUID? = null
-    var tournaments = mapOf<UUID, TournamentWithGames>()
+actual class TournamentsModel : ViewModel() {
+    actual var current: UUID? = null
+    actual var tournaments = mapOf<UUID, TournamentWithGames>()
 }
 
 actual data class TournamentWithGames actual constructor(

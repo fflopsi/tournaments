@@ -2,7 +2,13 @@ package me.frauenfelderflorian.tournamentscompose.common.data
 
 import com.google.gson.reflect.TypeToken
 import me.frauenfelderflorian.tournamentscompose.common.ui.gson
+import moe.tlaster.precompose.viewmodel.ViewModel
 import java.util.UUID
+
+actual class TournamentsModel : ViewModel() {
+    actual var current: UUID? = null
+    actual var tournaments = mapOf<UUID, TournamentWithGames>()
+}
 
 actual data class TournamentWithGames actual constructor(
     actual val t: Tournament,

@@ -2,6 +2,11 @@ package me.frauenfelderflorian.tournamentscompose.common.data
 
 import java.util.UUID
 
+expect class TournamentsModel {
+    var current: UUID?
+    var tournaments: Map<UUID, TournamentWithGames>
+}
+
 expect class TournamentWithGames(t: Tournament, games: List<Game>) {
     val t: Tournament
     val games: List<Game>
