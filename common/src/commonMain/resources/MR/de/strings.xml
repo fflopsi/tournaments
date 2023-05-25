@@ -43,7 +43,7 @@
     <string name="export_tournaments_to_file">Alle Turniere in eine Datei exportieren</string>
     <string name="first_points">Punkte für ersten Platz</string>
     <string name="game_">Spiel</string>
-    <string name="game_details">Tor %1$s von %2$s erreicht, mit Schwierigkeit \"%3$s\"</string>
+    <string name="game_details">Tor %1$s von %2$s erreicht, mit Schwierigkeit "%3$s"</string>
     <string name="game_overview">Spielübersicht</string>
     <string name="game_title">Spiel vom %1$s</string>
     <string name="games_">Spiele</string>
@@ -91,9 +91,9 @@
     <string name="share">Alle Turniere teilen</string>
     <string name="start_date">Startdatum</string>
     <string name="to_">bis</string>
-    <string name="tournament_title">Turnier \"%1$s\"</string>
+    <string name="tournament_title">Turnier "%1$s"</string>
     <string name="use_defaults">Standardeinstellungen verwenden</string>
-    <string name="use_defaults_desc">Standardeinstellungen können in den Einstellungen unter \"Neue Turniere\" angepasst werden</string>
+    <string name="use_defaults_desc">Standardeinstellungen können in den Einstellungen unter "Neue Turniere" angepasst werden</string>
     <string name="use_dynamic_color">Dynamische Farben verwenden</string>
     <string name="app_name" translatable="false">TournamentsCompose</string>
     <string name="app_title" translatable="false">Tournaments</string>
