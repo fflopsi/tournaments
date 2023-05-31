@@ -53,31 +53,28 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.common.MR
-import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentEditor(
-    navController: NavController,
+    navigator: Navigator,
     tournament: TournamentWithGames?,
     current: UUID?,
     setCurrent: (UUID) -> Unit,
     tournaments: Map<UUID, TournamentWithGames>,
     dao: TournamentDao,
     gameDao: GameDao,
-    defaultPlayers: List<String>,
-    defaultAdaptivePoints: Boolean,
-    defaultFirstPoints: Int,
-    experimentalFeatures: Boolean,
+    prefs: Prefs,
 ) {
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
@@ -101,7 +98,7 @@ fun TournamentEditor(
     var deleteDialogOpen by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val stateHandle = navController.currentBackStackEntry?.savedStateHandle
+        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
         if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
             players.clear()
             stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
@@ -113,15 +110,15 @@ fun TournamentEditor(
     LaunchedEffect(tournaments[uuid]) {
         if (tournaments[uuid] != null) {
             setCurrent(uuid!!)
-            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-            navController.backQueue.remove(navController.previousBackStackEntry)
+            navigator.navigate(Routes.TOURNAMENT_VIEWER)
+            (navigator.controller as NavController).backQueue.remove(navigator.controller.previousBackStackEntry)
         }
     }
 
     fun save() {
         val t: Tournament
         if (current == null) {
-            if (!useDefaults && players.size < 2 || useDefaults && defaultPlayers.size < 2) {
+            if (!useDefaults && players.size < 2 || useDefaults && prefs.players.size < 2) {
                 scope.launch {
                     hostState.showSnackbar(MR.strings.at_least_two_players.getString(context))
                 }
@@ -133,9 +130,9 @@ fun TournamentEditor(
                     name = name.trim(),
                     start = start,
                     end = end,
-                    useAdaptivePoints = defaultAdaptivePoints,
-                    firstPoints = defaultFirstPoints,
-                ).apply { this.players = defaultPlayers }
+                    useAdaptivePoints = prefs.adaptivePoints,
+                    firstPoints = prefs.firstPoints,
+                ).apply { this.players = prefs.players }
             } else if (adaptivePoints) {
                 t = Tournament(
                     id = UUID.randomUUID(),
@@ -180,8 +177,8 @@ fun TournamentEditor(
             }
         }
         scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
-        if (navController.previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
-            navController.popBackStack()
+        if ((navigator.controller as NavController).previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
+            navigator.navigateUp()
         } else {
             uuid = t.id
         }
@@ -193,7 +190,7 @@ fun TournamentEditor(
                 title = {
                     TopAppBarTitle(stringResource(MR.strings.edit_tournament), scrollBehavior)
                 },
-                navigationIcon = { BackButton { navController.navigateUp() } },
+                navigationIcon = { BackButton { navigator.navigateUp() } },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -205,7 +202,7 @@ fun TournamentEditor(
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                            navigator.navigate(Routes.SETTINGS_EDITOR)
                         },
                         showInfoDialog = showInfo,
                     )
@@ -272,7 +269,7 @@ fun TournamentEditor(
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
                         PlayersSetting(players) {
-                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                            (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle?.set(
                                 MR.strings.players_key.getString(context),
                                 if (players.isNotEmpty()) {
                                     players.toTypedArray()
@@ -283,7 +280,7 @@ fun TournamentEditor(
                                     )
                                 },
                             )
-                            navController.navigate(Routes.PLAYERS_EDITOR.route)
+                            navigator.navigate(Routes.PLAYERS_EDITOR)
                         }
                     }
                 }
@@ -311,7 +308,7 @@ fun TournamentEditor(
                     )
                 }
             }
-            if (experimentalFeatures && current == null) {
+            if (prefs.experimentalFeatures && current == null) {
                 Button(
                     onClick = ::save,
                     modifier = Modifier.padding(normalPadding).fillMaxWidth(),
@@ -386,7 +383,7 @@ fun TournamentEditor(
                                 tournament.games.forEach { gameDao.delete(it) }
                             }
                         }
-                        navController.popBackStack(Routes.TOURNAMENT_LIST.route, false)
+                        (navigator.controller as NavController).popBackStack(Routes.TOURNAMENT_LIST.route, false)
                     }) {
                         Text(stringResource(MR.strings.delete_tournament))
                     }

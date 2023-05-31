@@ -1,4 +1,10 @@
-package me.frauenfelderflorian.tournamentscompose.common
+package me.frauenfelderflorian.tournamentscompose.common.ui
+
+expect class Navigator(controller: Any) {
+    val controller: Any
+    fun navigate(route: Routes)
+    fun navigateUp()
+}
 
 enum class Routes(val route: String) {
     TOURNAMENT_LIST("tl"),

@@ -58,13 +58,12 @@ import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
-import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun AppSettings(
-    navController: NavController,
+    navigator: Navigator,
     prefs: Prefs,
 ) {
     var firstPoints: Int? by rememberSaveable { mutableStateOf(prefs.firstPoints) }
@@ -77,7 +76,7 @@ fun AppSettings(
     val showInfo = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        val stateHandle = navController.currentBackStackEntry?.savedStateHandle
+        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
         if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
             prefs.players =
                 stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!.toList()
@@ -89,7 +88,7 @@ fun AppSettings(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.settings), scrollBehavior) },
-                navigationIcon = { BackButton { navController.navigateUp() } },
+                navigationIcon = { BackButton { navigator.navigateUp() } },
                 actions = {
                     IconButton({ showInfo.value = true }) {
                         Icon(Icons.Outlined.Info, stringResource(MR.strings.about))
@@ -279,7 +278,7 @@ fun AppSettings(
                         }
                         item {
                             PlayersSetting(prefs.players) {
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle?.set(
                                     MR.strings.players_key.getString(context),
                                     if (prefs.players.isNotEmpty()) {
                                         prefs.players.toTypedArray()
@@ -290,7 +289,7 @@ fun AppSettings(
                                         )
                                     },
                                 )
-                                navController.navigate(Routes.PLAYERS_EDITOR.route)
+                                navigator.navigate(Routes.PLAYERS_EDITOR)
                             }
                         }
                         item {

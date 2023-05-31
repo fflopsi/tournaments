@@ -58,11 +58,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.NavController
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
-import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 @OptIn(
@@ -72,7 +70,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 )
 @Composable
 fun TournamentViewer(
-    navController: NavController,
+    navigator: Navigator,
     tournament: TournamentWithGames,
 ) {
     val scrollBehavior =
@@ -103,9 +101,9 @@ fun TournamentViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton { navController.navigateUp() } },
+                navigationIcon = { BackButton { navigator.navigateUp() } },
                 actions = {
-                    IconButton({ navController.navigate(Routes.TOURNAMENT_EDITOR.route) }) {
+                    IconButton({ navigator.navigate(Routes.TOURNAMENT_EDITOR) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }
                     IconButton({
@@ -122,7 +120,7 @@ fun TournamentViewer(
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navController.navigate(Routes.SETTINGS_EDITOR.route)
+                            navigator.navigate(Routes.SETTINGS_EDITOR)
                         },
                         showInfoDialog = showInfo,
                     )
@@ -142,7 +140,7 @@ fun TournamentViewer(
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
                         tournament.current = null
-                        navController.navigate(Routes.GAME_EDITOR.route)
+                        navigator.navigate(Routes.GAME_EDITOR)
                     },
                 )
             }
@@ -174,7 +172,7 @@ fun TournamentViewer(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.clickable {
                                         tournament.current = it
-                                        navController.navigate(Routes.GAME_VIEWER.route)
+                                        navigator.navigate(Routes.GAME_VIEWER)
                                     }.padding(normalPadding),
                                 ) {
                                     Column(Modifier.weight(2f)) {
@@ -196,7 +194,7 @@ fun TournamentViewer(
                                     }
                                     IconButton({
                                         tournament.current = it
-                                        navController.navigate(Routes.GAME_EDITOR.route)
+                                        navigator.navigate(Routes.GAME_EDITOR)
                                     }) {
                                         Icon(
                                             Icons.Default.Edit, stringResource(MR.strings.edit_game)

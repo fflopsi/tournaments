@@ -3,23 +3,16 @@ package me.frauenfelderflorian.tournamentscompose.common.ui
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
@@ -46,26 +39,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import dev.icerock.moko.resources.compose.stringResource
-import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.MR
-import me.frauenfelderflorian.tournamentscompose.common.Routes
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentList(
-    navController: NavHostController,
+    navigator: Navigator,
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: (UUID?) -> Unit,
     tournamentDao: TournamentDao,
@@ -113,7 +100,7 @@ fun TournamentList(
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.app_title), scrollBehavior) },
                 actions = {
-                    IconButton({ navController.navigate(Routes.SETTINGS_EDITOR.route) }) {
+                    IconButton({ navigator.navigate(Routes.SETTINGS_EDITOR) }) {
                         Icon(Icons.Default.Settings, stringResource(MR.strings.settings))
                     }
                     IconButton({ showInfo.value = true }) {
@@ -160,7 +147,7 @@ fun TournamentList(
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = {
                     setCurrent(null)
-                    navController.navigate(Routes.TOURNAMENT_EDITOR.route)
+                    navigator.navigate(Routes.TOURNAMENT_EDITOR)
                 },
             )
         },
@@ -168,53 +155,12 @@ fun TournamentList(
         contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        LazyColumn(Modifier.padding(paddingValues)) {
-            if (tournaments.isNotEmpty()) {
-                items(tournaments.values.sortedByDescending { it.t.start }) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            setCurrent(it.t.id)
-                            navController.navigate(Routes.TOURNAMENT_VIEWER.route)
-                        }.padding(normalPadding),
-                    ) {
-                        Column(Modifier.weight(2f)) {
-                            Text(text = it.t.name, style = titleStyle)
-                            Text(
-                                text = "${formatDate(it.t.start)} ${stringResource(MR.strings.to_)} ${
-                                    formatDate(it.t.end)
-                                }, ${it.games.size} ${
-                                    stringResource(
-                                        if (it.games.size == 1) {
-                                            MR.strings.game_
-                                        } else {
-                                            MR.strings.games_
-                                        }
-                                    )
-                                }",
-                                style = detailsStyle,
-                            )
-                        }
-                        IconButton({
-                            setCurrent(it.t.id)
-                            navController.navigate(Routes.TOURNAMENT_EDITOR.route)
-                        }) {
-                            Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
-                        }
-                    }
-                }
-            } else {
-                item {
-                    Text(
-                        text = stringResource(MR.strings.add_first_tournament_hint),
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Light,
-                        modifier = Modifier.padding(normalPadding),
-                    )
-                }
-            }
-        }
+        TournamentListContent(
+            tournaments = tournaments,
+            setCurrent = setCurrent,
+            navigator = navigator,
+            modifier = Modifier.padding(paddingValues),
+        )
         InfoDialog(showInfo)
         if (showImport) {
             AlertDialog(

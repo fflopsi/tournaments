@@ -51,7 +51,7 @@ import me.frauenfelderflorian.tournamentscompose.common.MR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayersEditor(
-    navController: NavController,
+    navigator: Navigator,
 ) {
     val players = rememberMutableStateMapOf()
     var playersIdCounter by rememberSaveable { mutableStateOf(0) }
@@ -63,7 +63,7 @@ fun PlayersEditor(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     LaunchedEffect(Unit) {
-        val stateHandle = navController.previousBackStackEntry?.savedStateHandle
+        val stateHandle = (navigator.controller as NavController).previousBackStackEntry?.savedStateHandle
         if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
             stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
                 .forEach { players[playersIdCounter++] = it }
@@ -75,7 +75,7 @@ fun PlayersEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
-                navigationIcon = { BackButton { navController.navigateUp() } },
+                navigationIcon = { BackButton { navigator.navigateUp() } },
                 actions = {
                     IconButton({
                         for (player1 in players) {
@@ -99,10 +99,10 @@ fun PlayersEditor(
                                 }
                             }
                         }
-                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                        (navigator.controller as NavController).previousBackStackEntry?.savedStateHandle?.set(
                             MR.strings.players_key.getString(context), players.values.toTypedArray()
                         )
-                        navController.popBackStack()
+                        navigator.navigateUp()
                     }) {
                         Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }

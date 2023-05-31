@@ -7,18 +7,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.application
-import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
 import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
 import moe.tlaster.precompose.PreComposeWindow
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
+import java.util.UUID
 
 fun desktopApp() = application {
-    PreComposeWindow(onCloseRequest = ::exitApplication) {
-        DesktopAppContent()
-    }
+    PreComposeWindow(onCloseRequest = ::exitApplication) { DesktopAppContent() }
 }
 
 @Composable
