@@ -51,13 +51,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popTo
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
+import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
@@ -67,7 +71,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentEditor(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     tournament: TournamentWithGames?,
     current: UUID?,
     setCurrent: (UUID) -> Unit,
@@ -75,6 +79,7 @@ fun TournamentEditor(
     dao: TournamentDao,
     gameDao: GameDao,
     prefs: Prefs,
+    playersModel: PlayersModel,
 ) {
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
@@ -97,21 +102,19 @@ fun TournamentEditor(
     val showInfo = remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
-        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
+    LaunchedEffect(playersModel.edited) {
+        if (playersModel.edited) {
             players.clear()
-            stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
-                .forEach { players.add(it) }
-            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
+            players.addAll(playersModel.players)
+            playersModel.edited = false
         }
     }
 
     LaunchedEffect(tournaments[uuid]) {
         if (tournaments[uuid] != null) {
             setCurrent(uuid!!)
-            navigator.navigate(Routes.TOURNAMENT_VIEWER)
-            (navigator.controller as NavController).backQueue.remove(navigator.controller.previousBackStackEntry)
+            navigator.pop()
+            navigator.push(Screen.TournamentViewer)
         }
     }
 
@@ -156,6 +159,7 @@ fun TournamentEditor(
                 }
                 return
             }
+            uuid = t.id
         } else {
             if (adaptivePoints) {
                 t = tournament!!.t.copy(
@@ -175,13 +179,9 @@ fun TournamentEditor(
                 }
                 return
             }
+            navigator.pop()
         }
         scope.launch { withContext(Dispatchers.IO) { dao.upsert(t) } }
-        if ((navigator.controller as NavController).previousBackStackEntry?.destination?.route == Routes.TOURNAMENT_VIEWER.route) {
-            navigator.navigateUp()
-        } else {
-            uuid = t.id
-        }
     }
 
     Scaffold(
@@ -190,7 +190,7 @@ fun TournamentEditor(
                 title = {
                     TopAppBarTitle(stringResource(MR.strings.edit_tournament), scrollBehavior)
                 },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -202,7 +202,7 @@ fun TournamentEditor(
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navigator.navigate(Routes.SETTINGS_EDITOR)
+                            navigator.push(Screen.AppSettings)
                         },
                         showInfoDialog = showInfo,
                     )
@@ -269,18 +269,14 @@ fun TournamentEditor(
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
                         PlayersSetting(players) {
-                            (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle?.set(
-                                MR.strings.players_key.getString(context),
-                                if (players.isNotEmpty()) {
-                                    players.toTypedArray()
-                                } else {
-                                    arrayOf(
-                                        "${MR.strings.player.getString(context)} 1",
-                                        "${MR.strings.player.getString(context)} 2",
-                                    )
-                                },
-                            )
-                            navigator.navigate(Routes.PLAYERS_EDITOR)
+                            playersModel.players.clear()
+                            playersModel.players.addAll(players.ifEmpty {
+                                listOf(
+                                    "${MR.strings.player.getString(context)} 1",
+                                    "${MR.strings.player.getString(context)} 2",
+                                )
+                            })
+                            navigator.push(Screen.PlayersEditor)
                         }
                     }
                 }
@@ -383,7 +379,7 @@ fun TournamentEditor(
                                 tournament.games.forEach { gameDao.delete(it) }
                             }
                         }
-                        (navigator.controller as NavController).popBackStack(Routes.TOURNAMENT_LIST.route, false)
+                        navigator.popTo(0)
                     }) {
                         Text(stringResource(MR.strings.delete_tournament))
                     }

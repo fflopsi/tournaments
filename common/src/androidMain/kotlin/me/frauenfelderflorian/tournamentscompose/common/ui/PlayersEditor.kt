@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,19 +41,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.format
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
+import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayersEditor(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
+    playersModel: PlayersModel,
 ) {
-    val players = rememberMutableStateMapOf()
     var playersIdCounter by rememberSaveable { mutableStateOf(0) }
+    val players = rememberMutableStateMapOf(
+        *playersModel.players.associateBy { playersIdCounter++ }.toList().toTypedArray()
+    )
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -62,20 +66,11 @@ fun PlayersEditor(
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    LaunchedEffect(Unit) {
-        val stateHandle = (navigator.controller as NavController).previousBackStackEntry?.savedStateHandle
-        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
-            stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!
-                .forEach { players[playersIdCounter++] = it }
-            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
-        }
-    }
-
     Scaffold(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
                     IconButton({
                         for (player1 in players) {
@@ -99,10 +94,10 @@ fun PlayersEditor(
                                 }
                             }
                         }
-                        (navigator.controller as NavController).previousBackStackEntry?.savedStateHandle?.set(
-                            MR.strings.players_key.getString(context), players.values.toTypedArray()
-                        )
-                        navigator.navigateUp()
+                        playersModel.players.clear()
+                        playersModel.players.addAll(players.values)
+                        playersModel.edited = true
+                        navigator.pop()
                     }) {
                         Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }

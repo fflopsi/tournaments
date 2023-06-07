@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
@@ -27,7 +29,7 @@ import java.util.UUID
 fun TournamentListContent(
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: (UUID?) -> Unit,
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier) {
@@ -38,7 +40,7 @@ fun TournamentListContent(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
                         setCurrent(it.t.id)
-                        navigator.navigate(Routes.TOURNAMENT_VIEWER)
+                        navigator.push(Screen.TournamentViewer)
                     }.padding(normalPadding),
                 ) {
                     Column(Modifier.weight(2f)) {
@@ -60,7 +62,7 @@ fun TournamentListContent(
                     }
                     IconButton({
                         setCurrent(it.t.id)
-                        navigator.navigate(Routes.TOURNAMENT_EDITOR)
+                        navigator.push(Screen.TournamentEditor)
                     }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }

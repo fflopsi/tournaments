@@ -5,26 +5,25 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsDatabase
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.common.ui.AppSettings
+import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
-import me.frauenfelderflorian.tournamentscompose.common.ui.Navigator
 import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersEditor
-import me.frauenfelderflorian.tournamentscompose.common.ui.Routes
+import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentViewer
@@ -41,7 +40,8 @@ fun TournamentsApp(intent: Intent) {
     val model: TournamentsModel = viewModel()
     model.tournaments = tournamentDao.getTournamentsWithGames().asLiveData()
         .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
-    val navigator = Navigator(rememberNavController())
+    val playersModel: PlayersModel = viewModel()
+    val navigator = remember { StackNavigation<Screen>() }
     val systemUiController = rememberSystemUiController()
     val darkIcons = !isSystemInDarkTheme()
     DisposableEffect(systemUiController, prefs.theme) {
@@ -64,12 +64,13 @@ fun TournamentsApp(intent: Intent) {
         },
         dynamicColor = prefs.dynamicColor,
     ) {
-        NavHost(
-            navController = navigator.controller as NavHostController,
-            startDestination = Routes.TOURNAMENT_LIST.route,
+        ChildStack(
+            source = navigator,
+            initialStack = { listOf(Screen.TournamentList) },
+            handleBackButton = true,
         ) {
-            composable(Routes.TOURNAMENT_LIST.route) {
-                TournamentList(
+            when (it) {
+                is Screen.TournamentList -> TournamentList(
                     navigator = navigator,
                     tournaments = model.tournaments,
                     setCurrent = { new: UUID? -> model.current = new },
@@ -77,9 +78,8 @@ fun TournamentsApp(intent: Intent) {
                     gameDao = gameDao,
                     intent = intent,
                 )
-            }
-            composable(Routes.TOURNAMENT_EDITOR.route) {
-                TournamentEditor(
+
+                is Screen.TournamentEditor -> TournamentEditor(
                     navigator = navigator,
                     tournament = model.tournaments[model.current],
                     current = model.current,
@@ -88,36 +88,34 @@ fun TournamentsApp(intent: Intent) {
                     dao = tournamentDao,
                     gameDao = gameDao,
                     prefs = prefs,
+                    playersModel = playersModel,
                 )
-            }
-            composable(Routes.TOURNAMENT_VIEWER.route) {
-                TournamentViewer(
+
+                is Screen.TournamentViewer -> TournamentViewer(
                     navigator = navigator,
                     tournament = model.tournaments[model.current]!!,
                 )
-            }
-            composable(Routes.GAME_EDITOR.route) {
-                GameEditor(
+
+                is Screen.GameEditor -> GameEditor(
                     navigator = navigator,
                     tournament = model.tournaments[model.current]!!,
                     dao = gameDao,
                 )
-            }
-            composable(Routes.GAME_VIEWER.route) {
-                GameViewer(
+
+                is Screen.GameViewer -> GameViewer(
                     navigator = navigator,
                     game = model.tournaments[model.current]!!.current!!,
                 )
-            }
-            composable(Routes.PLAYERS_EDITOR.route) {
-                PlayersEditor(
+
+                is Screen.PlayersEditor -> PlayersEditor(
                     navigator = navigator,
+                    playersModel = playersModel,
                 )
-            }
-            composable(Routes.SETTINGS_EDITOR.route) {
-                AppSettings(
+
+                is Screen.AppSettings -> AppSettings(
                     navigator = navigator,
                     prefs = prefs,
+                    playersModel = playersModel,
                 )
             }
         }

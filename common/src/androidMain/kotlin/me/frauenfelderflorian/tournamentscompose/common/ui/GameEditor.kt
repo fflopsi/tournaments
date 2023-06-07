@@ -59,7 +59,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.navigation.NavController
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popWhile
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,7 +76,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun GameEditor(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     tournament: TournamentWithGames,
     dao: GameDao,
 ) {
@@ -118,7 +121,7 @@ fun GameEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_game), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
                     if (tournament.current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -184,7 +187,7 @@ fun GameEditor(
                                 .forEach { ranking[it] = 0 }
                             g.ranking = ranking
                             scope.launch { withContext(Dispatchers.IO) { dao.upsert(g) } }
-                            navigator.navigateUp()
+                            navigator.pop()
                         } catch (e: NumberFormatException) {
                             scope.launch {
                                 hostState.showSnackbar(MR.strings.invalid_number.getString(context))
@@ -195,7 +198,7 @@ fun GameEditor(
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navigator.navigate(Routes.SETTINGS_EDITOR)
+                            navigator.push(Screen.AppSettings)
                         },
                         showInfoDialog = showInfo,
                     )
@@ -413,7 +416,7 @@ fun GameEditor(
                         scope.launch {
                             withContext(Dispatchers.IO) { dao.delete(tournament.current!!) }
                         }
-                        (navigator.controller as NavController).popBackStack(Routes.TOURNAMENT_VIEWER.route, false)
+                        navigator.popWhile { top: Screen -> top !is Screen.TournamentViewer }
                     }) {
                         Text(stringResource(MR.strings.delete_game))
                     }

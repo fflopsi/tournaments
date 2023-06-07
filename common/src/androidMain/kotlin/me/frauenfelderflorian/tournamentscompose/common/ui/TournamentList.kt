@@ -42,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
@@ -52,7 +54,7 @@ import java.util.UUID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TournamentList(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: (UUID?) -> Unit,
     tournamentDao: TournamentDao,
@@ -100,7 +102,7 @@ fun TournamentList(
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.app_title), scrollBehavior) },
                 actions = {
-                    IconButton({ navigator.navigate(Routes.SETTINGS_EDITOR) }) {
+                    IconButton({ navigator.push(Screen.AppSettings) }) {
                         Icon(Icons.Default.Settings, stringResource(MR.strings.settings))
                     }
                     IconButton({ showInfo.value = true }) {
@@ -147,7 +149,7 @@ fun TournamentList(
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = {
                     setCurrent(null)
-                    navigator.navigate(Routes.TOURNAMENT_EDITOR)
+                    navigator.push(Screen.TournamentEditor)
                 },
             )
         },

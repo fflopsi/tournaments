@@ -19,6 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
@@ -26,7 +29,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.Game
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameViewer(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     game: Game,
 ) {
     val scrollBehavior =
@@ -42,14 +45,14 @@ fun GameViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
-                    IconButton({ navigator.navigate(Routes.GAME_EDITOR) }) {
+                    IconButton({ navigator.push(Screen.GameEditor) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_game))
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navigator.navigate(Routes.SETTINGS_EDITOR)
+                            navigator.push(Screen.AppSettings)
                         },
                         showInfoDialog = showInfo,
                     )

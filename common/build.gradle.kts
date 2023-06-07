@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("dev.icerock.mobile.multiplatform-resources")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 kotlin {
@@ -23,19 +24,21 @@ kotlin {
                 implementation("dev.icerock.moko:resources:0.22.0")
                 implementation("dev.icerock.moko:resources-compose:0.22.0")
                 implementation("com.google.code.gson:gson:2.10.1")
+                implementation("com.arkivanov.decompose:decompose:2.0.0-beta-01")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-beta-01")
             }
         }
+        @Suppress("UNUSED_VARIABLE")
         val androidMain by getting {
             dependencies {
                 val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
                 implementation(composeBom)
                 implementation("androidx.compose.ui:ui")
                 //implementation("androidx.compose.ui:ui-tooling-preview")
-                //implementation("androidx.compose.runtime:runtime-livedata")
+                implementation("androidx.compose.runtime:runtime-livedata")
                 //implementation("androidx.compose.material:material-icons-extended")
                 implementation("androidx.compose.material3:material3")
 
-                implementation("androidx.compose.runtime:runtime-livedata")
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
                 implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
@@ -48,8 +51,12 @@ kotlin {
                 configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+                implementation("com.arkivanov.decompose:decompose:2.0.0-beta-01")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-beta-01")
             }
         }
+
+        @Suppress("UNUSED_VARIABLE")
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.common)

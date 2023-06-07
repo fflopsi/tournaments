@@ -15,6 +15,11 @@ actual class TournamentsModel : ViewModel() {
     actual var tournaments = mapOf<UUID, TournamentWithGames>()
 }
 
+class PlayersModel : ViewModel() {
+    val players = mutableListOf<String>()
+    var edited = false
+}
+
 actual data class TournamentWithGames actual constructor(
     @Embedded actual val t: Tournament,
     @Relation(parentColumn = "id", entityColumn = "tournamentId") actual val games: List<Game>,

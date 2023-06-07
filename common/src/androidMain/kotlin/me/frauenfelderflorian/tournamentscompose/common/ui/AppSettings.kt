@@ -54,17 +54,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
-import androidx.navigation.NavController
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
+import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun AppSettings(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     prefs: Prefs,
+    playersModel: PlayersModel,
 ) {
     var firstPoints: Int? by rememberSaveable { mutableStateOf(prefs.firstPoints) }
 
@@ -75,20 +79,27 @@ fun AppSettings(
     val pagerState = rememberPagerState()
     val showInfo = rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
-        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
-            prefs.players =
-                stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!.toList()
-            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
+    LaunchedEffect(playersModel.edited) {
+        if (playersModel.edited) {
+            prefs.players = listOf(*playersModel.players.toTypedArray())
+            playersModel.edited = false
         }
     }
+
+//    LaunchedEffect(Unit) {
+//        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
+//        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
+//            prefs.players =
+//                stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!.toList()
+//            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
+//        }
+//    }
 
     Scaffold(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.settings), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
                     IconButton({ showInfo.value = true }) {
                         Icon(Icons.Outlined.Info, stringResource(MR.strings.about))
@@ -278,18 +289,14 @@ fun AppSettings(
                         }
                         item {
                             PlayersSetting(prefs.players) {
-                                (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle?.set(
-                                    MR.strings.players_key.getString(context),
-                                    if (prefs.players.isNotEmpty()) {
-                                        prefs.players.toTypedArray()
-                                    } else {
-                                        arrayOf(
-                                            "${MR.strings.player.getString(context)} 1",
-                                            "${MR.strings.player.getString(context)} 2",
-                                        )
-                                    },
-                                )
-                                navigator.navigate(Routes.PLAYERS_EDITOR)
+                                playersModel.players.clear()
+                                playersModel.players.addAll(prefs.players.ifEmpty {
+                                    listOf(
+                                        "${MR.strings.player.getString(context)} 1",
+                                        "${MR.strings.player.getString(context)} 2",
+                                    )
+                                })
+                                navigator.push(Screen.PlayersEditor)
                             }
                         }
                         item {

@@ -58,6 +58,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
@@ -70,7 +73,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 )
 @Composable
 fun TournamentViewer(
-    navigator: Navigator,
+    navigator: StackNavigation<Screen>,
     tournament: TournamentWithGames,
 ) {
     val scrollBehavior =
@@ -101,9 +104,9 @@ fun TournamentViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton { navigator.navigateUp() } },
+                navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
-                    IconButton({ navigator.navigate(Routes.TOURNAMENT_EDITOR) }) {
+                    IconButton({ navigator.push(Screen.TournamentEditor) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }
                     IconButton({
@@ -120,7 +123,7 @@ fun TournamentViewer(
                     }
                     SettingsInfoMenu(
                         navigateToSettings = {
-                            navigator.navigate(Routes.SETTINGS_EDITOR)
+                            navigator.push(Screen.AppSettings)
                         },
                         showInfoDialog = showInfo,
                     )
@@ -140,7 +143,7 @@ fun TournamentViewer(
                     expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                     onClick = {
                         tournament.current = null
-                        navigator.navigate(Routes.GAME_EDITOR)
+                        navigator.push(Screen.GameEditor)
                     },
                 )
             }
@@ -172,7 +175,7 @@ fun TournamentViewer(
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.clickable {
                                         tournament.current = it
-                                        navigator.navigate(Routes.GAME_VIEWER)
+                                        navigator.push(Screen.GameViewer)
                                     }.padding(normalPadding),
                                 ) {
                                     Column(Modifier.weight(2f)) {
@@ -194,7 +197,7 @@ fun TournamentViewer(
                                     }
                                     IconButton({
                                         tournament.current = it
-                                        navigator.navigate(Routes.GAME_EDITOR)
+                                        navigator.push(Screen.GameEditor)
                                     }) {
                                         Icon(
                                             Icons.Default.Edit, stringResource(MR.strings.edit_game)
