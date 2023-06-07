@@ -63,7 +63,6 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.desktop.currentOs)
                 implementation("moe.tlaster:precompose:1.4.1")
-                implementation("moe.tlaster:precompose-viewmodel:1.4.1")
             }
         }
     }
