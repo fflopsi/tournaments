@@ -86,15 +86,6 @@ fun AppSettings(
         }
     }
 
-//    LaunchedEffect(Unit) {
-//        val stateHandle = (navigator.controller as NavController).currentBackStackEntry?.savedStateHandle
-//        if (stateHandle?.get<Array<String>>(MR.strings.players_key.getString(context)) != null) {
-//            prefs.players =
-//                stateHandle.get<Array<String>>(MR.strings.players_key.getString(context))!!.toList()
-//            stateHandle.remove<Array<String>>(MR.strings.players_key.getString(context))
-//        }
-//    }
-
     Scaffold(
         topBar = {
             LargeTopAppBar(
