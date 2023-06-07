@@ -7,6 +7,11 @@ expect class TournamentsModel {
     var tournaments: Map<UUID, TournamentWithGames>
 }
 
+expect class PlayersModel {
+    val players: MutableList<String>
+    var edited: Boolean
+}
+
 expect class TournamentWithGames(t: Tournament, games: List<Game>) {
     val t: Tournament
     val games: List<Game>

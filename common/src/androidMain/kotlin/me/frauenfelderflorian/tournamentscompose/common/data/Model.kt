@@ -15,9 +15,9 @@ actual class TournamentsModel : ViewModel() {
     actual var tournaments = mapOf<UUID, TournamentWithGames>()
 }
 
-class PlayersModel : ViewModel() {
-    val players = mutableListOf<String>()
-    var edited = false
+actual class PlayersModel : ViewModel() {
+    actual val players = mutableListOf<String>()
+    actual var edited = false
 }
 
 actual data class TournamentWithGames actual constructor(
