@@ -1,10 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.union
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,7 +56,7 @@ fun GameViewer(
                 scrollBehavior = scrollBehavior,
             )
         },
-        contentWindowInsets = WindowInsets.ime.union(WindowInsets.systemBars),
+        contentWindowInsets = insets,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         GameViewerContent(game = game, modifier = Modifier.padding(paddingValues))

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -53,8 +54,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import dev.icerock.moko.resources.compose.stringResource
-import java.text.DateFormat
 import me.frauenfelderflorian.tournamentscompose.common.MR
+import java.text.DateFormat
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
@@ -238,3 +239,5 @@ fun rememberMutableStateMapOf(vararg elements: Pair<Int, String>): SnapshotState
         elements.toList().map { it.first to it.second }.toMutableStateMap()
     }
 }
+
+expect val insets: WindowInsets
