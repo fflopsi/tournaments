@@ -2,13 +2,9 @@ package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.material3.SnackbarHostState
+import android.widget.Toast
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStreamReader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,12 +13,14 @@ import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 
 fun exportToUri(
     uri: Uri?,
     context: Context,
-    scope: CoroutineScope,
-    hostState: SnackbarHostState,
     content: Any,
 ) {
     try {
@@ -32,18 +30,18 @@ fun exportToUri(
                 it.close()
             }
         } else {
-            scope.launch { hostState.showSnackbar(MR.strings.exception_file.getString(context)) }
+            Toast.makeText(
+                context, MR.strings.exception_file.getString(context), Toast.LENGTH_SHORT
+            ).show()
         }
     } catch (e: java.lang.Exception) {
-        scope.launch {
-            hostState.showSnackbar(
-                when (e) {
-                    is FileNotFoundException -> MR.strings.exception_file.getString(context)
-                    is IOException -> MR.strings.exception_io.getString(context)
-                    else -> MR.strings.exception.getString(context)
-                }
-            )
-        }
+        Toast.makeText(
+            context, when (e) {
+                is FileNotFoundException -> MR.strings.exception_file.getString(context)
+                is IOException -> MR.strings.exception_io.getString(context)
+                else -> MR.strings.exception.getString(context)
+            }, Toast.LENGTH_SHORT
+        ).show()
     }
 
 }
@@ -52,7 +50,6 @@ fun importFromUri(
     uri: Uri?,
     context: Context,
     scope: CoroutineScope,
-    hostState: SnackbarHostState,
     tournamentDao: TournamentDao,
     gameDao: GameDao,
 ) {
@@ -73,18 +70,18 @@ fun importFromUri(
                 inputStream.close()
             }
         } else {
-            scope.launch { hostState.showSnackbar(MR.strings.exception_file.getString(context)) }
+            Toast.makeText(
+                context, MR.strings.exception_file.getString(context), Toast.LENGTH_SHORT
+            ).show()
         }
     } catch (e: java.lang.Exception) {
-        scope.launch {
-            hostState.showSnackbar(
-                when (e) {
-                    is FileNotFoundException -> MR.strings.exception_file.getString(context)
-                    is JsonSyntaxException -> MR.strings.exception_json.getString(context)
-                    is IOException -> MR.strings.exception_io.getString(context)
-                    else -> MR.strings.exception.getString(context)
-                }
-            )
-        }
+        Toast.makeText(
+            context, when (e) {
+                is FileNotFoundException -> MR.strings.exception_file.getString(context)
+                is JsonSyntaxException -> MR.strings.exception_json.getString(context)
+                is IOException -> MR.strings.exception_io.getString(context)
+                else -> MR.strings.exception.getString(context)
+            }, Toast.LENGTH_SHORT
+        ).show()
     }
 }

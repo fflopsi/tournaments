@@ -2,10 +2,22 @@ package me.frauenfelderflorian.tournamentscompose.common
 
 import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.asLiveData
@@ -13,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
@@ -27,6 +40,7 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentViewer
+import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 import java.util.UUID
 
@@ -64,6 +78,49 @@ fun TournamentsApp(intent: Intent) {
         },
         dynamicColor = prefs.dynamicColor,
     ) {
+        val scope = rememberCoroutineScope()
+        var showImport by rememberSaveable { mutableStateOf(false) }
+        var showedImport by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(Unit) {
+            if (!showedImport && intent.data != null && intent.action == Intent.ACTION_VIEW && intent.data!!.scheme == "content") {
+                showImport = true
+            }
+        }
+        if (showImport) {
+            AlertDialog(
+                onDismissRequest = {
+                    showImport = false
+                    showedImport = true
+                },
+                icon = { Icon(Icons.Default.ArrowDownward, null) },
+                title = { Text(stringResource(MR.strings.import_)) },
+                text = { Text(stringResource(MR.strings.import_info)) },
+                confirmButton = {
+                    TextButton({
+                        showImport = false
+                        importFromUri(
+                            uri = intent.data,
+                            context = context,
+                            scope = scope,
+                            tournamentDao = tournamentDao,
+                            gameDao = gameDao,
+                        )
+                        showedImport = true
+                    }) {
+                        Text(stringResource(MR.strings.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton({
+                        showImport = false
+                        showedImport = true
+                    }) {
+                        Text(stringResource(MR.strings.cancel))
+                    }
+                },
+            )
+        }
+
         ChildStack(
             source = navigator,
             initialStack = { listOf(Screen.TournamentList) },
@@ -76,7 +133,6 @@ fun TournamentsApp(intent: Intent) {
                     setCurrent = { new: UUID? -> model.current = new },
                     tournamentDao = tournamentDao,
                     gameDao = gameDao,
-                    intent = intent,
                 )
 
                 is Screen.TournamentEditor -> TournamentEditor(

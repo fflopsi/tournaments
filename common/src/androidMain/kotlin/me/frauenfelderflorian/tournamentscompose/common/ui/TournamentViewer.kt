@@ -85,8 +85,6 @@ fun TournamentViewer(
         exportToUri(
             uri = it,
             context = context,
-            scope = scope,
-            hostState = hostState,
             content = setOf(tournament),
         )
     }

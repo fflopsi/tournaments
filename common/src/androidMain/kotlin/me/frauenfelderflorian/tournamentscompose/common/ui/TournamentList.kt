@@ -1,6 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,11 +22,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,13 +51,10 @@ fun TournamentList(
     setCurrent: (UUID?) -> Unit,
     tournamentDao: TournamentDao,
     gameDao: GameDao,
-    intent: Intent,
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = rememberSaveable { mutableStateOf(false) }
-    var showImport by rememberSaveable { mutableStateOf(false) }
-    var showedImport by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -71,8 +64,6 @@ fun TournamentList(
         exportToUri(
             uri = it,
             context = context,
-            scope = scope,
-            hostState = hostState,
             content = tournaments.values,
         )
     }
@@ -81,16 +72,9 @@ fun TournamentList(
             uri = it,
             context = context,
             scope = scope,
-            hostState = hostState,
             tournamentDao = tournamentDao,
             gameDao = gameDao,
         )
-    }
-
-    LaunchedEffect(Unit) {
-        if (!showedImport && intent.data != null && intent.action == Intent.ACTION_VIEW && intent.data!!.scheme == "content") {
-            showImport = true
-        }
     }
 
     Scaffold(
@@ -160,40 +144,5 @@ fun TournamentList(
             modifier = Modifier.padding(paddingValues),
         )
         InfoDialog(showInfo)
-        if (showImport) {
-            AlertDialog(
-                onDismissRequest = {
-                    showImport = false
-                    showedImport = true
-                },
-                icon = { Icon(Icons.Default.ArrowDownward, null) },
-                title = { Text(stringResource(MR.strings.import_)) },
-                text = { Text(stringResource(MR.strings.import_info)) },
-                confirmButton = {
-                    TextButton({
-                        showImport = false
-                        importFromUri(
-                            uri = intent.data,
-                            context = context,
-                            scope = scope,
-                            hostState = hostState,
-                            tournamentDao = tournamentDao,
-                            gameDao = gameDao,
-                        )
-                        showedImport = true
-                    }) {
-                        Text(stringResource(MR.strings.ok))
-                    }
-                },
-                dismissButton = {
-                    TextButton({
-                        showImport = false
-                        showedImport = true
-                    }) {
-                        Text(stringResource(MR.strings.cancel))
-                    }
-                },
-            )
-        }
     }
 }
