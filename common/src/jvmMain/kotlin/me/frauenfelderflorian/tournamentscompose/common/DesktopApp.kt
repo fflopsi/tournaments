@@ -1,40 +1,66 @@
 package me.frauenfelderflorian.tournamentscompose.common
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.defaultScrollbarStyle
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewerContent
-import me.frauenfelderflorian.tournamentscompose.common.ui.normalPadding
-import moe.tlaster.precompose.PreComposeWindow
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.rememberNavigator
+import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
+import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
+import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
+import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
+import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 import java.util.UUID
 
-fun desktopApp() = application {
-    PreComposeWindow(onCloseRequest = ::exitApplication) { DesktopAppContent() }
+@OptIn(ExperimentalDecomposeApi::class)
+fun desktopApp() {
+    val lifecycle = LifecycleRegistry()
+    val rootComponentContext = DefaultComponentContext(lifecycle)
+    application {
+        val windowState = rememberWindowState()
+        LifecycleController(lifecycle, windowState)
+        Window(onCloseRequest = ::exitApplication, state = windowState) {
+            CompositionLocalProvider(LocalScrollbarStyle provides defaultScrollbarStyle()) {
+                ProvideComponentContext(rootComponentContext) { DesktopAppContent() }
+            }
+        }
+    }
 }
 
 @Composable
 fun DesktopAppContent() {
-    val navigator = rememberNavigator()
-    NavHost(navigator = navigator, initialRoute = "/home") {
-        scene(route = "/home") {
-            Button({ navigator.navigate("/game") }) {
-                Text("Hello, World! Go to Game")
-            }
-        }
-        scene(route = "/game") {
-            Column {
-                GameViewerContent(
+    val prefs = Prefs().apply { Initialize() }
+    val navigator = remember { StackNavigation<Screen>() }
+    TournamentsTheme(
+        darkTheme = when (prefs.theme) {
+            1 -> false
+            2 -> true
+            else -> isSystemInDarkTheme()
+        },
+    ) {
+        ChildStack(
+            source = navigator,
+            initialStack = { listOf(Screen.GameViewer) },
+            handleBackButton = true,
+        ) {
+            when (it) {
+                is Screen.GameViewer -> GameViewer(
+                    navigator = navigator,
                     game = Game(
                         id = UUID.randomUUID(),
                         tournamentId = UUID.randomUUID(),
-                        date = 0,
+                        date = System.currentTimeMillis(),
                         hoops = 10,
                         hoopReached = 8,
                         difficulty = "very"
@@ -49,11 +75,9 @@ fun DesktopAppContent() {
                             "absent2" to 0
                         )
                     },
-                    modifier = Modifier.padding(normalPadding),
                 )
-                Button({ navigator.goBack() }) {
-                    Text("Back")
-                }
+
+                else -> {}
             }
         }
     }

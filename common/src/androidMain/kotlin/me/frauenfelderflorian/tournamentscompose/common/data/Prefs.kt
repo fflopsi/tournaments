@@ -23,7 +23,7 @@ import kotlinx.coroutines.runBlocking
 private val Context.dataStore by preferencesDataStore("settings")
 
 @SuppressLint("StaticFieldLeak")
-class Prefs(private val context: Context) : ViewModel() {
+actual class Prefs(private val context: Context) : ViewModel() {
     private val themeKey = intPreferencesKey("theme")
     private val dynamicColorKey = booleanPreferencesKey("dynamicColor")
     private val experimentalFeaturesKey = booleanPreferencesKey("experimentalFeatures")
@@ -32,7 +32,7 @@ class Prefs(private val context: Context) : ViewModel() {
     private val firstPointsKey = intPreferencesKey("firstPoints")
 
     private var _theme by mutableStateOf(0)
-    var theme
+    actual var theme
         set(value) = runBlocking {
             if (value < 0 || value > 2) {
                 throw IllegalArgumentException("Theme ID must be 0, 1, or 2")
@@ -41,31 +41,31 @@ class Prefs(private val context: Context) : ViewModel() {
         }
         get() = _theme
     private var _dynamicColor by mutableStateOf(true)
-    var dynamicColor
+    actual var dynamicColor
         set(value) = runBlocking {
             launch { context.dataStore.edit { it[dynamicColorKey] = value } }
         }
         get() = _dynamicColor
     private var _experimentalFeatures by mutableStateOf(false)
-    var experimentalFeatures
+    actual var experimentalFeatures
         set(value) = runBlocking {
             launch { context.dataStore.edit { it[experimentalFeaturesKey] = value } }
         }
         get() = _experimentalFeatures
     private var _players by mutableStateOf(listOf<String>())
-    var players
+    actual var players
         set(value) = runBlocking {
             launch { context.dataStore.edit { it[playersKey] = value.joinToString(";") } }
         }
         get() = _players
     private var _adaptivePoints by mutableStateOf(true)
-    var adaptivePoints
+    actual var adaptivePoints
         set(value) = runBlocking {
             launch { context.dataStore.edit { it[adaptivePointsKey] = value } }
         }
         get() = _adaptivePoints
     private var _firstPoints by mutableStateOf(10)
-    var firstPoints
+    actual var firstPoints
         set(value) = runBlocking {
             launch { context.dataStore.edit { it[firstPointsKey] = value } }
         }
@@ -85,7 +85,7 @@ class Prefs(private val context: Context) : ViewModel() {
      * [firstPoints] with the values stored on disk and observe them for changes
      */
     @Composable
-    fun Initialize() {
+    actual fun Initialize() {
         _theme = themeFlow.asLiveData().observeAsState(theme).value
         _dynamicColor = dynamicColorFlow.asLiveData().observeAsState(dynamicColor).value
         _experimentalFeatures =

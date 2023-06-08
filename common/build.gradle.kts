@@ -62,7 +62,8 @@ kotlin {
                 implementation(compose.desktop.common)
                 implementation(compose.foundation)
                 implementation(compose.desktop.currentOs)
-                implementation("moe.tlaster:precompose:1.4.1")
+                implementation("com.russhwolf:multiplatform-settings:1.0.0")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
             }
         }
     }
