@@ -45,7 +45,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TournamentList(
+actual fun TournamentList(
     navigator: StackNavigation<Screen>,
     tournaments: Map<UUID, TournamentWithGames>,
     setCurrent: (UUID?) -> Unit,

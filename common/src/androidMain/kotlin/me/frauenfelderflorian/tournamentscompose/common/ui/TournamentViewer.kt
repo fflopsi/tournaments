@@ -44,7 +44,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
     ExperimentalFoundationApi::class,
 )
 @Composable
-fun TournamentViewer(
+actual fun TournamentViewer(
     navigator: StackNavigation<Screen>,
     tournament: TournamentWithGames,
 ) {
