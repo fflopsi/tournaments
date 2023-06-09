@@ -1,7 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.scaleIn
@@ -19,8 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -30,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -40,11 +35,11 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class,
     ExperimentalFoundationApi::class,
+    ExperimentalAnimationApi::class
 )
 @Composable
-fun TournamentViewer(
+actual fun TournamentViewer(
     navigator: StackNavigation<Screen>,
     tournament: TournamentWithGames,
 ) {
@@ -53,17 +48,6 @@ fun TournamentViewer(
     val pagerState = rememberPagerState()
     val showInfo = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val hostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
-    val exportToFile = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument(stringResource(MR.strings.file_mime))
-    ) {
-        exportToUri(
-            uri = it,
-            context = context,
-            content = setOf(tournament),
-        )
-    }
 
     Scaffold(
         topBar = {
@@ -79,13 +63,7 @@ fun TournamentViewer(
                     IconButton({ navigator.push(Screen.TournamentEditor) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
                     }
-                    IconButton({
-                        exportToFile.launch(
-                            "${tournament.t.name}${
-                                MR.strings.file_ending_tournament.getString(context)
-                            }"
-                        )
-                    }) {
+                    IconButton(onClick = { /*TODO*/ }, enabled = false) {
                         Icon(
                             Icons.Default.ArrowUpward,
                             stringResource(MR.strings.export_tournament_to_file)
@@ -118,7 +96,6 @@ fun TournamentViewer(
                 )
             }
         },
-        snackbarHost = { SnackbarHost(hostState) },
         contentWindowInsets = insets,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
