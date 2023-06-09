@@ -35,12 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import dev.icerock.moko.resources.compose.stringResource
-import dev.icerock.moko.resources.format
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
@@ -56,7 +54,6 @@ fun PlayersEditor(
         *playersModel.players.associateBy { playersIdCounter++ }.toList().toTypedArray()
     )
 
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
@@ -68,22 +65,19 @@ fun PlayersEditor(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
                 navigationIcon = { BackButton { navigator.pop() } },
                 actions = {
+                    val noNamelessPlayers = stringResource(MR.strings.no_nameless_players)
+                    val noSameNamePlayers = stringResource(MR.strings.no_same_name_players)
                     IconButton({
                         for (player1 in players) {
                             if (player1.value.isBlank()) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.no_nameless_players.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(noNamelessPlayers) }
                                 return@IconButton
                             }
                             for (player2 in players) {
                                 if (player1.key != player2.key && player1.value.trim() == player2.value.trim()) {
                                     scope.launch {
                                         hostState.showSnackbar(
-                                            MR.strings.no_same_name_players.format(player1.value)
-                                                .toString(context)
+                                            "$noSameNamePlayers ${player1.value}"
                                         )
                                     }
                                     return@IconButton
@@ -121,15 +115,12 @@ fun PlayersEditor(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(normalPadding),
                 ) {
+                    val invalidName = stringResource(MR.strings.invalid_name)
                     OutlinedTextField(
                         value = it.second,
                         onValueChange = { value ->
                             if (value.contains(";")) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.invalid_name.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(invalidName) }
                             } else if (value.length < 100) {
                                 players[it.first] = value
                             }

@@ -69,7 +69,7 @@
     <string name="new_tournaments">New tournaments</string>
     <string name="no_nameless_players">Nameless players not allowed</string>
     <string name="no_players">No players</string>
-    <string name="no_same_name_players">Two players cannot have the same name: %1$s</string>
+    <string name="no_same_name_players">Two players cannot have the same name:</string>
     <string name="number_hoops_reached_too_big">Number of reached hoops too big</string>
     <string name="number_hoops_reached_too_small">Number of reached hoops too small</string>
     <string name="number_hoops_too_small">Number of hoops too small</string>
