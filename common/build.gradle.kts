@@ -31,7 +31,7 @@ kotlin {
         @Suppress("UNUSED_VARIABLE")
         val androidMain by getting {
             dependencies {
-                val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
+                val composeBom = platform("androidx.compose:compose-bom:2023.06.00")
                 implementation(composeBom)
                 implementation("androidx.compose.ui:ui")
                 //implementation("androidx.compose.ui:ui-tooling-preview")
