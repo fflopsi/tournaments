@@ -70,8 +70,8 @@
     <string name="no_nameless_players">Namenlose Spieler nicht erlaubt</string>
     <string name="no_players">Keine Spieler</string>
     <string name="no_same_name_players">Zwei Spieler können nicht denselben Namen haben:</string>
-    <string name="number_hoops_reached_too_big">Anzahl erreichter Tore zu gross</string>
-    <string name="number_hoops_reached_too_small">Anzahl erreichter Tore zu klein</string>
+    <string name="number_hoop_reached_too_big">Anzahl erreichtes Tor zu gross</string>
+    <string name="number_hoop_reached_too_small">Anzahl erreichtes Tor zu klein</string>
     <string name="number_hoops_too_small">Anzahl Tore zu klein</string>
     <string name="ok">OK</string>
     <string name="player">Spieler</string>

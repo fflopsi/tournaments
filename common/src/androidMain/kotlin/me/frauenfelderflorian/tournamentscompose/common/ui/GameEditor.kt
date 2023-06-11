@@ -137,14 +137,14 @@ fun GameEditor(
                             } else if (hoopReachedString.toInt() < 1) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        MR.strings.number_hoops_reached_too_small.getString(context)
+                                        MR.strings.number_hoop_reached_too_small.getString(context)
                                     )
                                 }
                                 return@IconButton
                             } else if (hoopReachedString.toInt() > hoopsString.toInt()) {
                                 scope.launch {
                                     hostState.showSnackbar(
-                                        MR.strings.number_hoops_reached_too_big.getString(context)
+                                        MR.strings.number_hoop_reached_too_big.getString(context)
                                     )
                                 }
                                 return@IconButton
