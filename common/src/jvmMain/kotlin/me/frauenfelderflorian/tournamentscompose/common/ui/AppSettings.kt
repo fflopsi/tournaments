@@ -1,7 +1,5 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
-import android.content.Intent
-import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +46,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
@@ -68,7 +65,6 @@ actual fun AppSettings(
 ) {
     var firstPoints: Int? by rememberSaveable { mutableStateOf(prefs.firstPoints) }
 
-    val context = LocalContext.current
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -194,35 +190,6 @@ actual fun AppSettings(
                                 }
                             }
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            item {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(normalDp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        prefs.dynamicColor = !prefs.dynamicColor
-                                    }.padding(normalPadding),
-                                ) {
-                                    Column(Modifier.weight(2f)) {
-                                        Text(
-                                            text = stringResource(MR.strings.use_dynamic_color),
-                                            style = titleStyle
-                                        )
-                                        Text(
-                                            text = stringResource(
-                                                if (prefs.dynamicColor) {
-                                                    MR.strings.dynamic_color_on_desc
-                                                } else {
-                                                    MR.strings.dynamic_color_off_desc
-                                                }
-                                            ),
-                                            style = detailsStyle,
-                                        )
-                                    }
-                                    Switch(checked = prefs.dynamicColor, onCheckedChange = null)
-                                }
-                            }
-                        }
                         item { Divider() }
                         item {
                             Row(
@@ -247,16 +214,10 @@ actual fun AppSettings(
                         }
                         item { Divider() }
                         item {
-                            Column(Modifier.clickable {
-                                context.startActivity(
-                                    Intent.makeRestartActivityTask(
-                                        context.packageManager.getLaunchIntentForPackage(
-                                            context.packageName
-                                        )!!.component!!
-                                    )
-                                )
-                                Runtime.getRuntime().exit(0)
-                            }.fillMaxWidth().padding(normalPadding)) {
+                            Column(
+                                Modifier.clickable { /*TODO*/ }.fillMaxWidth()
+                                    .padding(normalPadding)
+                            ) {
                                 Text(text = stringResource(MR.strings.restart), style = titleStyle)
                                 Text(
                                     text = stringResource(MR.strings.restart_desc),
@@ -275,19 +236,18 @@ actual fun AppSettings(
                             )
                         }
                         item {
+                            val player = stringResource(MR.strings.player)
                             PlayersSetting(prefs.players) {
                                 playersModel.players.clear()
                                 playersModel.players.addAll(prefs.players.ifEmpty {
-                                    listOf(
-                                        "${MR.strings.player.getString(context)} 1",
-                                        "${MR.strings.player.getString(context)} 2",
-                                    )
+                                    listOf("$player 1", "$player 2")
                                 })
                                 navigator.push(Screen.PlayersEditor)
                             }
                         }
                         item {
                             val scope = rememberCoroutineScope()
+                            val invalidNumber = stringResource(MR.strings.invalid_number)
                             PointSystemSettings(
                                 adaptivePoints = prefs.adaptivePoints,
                                 onClickAdaptivePoints = {
@@ -299,11 +259,7 @@ actual fun AppSettings(
                                         if (it != "") it.toInt()
                                         firstPoints = it.toIntOrNull()
                                     } catch (e: NumberFormatException) {
-                                        scope.launch {
-                                            hostState.showSnackbar(
-                                                MR.strings.invalid_number.getString(context)
-                                            )
-                                        }
+                                        scope.launch { hostState.showSnackbar(invalidNumber) }
                                     }
                                     prefs.firstPoints = firstPoints ?: 10
                                 },
