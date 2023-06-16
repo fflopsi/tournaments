@@ -42,6 +42,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import me.frauenfelderflorian.tournamentscompose.common.data.getPoints
+import me.frauenfelderflorian.tournamentscompose.common.data.playersByPoints
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
