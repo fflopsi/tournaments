@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
@@ -55,17 +54,12 @@ fun GameViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ navigator.push(Screen.GameEditor) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_game))
                     }
-                    SettingsInfoMenu(
-                        navigateToSettings = {
-                            navigator.push(Screen.AppSettings)
-                        },
-                        showInfoDialog = showInfo,
-                    )
+                    SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
                 scrollBehavior = scrollBehavior,
             )

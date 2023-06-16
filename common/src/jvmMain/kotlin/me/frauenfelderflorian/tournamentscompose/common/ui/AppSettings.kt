@@ -48,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontStyle
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
@@ -82,7 +81,7 @@ actual fun AppSettings(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.settings), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ showInfo.value = true }) {
                         Icon(Icons.Outlined.Info, stringResource(MR.strings.about))

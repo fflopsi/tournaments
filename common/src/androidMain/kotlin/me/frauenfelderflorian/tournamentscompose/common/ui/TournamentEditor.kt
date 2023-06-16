@@ -186,7 +186,7 @@ fun TournamentEditor(
                 title = {
                     TopAppBarTitle(stringResource(MR.strings.edit_tournament), scrollBehavior)
                 },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -196,12 +196,7 @@ fun TournamentEditor(
                     IconButton(::save) {
                         Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }
-                    SettingsInfoMenu(
-                        navigateToSettings = {
-                            navigator.push(Screen.AppSettings)
-                        },
-                        showInfoDialog = showInfo,
-                    )
+                    SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
                 scrollBehavior = scrollBehavior,
             )

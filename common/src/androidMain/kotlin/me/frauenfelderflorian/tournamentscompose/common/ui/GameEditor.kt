@@ -58,7 +58,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popWhile
-import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -117,7 +116,7 @@ fun GameEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_game), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     if (tournament.current != null) {
                         IconButton({ deleteDialogOpen = true }) {
@@ -192,12 +191,7 @@ fun GameEditor(
                     }) {
                         Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
                     }
-                    SettingsInfoMenu(
-                        navigateToSettings = {
-                            navigator.push(Screen.AppSettings)
-                        },
-                        showInfoDialog = showInfo,
-                    )
+                    SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
                 scrollBehavior = scrollBehavior,
             )

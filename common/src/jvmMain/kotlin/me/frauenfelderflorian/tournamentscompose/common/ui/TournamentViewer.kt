@@ -27,7 +27,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
 import me.frauenfelderflorian.tournamentscompose.common.MR
@@ -58,7 +57,7 @@ actual fun TournamentViewer(
                         scrollBehavior = scrollBehavior,
                     )
                 },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ navigator.push(Screen.TournamentEditor) }) {
                         Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
@@ -69,12 +68,7 @@ actual fun TournamentViewer(
                             stringResource(MR.strings.export_tournament_to_file)
                         )
                     }
-                    SettingsInfoMenu(
-                        navigateToSettings = {
-                            navigator.push(Screen.AppSettings)
-                        },
-                        showInfoDialog = showInfo,
-                    )
+                    SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
                 scrollBehavior = scrollBehavior,
             )

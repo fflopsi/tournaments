@@ -50,6 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.router.stack.StackNavigation
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
@@ -61,6 +64,7 @@ val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
 val normalDp = 16.dp
 val normalPadding = PaddingValues(normalDp, normalDp)
+expect val insets: WindowInsets
 val gson: Gson = GsonBuilder().setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE).create()
 
 fun formatDate(date: Long): String = DateFormat.getDateInstance(DateFormat.SHORT).format(date)
@@ -81,17 +85,15 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
 }
 
 @Composable
-fun BackButton(navigateUp: () -> Unit) {
-    IconButton(navigateUp) {
-        Icon(Icons.Default.ArrowBack, stringResource(MR.strings.back))
-    }
+fun BackButton(navigator: StackNavigation<Screen>) {
+    IconButton(navigator::pop) { Icon(Icons.Default.ArrowBack, stringResource(MR.strings.back)) }
 }
 
 @Composable
 expect fun InfoDialog(showDialog: MutableState<Boolean>)
 
 @Composable
-fun SettingsInfoMenu(navigateToSettings: () -> Unit, showInfoDialog: MutableState<Boolean>) {
+fun SettingsInfoMenu(navigator: StackNavigation<Screen>, showInfoDialog: MutableState<Boolean>) {
     Box {
         var expanded by remember { mutableStateOf(false) }
         IconButton({ expanded = true }) {
@@ -102,7 +104,7 @@ fun SettingsInfoMenu(navigateToSettings: () -> Unit, showInfoDialog: MutableStat
                 text = { Text(stringResource(MR.strings.settings)) },
                 onClick = {
                     expanded = false
-                    navigateToSettings()
+                    navigator.push(Screen.AppSettings)
                 },
                 leadingIcon = { Icon(Icons.Default.Settings, null) },
             )
@@ -239,5 +241,3 @@ fun rememberMutableStateMapOf(vararg elements: Pair<Int, String>): SnapshotState
         elements.toList().map { it.first to it.second }.toMutableStateMap()
     }
 }
-
-expect val insets: WindowInsets

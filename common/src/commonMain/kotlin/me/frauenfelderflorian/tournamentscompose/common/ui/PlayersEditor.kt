@@ -63,7 +63,7 @@ fun PlayersEditor(
         topBar = {
             LargeTopAppBar(
                 title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
-                navigationIcon = { BackButton { navigator.pop() } },
+                navigationIcon = { BackButton(navigator) },
                 actions = {
                     val noNamelessPlayers = stringResource(MR.strings.no_nameless_players)
                     val noSameNamePlayers = stringResource(MR.strings.no_same_name_players)
