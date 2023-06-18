@@ -11,10 +11,10 @@ kotlin {
         withJava()
     }
     sourceSets {
+        @Suppress("UNUSED_VARIABLE")
         val jvmMain by getting {
             dependencies {
                 implementation(project(":common"))
-                implementation(compose.desktop.currentOs)
             }
         }
     }
@@ -26,7 +26,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
             packageName = "TournamentsCompose"
-            packageVersion = "2.0.0"
+            packageVersion = property("tournamentscompose.version") as String
         }
     }
 }

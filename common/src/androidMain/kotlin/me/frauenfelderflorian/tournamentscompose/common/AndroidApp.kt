@@ -1,6 +1,8 @@
 package me.frauenfelderflorian.tournamentscompose.common
 
 import android.content.Intent
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -20,12 +22,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
+import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.icerock.moko.resources.compose.stringResource
+import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
@@ -36,16 +41,24 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
 import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersEditor
+import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentList
 import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentViewer
 import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
-import java.util.UUID
+
+fun androidApp(activity: ComponentActivity) {
+    WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+    val rootComponentContext = activity.defaultComponentContext()
+    activity.setContent {
+        ProvideComponentContext(rootComponentContext) { AndroidAppContent(activity.intent) }
+    }
+}
 
 @Composable
-fun TournamentsApp(intent: Intent) {
+fun AndroidAppContent(intent: Intent) {
     val context = LocalContext.current
     val prefs: Prefs = viewModel<Prefs>(factory = PrefsFactory(context)).apply { Initialize() }
     val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
@@ -150,6 +163,8 @@ fun TournamentsApp(intent: Intent) {
                 is Screen.TournamentViewer -> TournamentViewer(
                     navigator = navigator,
                     tournament = model.tournaments[model.current]!!,
+                    tournamentDao = tournamentDao,
+                    gameDao = gameDao,
                 )
 
                 is Screen.GameEditor -> GameEditor(

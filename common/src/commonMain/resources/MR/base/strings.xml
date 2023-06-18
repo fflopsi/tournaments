@@ -7,6 +7,7 @@
     <string name="add_first_game_hint">Tap  +  in the lower right corner to add your first game</string>
     <string name="add_first_tournament_hint">Tap  +  in the lower right corner to add your first tournament</string>
     <string name="add_new_player">Add a new player</string>
+    <string name="add_new_player_info">The player will be added to the tournament and marked as absent on all previous games</string>
     <string name="app">App</string>
     <string name="at_least_two_players">Add at least two players</string>
     <string name="auto">Auto</string>
@@ -21,6 +22,7 @@
     <string name="delete_game">Delete game</string>
     <string name="delete_game_hint">This game will be deleted. This action cannot be undone.</string>
     <string name="delete_player">Delete player</string>
+    <string name="delete_player_hint">This player and all its points will be deleted. This action cannot be undone.</string>
     <string name="delete_tournament">Delete tournament</string>
     <string name="delete_tournament_hint">This Tournament and all its Games will be deleted. This action cannot be undone.</string>
     <string name="details">Details</string>
@@ -84,6 +86,7 @@
     <string name="point_system_classic_info">Second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. The system will assign negative points if necessary.</string>
     <string name="ranking">Ranking</string>
     <string name="ranking_invalid">Ranking invalid</string>
+    <string name="rename_player">Rename player</string>
     <string name="restart">Restart</string>
     <string name="restart_desc">Restarts the whole app. Use in case of problems</string>
     <string name="save_and_exit">Save and exit</string>

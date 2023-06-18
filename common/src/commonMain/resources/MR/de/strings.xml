@@ -7,6 +7,7 @@
     <string name="add_first_game_hint">Tippe auf  +  in der unteren rechten Ecke, um dein erstes Spiel zu erstellen</string>
     <string name="add_first_tournament_hint">Tippe auf  +  in der unteren rechten Ecke, um dein erstes Turnier zu erstellen</string>
     <string name="add_new_player">Neuen Spieler hinzufügen</string>
+    <string name="add_new_player_info">Der Spieler wird dem Turnier hinzugefügt in allen bisherigen Spielen als abwesend markiert</string>
     <string name="app">App</string>
     <string name="at_least_two_players">Füge mindestens zwei Spieler hinzu</string>
     <string name="auto">Auto</string>
@@ -21,6 +22,7 @@
     <string name="delete_game">Spiel löschen</string>
     <string name="delete_game_hint">Dieses Spiel wird gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="delete_player">Spieler löschen</string>
+    <string name="delete_player_hint">Dieser Spieler und alle seine Punkte werden gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="delete_tournament">Turnier löschen</string>
     <string name="delete_tournament_hint">Dieses Turnier und alle seine Spiele werden gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
     <string name="details">Details</string>
@@ -84,6 +86,7 @@
     <string name="point_system_classic_info">Der zweite Platz erhält 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Das System vergibt bei Bedarf Negativpunkte.</string>
     <string name="ranking">Rangliste</string>
     <string name="ranking_invalid">Rangliste ungültig</string>
+    <string name="rename_player">Spieler umbenennen</string>
     <string name="restart">Neustart</string>
     <string name="restart_desc">Startet die ganze App neu. Bei Problemen verwenden</string>
     <string name="save_and_exit">Speichern und schliessen</string>

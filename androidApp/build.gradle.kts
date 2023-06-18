@@ -16,8 +16,8 @@ android {
         applicationId = "me.frauenfelderflorian.tournamentscompose"
         minSdk = 21
         targetSdk = 33
-        versionCode = 3
-        versionName = "1.1.1"
+        versionCode = 4
+        versionName = property("tournamentscompose.version") as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -61,38 +61,13 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.10.1")
-
-    val composeBom = platform("androidx.compose:compose-bom:2023.05.01")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.runtime:runtime-livedata")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.material3:material3")
-
     implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-
-    val roomVersion = "2.5.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.arkivanov.decompose:decompose:2.0.0-beta-01")
-
     implementation(project(":common"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.4.3")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.4.3")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.4.3")
 }
