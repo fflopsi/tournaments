@@ -204,6 +204,11 @@ actual fun TournamentViewer(
                         Text(stringResource(MR.strings.ok))
                     }
                 },
+                dismissButton = {
+                    TextButton({ showNewPlayerDialog = false }) {
+                        Text(stringResource(MR.strings.cancel))
+                    }
+                },
             )
         }
         if (showDeletePlayerDialog.value) {
@@ -234,6 +239,11 @@ actual fun TournamentViewer(
                         }
                     }) {
                         Text(stringResource(MR.strings.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton({ showDeletePlayerDialog.value = false }) {
+                        Text(stringResource(MR.strings.cancel))
                     }
                 },
             )
