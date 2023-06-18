@@ -56,6 +56,8 @@ fun TournamentViewerContent(
     tournament: TournamentWithGames,
     showDeletePlayerDialog: MutableState<Boolean>,
     playerToBeDeleted: MutableState<String>,
+    showRenamePlayerDialog: MutableState<Boolean>,
+    playerToBeRenamed: MutableState<String>,
     pagerState: PagerState,
     scope: CoroutineScope,
     modifier: Modifier = Modifier,
@@ -156,9 +158,12 @@ fun TournamentViewerContent(
                                     )
                                     Divider()
                                     DropdownMenuItem(
-                                        enabled = false,
                                         text = { Text(stringResource(MR.strings.rename_player)) },
-                                        onClick = { /*TODO*/ },
+                                        onClick = {
+                                            playerToBeRenamed.value = it
+                                            showRenamePlayerDialog.value = true
+                                            menuExpanded = false
+                                        },
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                     )
                                     DropdownMenuItem(
@@ -166,6 +171,7 @@ fun TournamentViewerContent(
                                         onClick = {
                                             playerToBeDeleted.value = it
                                             showDeletePlayerDialog.value = true
+                                            menuExpanded = false
                                         },
                                         leadingIcon = { Icon(Icons.Default.Delete, null) },
                                     )

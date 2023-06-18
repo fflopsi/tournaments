@@ -67,6 +67,8 @@ actual fun TournamentViewer(
     var showNewPlayerDialog by remember { mutableStateOf(false) }
     val showDeletePlayerDialog = remember { mutableStateOf(false) }
     val playerToBeDeleted = remember { mutableStateOf("") }
+    val showRenamePlayerDialog = remember { mutableStateOf(false) }
+    val playerToBeRenamed = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
 
@@ -131,6 +133,8 @@ actual fun TournamentViewer(
             tournament = tournament,
             showDeletePlayerDialog = showDeletePlayerDialog,
             playerToBeDeleted = playerToBeDeleted,
+            showRenamePlayerDialog = showRenamePlayerDialog,
+            playerToBeRenamed = playerToBeRenamed,
             pagerState = pagerState,
             scope = scope,
             modifier = Modifier.padding(paddingValues),
@@ -190,6 +194,62 @@ actual fun TournamentViewer(
                 },
                 dismissButton = {
                     TextButton({ showNewPlayerDialog = false }) {
+                        Text(stringResource(MR.strings.cancel))
+                    }
+                },
+            )
+        }
+        if (showRenamePlayerDialog.value) {
+            var newName by rememberSaveable { mutableStateOf(playerToBeRenamed.value) }
+            AlertDialog(
+                onDismissRequest = { showRenamePlayerDialog.value = false },
+                title = { Text("${stringResource(MR.strings.rename_player)} ${playerToBeRenamed.value}") },
+                text = {
+                    val invalidName = stringResource(MR.strings.invalid_name)
+                    OutlinedTextField(
+                        value = newName,
+                        onValueChange = { value ->
+                            if (value.contains(";")) {
+                                scope.launch { hostState.showSnackbar(invalidName) }
+                            } else if (value.length < 100) {
+                                newName = value
+                            }
+                        },
+                        singleLine = true,
+                        label = { Text(stringResource(MR.strings.name)) },
+                        placeholder = { Text(stringResource(MR.strings.name_unique)) },
+                        modifier = Modifier.fillMaxWidth().padding(normalPadding),
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showRenamePlayerDialog.value = false
+                            val newTournament =
+                                TournamentWithGames(tournament.t, tournament.games).apply {
+                                    t.players = t.players.toMutableList()
+                                        .apply { set(indexOf(playerToBeRenamed.value), newName) }
+                                    for (game in games) {
+                                        game.ranking = game.ranking.toMutableMap().apply {
+                                            set(newName, get(playerToBeRenamed.value)!!)
+                                            remove(playerToBeRenamed.value)
+                                        }
+                                    }
+                                }
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    tournamentDao.upsert(newTournament.t)
+                                    gameDao.upsert(*newTournament.games.toTypedArray())
+                                }
+                            }
+                        },
+                        enabled = newName.isNotBlank() && !tournament.t.players.contains(newName),
+                    ) {
+                        Text(stringResource(MR.strings.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton({ showRenamePlayerDialog.value = false }) {
                         Text(stringResource(MR.strings.cancel))
                     }
                 },
