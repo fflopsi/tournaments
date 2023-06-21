@@ -2,6 +2,7 @@ package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -146,11 +147,8 @@ actual fun TournamentViewer(
                 onDismissRequest = { showNewPlayerDialog = false },
                 title = { Text(stringResource(MR.strings.add_new_player)) },
                 text = {
-                    Column {
-                        Text(
-                            text = stringResource(MR.strings.add_new_player_info),
-                            modifier = Modifier.padding(normalPadding)
-                        )
+                    Column(verticalArrangement = Arrangement.spacedBy(normalDp)) {
+                        Text(stringResource(MR.strings.add_new_player_info))
                         val invalidName = stringResource(MR.strings.invalid_name)
                         OutlinedTextField(
                             value = newName,
@@ -164,7 +162,7 @@ actual fun TournamentViewer(
                             singleLine = true,
                             label = { Text(stringResource(MR.strings.name)) },
                             placeholder = { Text(stringResource(MR.strings.name_unique)) },
-                            modifier = Modifier.fillMaxWidth().padding(normalPadding),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                     }
                 },
@@ -218,7 +216,7 @@ actual fun TournamentViewer(
                         singleLine = true,
                         label = { Text(stringResource(MR.strings.name)) },
                         placeholder = { Text(stringResource(MR.strings.name_unique)) },
-                        modifier = Modifier.fillMaxWidth().padding(normalPadding),
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 },
                 confirmButton = {
