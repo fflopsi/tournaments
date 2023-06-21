@@ -24,7 +24,7 @@
     <string name="delete_player">Delete player</string>
     <string name="delete_player_hint">This player and all its points will be deleted. This action cannot be undone.</string>
     <string name="delete_tournament">Delete tournament</string>
-    <string name="delete_tournament_hint">This Tournament and all its Games will be deleted. This action cannot be undone.</string>
+    <string name="delete_tournament_hint">This tournament and all its games will be deleted. This action cannot be undone.</string>
     <string name="details">Details</string>
     <string name="difficulty">Difficulty</string>
     <string name="difficulty_placeholder">Something like: very challenging, quite easy, …</string>
@@ -44,11 +44,9 @@
     <string name="export_tournament_to_file">Export this tournament to a file</string>
     <string name="export_tournaments_to_file">Export all tournaments to a file</string>
     <string name="first_points">Points for first place</string>
-    <string name="game_">game</string>
     <string name="game_details">Hoop %1$s of %2$s reached, with difficulty "%3$s"</string>
     <string name="game_overview">Game overview</string>
     <string name="game_title">Game from %1$s</string>
-    <string name="games_">games</string>
     <string name="give_meaningful_name">Give the tournament a meaningful name</string>
     <string name="hoop_reached">Reached hoop</string>
     <string name="hoop_reached_desc">Hoop reached by best player</string>
@@ -76,8 +74,6 @@
     <string name="number_hoop_reached_too_small">Number of reached hoop too small</string>
     <string name="number_hoops_too_small">Number of hoops too small</string>
     <string name="ok">OK</string>
-    <string name="player">Player</string>
-    <string name="players">Players</string>
     <string name="point_system_adaptive_desc">Recommended. Switch off for classic system</string>
     <string name="point_system_adaptive_expl">Example: 5 players, first place gets 10 points, second place gets 10–3=7 points, third place gets 7–2=5 points, fourth place gets 5–2=3 points, fifth place gets 3–1=2 points. Absent players would get 0 points.</string>
     <string name="point_system_adaptive_info">In this system, absent players never get points. The last player always gets 2 points, the second-to-last 3 points, etc. Thus, there is no fixed amount of points for first/second/… place, but it varies based on the number of players present. However, second place gets 3 points less than first place, third place gets 2 points less than second place, and fourth place gets 2 points less than third place. After that, there is one point less for each place.</string>

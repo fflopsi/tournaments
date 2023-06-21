@@ -260,13 +260,11 @@ fun TournamentEditor(
                         enter = expandVertically(expandFrom = Alignment.Top),
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
+                        val player = stringResource(MR.plurals.players, 1)
                         PlayersSetting(players) {
                             playersModel.players.clear()
                             playersModel.players.addAll(players.ifEmpty {
-                                listOf(
-                                    "${MR.strings.player.getString(context)} 1",
-                                    "${MR.strings.player.getString(context)} 2",
-                                )
+                                listOf("$player 1", "$player 2")
                             })
                             navigator.push(Screen.PlayersEditor)
                         }

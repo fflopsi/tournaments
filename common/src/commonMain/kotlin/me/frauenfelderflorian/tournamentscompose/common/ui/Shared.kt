@@ -130,7 +130,7 @@ fun PlayersSetting(players: List<String>, onClick: () -> Unit) {
     ) {
         Column(Modifier.weight(2f)) {
             Text(
-                text = stringResource(MR.strings.players),
+                text = stringResource(MR.plurals.players, 2),
                 style = titleStyle,
             )
             Text(

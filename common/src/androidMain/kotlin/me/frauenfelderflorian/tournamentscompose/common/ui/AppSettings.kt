@@ -274,13 +274,11 @@ actual fun AppSettings(
                             )
                         }
                         item {
+                            val player = stringResource(MR.plurals.players, 1)
                             PlayersSetting(prefs.players) {
                                 playersModel.players.clear()
                                 playersModel.players.addAll(prefs.players.ifEmpty {
-                                    listOf(
-                                        "${MR.strings.player.getString(context)} 1",
-                                        "${MR.strings.player.getString(context)} 2",
-                                    )
+                                    listOf("$player 1", "$player 2")
                                 })
                                 navigator.push(Screen.PlayersEditor)
                             }

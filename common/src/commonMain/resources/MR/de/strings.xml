@@ -44,11 +44,9 @@
     <string name="export_tournament_to_file">Dieses Turnier in eine Datei exportieren</string>
     <string name="export_tournaments_to_file">Alle Turniere in eine Datei exportieren</string>
     <string name="first_points">Punkte für ersten Platz</string>
-    <string name="game_">Spiel</string>
     <string name="game_details">Tor %1$s von %2$s erreicht, mit Schwierigkeit "%3$s"</string>
     <string name="game_overview">Spielübersicht</string>
     <string name="game_title">Spiel vom %1$s</string>
-    <string name="games_">Spiele</string>
     <string name="give_meaningful_name">Gib dem Turnier einen aussagekräftigen Namen</string>
     <string name="hoop_reached">Erreichtes Tor</string>
     <string name="hoop_reached_desc">Tor erreicht vom besten Spieler</string>
@@ -76,8 +74,6 @@
     <string name="number_hoop_reached_too_small">Anzahl erreichtes Tor zu klein</string>
     <string name="number_hoops_too_small">Anzahl Tore zu klein</string>
     <string name="ok">OK</string>
-    <string name="player">Spieler</string>
-    <string name="players">Spieler</string>
     <string name="point_system_adaptive_desc">Empfohlen. Ausschalten für klassisches System</string>
     <string name="point_system_adaptive_expl">Beispiel: 5 Spieler, erster Platz bekommt 10 Punkte, zweiter Platz bekommt 10–3=7 Punkte, dritter Platz bekommt 7–2=5 Punkte, vierter Platz bekommt 5–2=3 Punkte, fünfter Platz bekommt 3–1=2 Punkte. Abwesende Spieler würden 0 Punkte erhalten.</string>
     <string name="point_system_adaptive_info">Bei diesem System erhalten abwesende Spieler niemals Punkte. Der letzte Spieler erhält immer 2 Punkte, der vorletzte 3 Punkte, usw. Es gibt also keine feste Punktzahl für den ersten/zweiten/… Platz, sondern sie variiert je nach Anzahl der anwesenden Spieler. Der zweite Platz erhält jedoch 3 Punkte weniger als der erste Platz, der dritte Platz erhält 2 Punkte weniger als der zweite Platz und der vierte Platz erhält 2 Punkte weniger als der dritte Platz. Nachher gibt es pro Platz einen Punkt weniger.</string>

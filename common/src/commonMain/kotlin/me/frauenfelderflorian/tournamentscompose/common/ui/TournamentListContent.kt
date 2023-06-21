@@ -49,13 +49,7 @@ fun TournamentListContent(
                             text = "${formatDate(it.t.start)} ${stringResource(MR.strings.to_)} ${
                                 formatDate(it.t.end)
                             }, ${it.games.size} ${
-                                stringResource(
-                                    if (it.games.size == 1) {
-                                        MR.strings.game_
-                                    } else {
-                                        MR.strings.games_
-                                    }
-                                )
+                                stringResource(MR.plurals.games, it.games.size)
                             }",
                             style = detailsStyle,
                         )

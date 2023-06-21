@@ -235,7 +235,7 @@ actual fun AppSettings(
                             )
                         }
                         item {
-                            val player = stringResource(MR.strings.player)
+                            val player = stringResource(MR.plurals.players, 1)
                             PlayersSetting(prefs.players) {
                                 playersModel.players.clear()
                                 playersModel.players.addAll(prefs.players.ifEmpty {

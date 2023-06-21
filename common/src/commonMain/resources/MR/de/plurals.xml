@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+    <plural name="games">
+        <item quantity="one">Spiel</item>
+        <item quantity="other">Spiele</item>
+    </plural>
+    <plural name="players">
+        <item quantity="one">Spieler</item>
+        <item quantity="other">Spieler</item>
+    </plural>
+</resources>
