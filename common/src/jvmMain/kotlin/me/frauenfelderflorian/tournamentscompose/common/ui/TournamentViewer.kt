@@ -124,7 +124,6 @@ actual fun TournamentViewer(
                 modifier = Modifier.animateContentSize(),
             )
         },
-        floatingActionButtonPosition = FabPosition.Center,
         snackbarHost = { SnackbarHost(hostState) },
         contentWindowInsets = insets,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
