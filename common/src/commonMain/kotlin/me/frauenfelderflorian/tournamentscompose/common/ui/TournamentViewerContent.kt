@@ -18,9 +18,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -134,7 +132,8 @@ fun TournamentViewerContent(
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(normalDp),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(normalPadding),
+                            modifier = Modifier.clickable { navigator.push(Screen.PlayerViewer(it)) }
+                                .padding(normalPadding),
                         ) {
                             Text(tournament.getPoints(it).toString())
                             Text(
@@ -150,13 +149,6 @@ fun TournamentViewerContent(
                                     expanded = menuExpanded,
                                     onDismissRequest = { menuExpanded = false },
                                 ) {
-                                    DropdownMenuItem(
-                                        enabled = false,
-                                        text = { Text(stringResource(MR.strings.game_overview)) },
-                                        onClick = { /*TODO*/ },
-                                        leadingIcon = { Icon(Icons.Default.EmojiEvents, null) },
-                                    )
-                                    Divider()
                                     DropdownMenuItem(
                                         text = { Text(stringResource(MR.strings.rename_player)) },
                                         onClick = {

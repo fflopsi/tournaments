@@ -40,6 +40,7 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.AppSettings
 import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.common.ui.PlayerViewer
 import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
@@ -165,6 +166,12 @@ fun AndroidAppContent(intent: Intent) {
                     tournament = model.tournaments[model.current]!!,
                     tournamentDao = tournamentDao,
                     gameDao = gameDao,
+                )
+
+                is Screen.PlayerViewer -> PlayerViewer(
+                    navigator = navigator,
+                    tournament = model.tournaments[model.current]!!,
+                    player = it.player,
                 )
 
                 is Screen.GameEditor -> GameEditor(

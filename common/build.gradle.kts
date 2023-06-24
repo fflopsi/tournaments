@@ -24,7 +24,7 @@ kotlin {
                 implementation("dev.icerock.moko:resources:0.22.0")
                 implementation("dev.icerock.moko:resources-compose:0.22.0")
                 implementation("com.google.code.gson:gson:2.10.1")
-                implementation("com.arkivanov.decompose:decompose:2.0.0-beta-01")
+                api("com.arkivanov.decompose:decompose:2.0.0-beta-01")
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-beta-01")
             }
         }

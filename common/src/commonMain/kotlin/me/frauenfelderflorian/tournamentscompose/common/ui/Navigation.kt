@@ -13,6 +13,7 @@ import com.arkivanov.decompose.router.stack.StackNavigationSource
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 sealed class Screen : Parcelable {
     @Parcelize
@@ -23,6 +24,9 @@ sealed class Screen : Parcelable {
 
     @Parcelize
     object TournamentViewer : Screen()
+
+    @Parcelize
+    data class PlayerViewer(val player: String) : Screen()
 
     @Parcelize
     object GameEditor : Screen()
