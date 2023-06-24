@@ -103,7 +103,6 @@ fun PlayersEditor(
                 onClick = { players[playersIdCounter++] = "" },
             )
         },
-        floatingActionButtonPosition = FabPosition.Center,
         snackbarHost = { SnackbarHost(hostState) },
         contentWindowInsets = insets,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
