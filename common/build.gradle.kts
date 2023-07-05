@@ -8,10 +8,11 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain((property("tournamentscompose.versions.java") as String).toInt())
     android()
     jvm()
     sourceSets {
+        val decomposeVersion = "2.0.0"
         commonMain {
             dependencies {
                 implementation(compose.runtime)
@@ -21,11 +22,12 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class) implementation(
                     compose.components.resources
                 )
-                implementation("dev.icerock.moko:resources:0.22.0")
-                implementation("dev.icerock.moko:resources-compose:0.22.0")
+                val resourcesVersion = "0.23.0"
+                implementation("dev.icerock.moko:resources:$resourcesVersion")
+                implementation("dev.icerock.moko:resources-compose:$resourcesVersion")
                 implementation("com.google.code.gson:gson:2.10.1")
-                api("com.arkivanov.decompose:decompose:2.0.0-beta-01")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-beta-01")
+                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
         @Suppress("UNUSED_VARIABLE")
@@ -50,8 +52,8 @@ kotlin {
                 configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-                implementation("com.arkivanov.decompose:decompose:2.0.0-beta-01")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:2.0.0-beta-01")
+                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
 
@@ -61,8 +63,9 @@ kotlin {
                 implementation(compose.desktop.common)
                 implementation(compose.foundation)
                 implementation(compose.desktop.currentOs)
-                implementation("com.russhwolf:multiplatform-settings:1.0.0")
-                implementation("com.russhwolf:multiplatform-settings-coroutines:1.0.0")
+                val multiplatformSettingsVersion = "1.0.0"
+                implementation("com.russhwolf:multiplatform-settings:$multiplatformSettingsVersion")
+                implementation("com.russhwolf:multiplatform-settings-coroutines:$multiplatformSettingsVersion")
             }
         }
     }
@@ -74,12 +77,12 @@ multiplatformResources {
 
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose.common"
-    compileSdk = 33
+    compileSdk = (property("tournamentscompose.android.compileTargetSdk") as String).toInt()
     defaultConfig {
-        minSdk = 21
+        minSdk = (property("tournamentscompose.android.minSdk") as String).toInt()
     }
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain((property("tournamentscompose.versions.java") as String).toInt())
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

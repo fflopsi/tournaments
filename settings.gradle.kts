@@ -9,7 +9,6 @@ pluginManagement {
     plugins {
         val kotlinVersion = "1.8.20"
         val agpVersion = "8.0.2"
-        val composeVersion = "1.4.0"
 
         kotlin("jvm") version kotlinVersion
         kotlin("multiplatform") version kotlinVersion
@@ -18,7 +17,7 @@ pluginManagement {
         id("com.android.application") version agpVersion
         id("com.android.library") version agpVersion
 
-        id("org.jetbrains.compose") version composeVersion
+        id("org.jetbrains.compose") version "1.4.0"
 
         id("dev.icerock.mobile.multiplatform-resources") version "0.22.0"
     }

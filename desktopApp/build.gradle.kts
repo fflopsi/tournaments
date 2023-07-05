@@ -7,7 +7,7 @@ plugins {
 
 kotlin {
     jvm {
-        jvmToolchain(17)
+        jvmToolchain((property("tournamentscompose.versions.java") as String).toInt())
         withJava()
     }
     sourceSets {
@@ -26,7 +26,7 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
-            packageName = "TournamentsCompose"
+            packageName = "Tournaments"
             packageVersion = property("tournamentscompose.version") as String
         }
     }

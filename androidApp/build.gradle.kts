@@ -5,18 +5,18 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain((property("tournamentscompose.versions.java") as String).toInt())
 }
 
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose.android"
-    compileSdk = 33
+    compileSdk = (property("tournamentscompose.android.compileTargetSdk") as String).toInt()
 
     defaultConfig {
         applicationId = "me.frauenfelderflorian.tournamentscompose"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 4
+        minSdk = (property("tournamentscompose.android.minSdk") as String).toInt()
+        targetSdk = (property("tournamentscompose.android.compileTargetSdk") as String).toInt()
+        versionCode = (property("tournamentscompose.android.versionCode") as String).toInt()
         versionName = property("tournamentscompose.version") as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -45,7 +45,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = property("tournamentscompose.versions.java") as String
     }
     buildFeatures {
         compose = true
