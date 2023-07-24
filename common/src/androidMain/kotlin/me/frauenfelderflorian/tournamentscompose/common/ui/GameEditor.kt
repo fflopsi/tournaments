@@ -44,6 +44,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,7 +81,7 @@ fun GameEditor(
 ) {
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
-    var date by rememberSaveable { mutableStateOf(tournament.current?.date ?: today) }
+    var date by rememberSaveable { mutableLongStateOf(tournament.current?.date ?: today) }
     var hoopsString by rememberSaveable {
         mutableStateOf(
             if (tournament.current == null) "" else tournament.current!!.hoops.toString()
@@ -205,7 +206,11 @@ fun GameEditor(
     ) { paddingValues ->
         var dateDialogOpen by remember { mutableStateOf(false) }
         Column(Modifier.padding(paddingValues)) {
-            val pagerState = rememberPagerState()
+            val pagerState = rememberPagerState(
+                initialPage = 0,
+                initialPageOffsetFraction = 0f,
+                pageCount = { 2 },
+            )
             TabRow(pagerState.currentPage) {
                 Tab(
                     selected = pagerState.currentPage == 0,
@@ -218,7 +223,7 @@ fun GameEditor(
                     text = { Text(stringResource(MR.strings.ranking)) },
                 )
             }
-            HorizontalPager(pageCount = 2, state = pagerState) { page ->
+            HorizontalPager(state = pagerState) { page ->
                 if (page == 0) {
                     LazyColumn(Modifier.fillMaxSize()) {
                         item {

@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -81,8 +82,8 @@ fun TournamentEditor(
     var name by rememberSaveable { mutableStateOf(tournament?.t?.name ?: "") }
     var today = System.currentTimeMillis()
     today -= today % 86400000 // Remove the passed milliseconds since the beginning of the day
-    var start by rememberSaveable { mutableStateOf(tournament?.t?.start ?: today) }
-    var end by rememberSaveable { mutableStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
+    var start by rememberSaveable { mutableLongStateOf(tournament?.t?.start ?: today) }
+    var end by rememberSaveable { mutableLongStateOf(tournament?.t?.end ?: (today + 7 * 86400000)) }
     var useDefaults by rememberSaveable { mutableStateOf(false) }
     val players = rememberMutableStateListOf<String>()
     var adaptivePoints by rememberSaveable {

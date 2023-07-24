@@ -71,7 +71,8 @@ actual fun AppSettings(
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val pagerState = rememberPagerState()
+    val pagerState =
+        rememberPagerState(initialPage = 0, initialPageOffsetFraction = 0f, pageCount = { 2 })
     val showInfo = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(playersModel.edited) {
@@ -112,7 +113,7 @@ actual fun AppSettings(
                     text = { Text(stringResource(MR.strings.new_tournaments)) },
                 )
             }
-            HorizontalPager(pageCount = 2, state = pagerState) { page ->
+            HorizontalPager(state = pagerState) { page ->
                 if (page == 0) {
                     LazyColumn(Modifier.fillMaxSize()) {
                         item {

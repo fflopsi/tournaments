@@ -13,7 +13,6 @@ import com.arkivanov.decompose.router.stack.StackNavigationSource
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
-import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 
 sealed class Screen : Parcelable {
     @Parcelize

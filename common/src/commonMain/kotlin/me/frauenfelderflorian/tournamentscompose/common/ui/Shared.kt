@@ -147,7 +147,6 @@ fun PlayersSetting(players: List<String>, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PointSystemSettings(
     adaptivePoints: Boolean,

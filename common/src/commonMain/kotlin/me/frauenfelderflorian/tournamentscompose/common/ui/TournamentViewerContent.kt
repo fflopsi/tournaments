@@ -73,7 +73,7 @@ fun TournamentViewerContent(
                 text = { Text(stringResource(MR.strings.ranking)) },
             )
         }
-        HorizontalPager(pageCount = 2, state = pagerState) { page ->
+        HorizontalPager(state = pagerState) { page ->
             if (page == 0) {
                 LazyColumn(Modifier.fillMaxSize()) {
                     if (tournament.games.isNotEmpty()) {
