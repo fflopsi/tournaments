@@ -12,7 +12,7 @@ kotlin {
     android()
     jvm()
     sourceSets {
-        val decomposeVersion = "2.0.0"
+        val decomposeVersion = "2.0.1"
         commonMain {
             dependencies {
                 implementation(compose.runtime)
