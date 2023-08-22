@@ -14,15 +14,14 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import me.frauenfelderflorian.tournamentscompose.common.data.Game
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDaoTest
+import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
-import me.frauenfelderflorian.tournamentscompose.common.data.ranking
-import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
-import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDaoTest
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
-import java.util.UUID
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun desktopApp() {
@@ -42,6 +41,10 @@ fun desktopApp() {
 @Composable
 fun DesktopAppContent() {
     val prefs = Prefs().apply { Initialize() }
+    val tournamentDao = TournamentDaoTest()
+    val gameDao = GameDaoTest()
+    val tournamentsModel = TournamentsModel()
+    val playersModel = PlayersModel()
     val navigator = remember { StackNavigation<Screen>() }
     TournamentsTheme(
         darkTheme = when (prefs.theme) {
@@ -50,36 +53,13 @@ fun DesktopAppContent() {
             else -> isSystemInDarkTheme()
         },
     ) {
-        ChildStack(
-            source = navigator,
-            initialStack = { listOf(Screen.GameViewer) },
-            handleBackButton = true,
-        ) {
-            when (it) {
-                is Screen.GameViewer -> GameViewer(
-                    navigator = navigator,
-                    game = Game(
-                        id = UUID.randomUUID(),
-                        tournamentId = UUID.randomUUID(),
-                        date = System.currentTimeMillis(),
-                        hoops = 10,
-                        hoopReached = 8,
-                        difficulty = "very"
-                    ).apply {
-                        ranking = mapOf(
-                            "best" to 1,
-                            "second" to 2,
-                            "third" to 3,
-                            "fourth" to 4,
-                            "last" to 5,
-                            "absent1" to 0,
-                            "absent2" to 0
-                        )
-                    },
-                )
-
-                else -> {}
-            }
-        }
+        TournamentStack(
+            navigator = navigator,
+            prefs = prefs,
+            tournamentsModel = tournamentsModel,
+            tournamentDao = tournamentDao,
+            gameDao = gameDao,
+            playersModel = playersModel,
+        )
     }
 }

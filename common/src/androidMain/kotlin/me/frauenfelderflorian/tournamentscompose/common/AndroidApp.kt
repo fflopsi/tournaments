@@ -30,23 +30,13 @@ import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dev.icerock.moko.resources.compose.stringResource
-import java.util.UUID
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsDatabase
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
-import me.frauenfelderflorian.tournamentscompose.common.ui.AppSettings
-import me.frauenfelderflorian.tournamentscompose.common.ui.ChildStack
-import me.frauenfelderflorian.tournamentscompose.common.ui.GameEditor
-import me.frauenfelderflorian.tournamentscompose.common.ui.GameViewer
-import me.frauenfelderflorian.tournamentscompose.common.ui.PlayerViewer
-import me.frauenfelderflorian.tournamentscompose.common.ui.PlayersEditor
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
-import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentEditor
-import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentList
-import me.frauenfelderflorian.tournamentscompose.common.ui.TournamentViewer
 import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 
@@ -134,68 +124,13 @@ fun AndroidAppContent(intent: Intent) {
                 },
             )
         }
-
-        ChildStack(
-            source = navigator,
-            initialStack = { listOf(Screen.TournamentList) },
-            handleBackButton = true,
-        ) {
-            when (it) {
-                is Screen.TournamentList -> TournamentList(
-                    navigator = navigator,
-                    tournaments = model.tournaments,
-                    setCurrent = { new: UUID? -> model.current = new },
-                    tournamentDao = tournamentDao,
-                    gameDao = gameDao,
-                )
-
-                is Screen.TournamentEditor -> TournamentEditor(
-                    navigator = navigator,
-                    tournament = model.tournaments[model.current],
-                    current = model.current,
-                    setCurrent = { new: UUID? -> model.current = new },
-                    tournaments = model.tournaments,
-                    dao = tournamentDao,
-                    gameDao = gameDao,
-                    prefs = prefs,
-                    playersModel = playersModel,
-                )
-
-                is Screen.TournamentViewer -> TournamentViewer(
-                    navigator = navigator,
-                    tournament = model.tournaments[model.current]!!,
-                    tournamentDao = tournamentDao,
-                    gameDao = gameDao,
-                )
-
-                is Screen.PlayerViewer -> PlayerViewer(
-                    navigator = navigator,
-                    tournament = model.tournaments[model.current]!!,
-                    player = it.player,
-                )
-
-                is Screen.GameEditor -> GameEditor(
-                    navigator = navigator,
-                    tournament = model.tournaments[model.current]!!,
-                    dao = gameDao,
-                )
-
-                is Screen.GameViewer -> GameViewer(
-                    navigator = navigator,
-                    game = model.tournaments[model.current]!!.current!!,
-                )
-
-                is Screen.PlayersEditor -> PlayersEditor(
-                    navigator = navigator,
-                    playersModel = playersModel,
-                )
-
-                is Screen.AppSettings -> AppSettings(
-                    navigator = navigator,
-                    prefs = prefs,
-                    playersModel = playersModel,
-                )
-            }
-        }
+        TournamentStack(
+            navigator = navigator,
+            prefs = prefs,
+            tournamentsModel = model,
+            tournamentDao = tournamentDao,
+            gameDao = gameDao,
+            playersModel = playersModel,
+        )
     }
 }
