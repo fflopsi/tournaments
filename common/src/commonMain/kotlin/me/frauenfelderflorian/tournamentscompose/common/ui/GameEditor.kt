@@ -1,18 +1,25 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Event
@@ -24,11 +31,10 @@ import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -53,13 +59,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popWhile
 import dev.icerock.moko.resources.compose.stringResource
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,7 +77,6 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.players
 import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -115,6 +121,7 @@ fun GameEditor(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
+    val invalidNumber = stringResource(MR.strings.invalid_number)
 
     Scaffold(
         topBar = {
@@ -127,59 +134,43 @@ fun GameEditor(
                             Icon(Icons.Default.Delete, stringResource(MR.strings.delete_game))
                         }
                     }
-                    val context = LocalContext.current
+                    val numberHoopsTooSmall = stringResource(MR.strings.number_hoops_too_small)
+                    val numberHoopReachedTooSmall =
+                        stringResource(MR.strings.number_hoop_reached_too_small)
+                    val numberHoopReachedTooBig =
+                        stringResource(MR.strings.number_hoop_reached_too_big)
+                    val rankingInvalid = stringResource(MR.strings.ranking_invalid)
                     IconButton({
                         try {
                             if (hoopsString.toInt() < 1) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.number_hoops_too_small.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(numberHoopsTooSmall) }
                                 return@IconButton
                             } else if (hoopReachedString.toInt() < 1) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.number_hoop_reached_too_small.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(numberHoopReachedTooSmall) }
                                 return@IconButton
                             } else if (hoopReachedString.toInt() > hoopsString.toInt()) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.number_hoop_reached_too_big.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(numberHoopReachedTooBig) }
                                 return@IconButton
                             }
                             val ranks =
                                 selectedPlayers.toMutableList().apply { removeAll { it == "---" } }
                                     .toList()
                             if (ranks.size < 2) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.ranking_invalid.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(rankingInvalid) }
                                 return@IconButton
                             }
-                            val g = if (tournament.current == null) {
-                                Game(
-                                    id = UUID.randomUUID(),
-                                    tournamentId = tournament.t.id,
-                                    date = date,
-                                    hoops = hoopsString.toInt(),
-                                    hoopReached = hoopReachedString.toInt(),
-                                    difficulty = difficulty.trim(),
-                                )
-                            } else {
-                                tournament.current!!.copy(
-                                    date = date,
-                                    hoops = hoopsString.toInt(),
-                                    hoopReached = hoopReachedString.toInt(),
-                                    difficulty = difficulty.trim(),
-                                )
-                            }
+                            val g = Game(
+                                id = if (tournament.current == null) {
+                                    UUID.randomUUID()
+                                } else {
+                                    tournament.current!!.id
+                                },
+                                tournamentId = tournament.t.id,
+                                date = date,
+                                hoops = hoopsString.toInt(),
+                                hoopReached = hoopReachedString.toInt(),
+                                difficulty = difficulty.trim(),
+                            )
                             val ranking = mutableMapOf<String, Int>()
                             ranks.forEach { ranking[it] = ranks.indexOf(it) + 1 }
                             tournament.t.players.toMutableList().apply { removeAll(ranks) }
@@ -188,9 +179,7 @@ fun GameEditor(
                             scope.launch { withContext(Dispatchers.IO) { dao.upsert(g) } }
                             navigator.pop()
                         } catch (e: NumberFormatException) {
-                            scope.launch {
-                                hostState.showSnackbar(MR.strings.invalid_number.getString(context))
-                            }
+                            scope.launch { hostState.showSnackbar(invalidNumber) }
                         }
                     }) {
                         Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
@@ -252,7 +241,6 @@ fun GameEditor(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.padding(normalPadding),
                             ) {
-                                val context = LocalContext.current
                                 OutlinedTextField(
                                     value = hoopsString,
                                     onValueChange = {
@@ -260,11 +248,7 @@ fun GameEditor(
                                             if (it != "") it.toInt()
                                             hoopsString = it.trim()
                                         } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    MR.strings.invalid_number.getString(context)
-                                                )
-                                            }
+                                            scope.launch { hostState.showSnackbar(invalidNumber) }
                                         }
                                     },
                                     singleLine = true,
@@ -283,11 +267,7 @@ fun GameEditor(
                                             if (it != "") it.toInt()
                                             hoopReachedString = it.trim()
                                         } catch (e: NumberFormatException) {
-                                            scope.launch {
-                                                hostState.showSnackbar(
-                                                    MR.strings.invalid_number.getString(context)
-                                                )
-                                            }
+                                            scope.launch { hostState.showSnackbar(invalidNumber) }
                                         }
                                     },
                                     singleLine = true,
@@ -318,24 +298,36 @@ fun GameEditor(
                     LazyColumn(Modifier.fillMaxSize()) {
                         items(tournament.t.players) {
                             var expanded by remember { mutableStateOf(false) }
-                            ExposedDropdownMenuBox(
-                                expanded = expanded,
-                                onExpandedChange = { expanded = !expanded },
-                                modifier = Modifier.padding(normalPadding),
+                            Box(
+                                modifier = Modifier.clickable { expanded = !expanded }
+                                    .padding(normalPadding),
                             ) {
-                                OutlinedTextField(
-                                    value = selectedPlayers[tournament.t.players.indexOf(it)],
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = {
-                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded)
-                                    },
-                                    modifier = Modifier.menuAnchor().fillMaxWidth(),
-                                )
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.outline,
+                                        shape = RoundedCornerShape(4.dp),
+                                    ).padding(normalPadding)
+                                ) {
+                                    Text(
+                                        text = selectedPlayers[tournament.t.players.indexOf(it)],
+                                        modifier = Modifier.weight(2f),
+                                    )
+                                    Icon(
+                                        imageVector = if (expanded) {
+                                            Icons.Default.ArrowDropUp
+                                        } else {
+                                            Icons.Default.ArrowDropDown
+                                        },
+                                        contentDescription = null,
+                                    )
+                                }
                                 DropdownMenu(
                                     expanded = expanded,
                                     onDismissRequest = { expanded = false },
-                                    modifier = Modifier.exposedDropdownSize(),
+                                    modifier = Modifier.heightIn(max = 300.dp).fillParentMaxWidth(),
                                 ) {
                                     selectablePlayers.forEach { selected ->
                                         DropdownMenuItem(
@@ -347,7 +339,10 @@ fun GameEditor(
                                                         selectablePlayers.toMutableList()
                                                             .apply { remove(selected) }.toList()
                                                 }
-                                                if (selectedPlayers[tournament.t.players.indexOf(it)] != "---") {
+                                                if (selectedPlayers[tournament.t.players.indexOf(
+                                                        it
+                                                    )] != "---"
+                                                ) {
                                                     selectablePlayers =
                                                         selectablePlayers.toMutableList().apply {
                                                             add(
@@ -365,7 +360,6 @@ fun GameEditor(
                                                         )
                                                     }.toList()
                                             },
-                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                                         )
                                     }
                                 }

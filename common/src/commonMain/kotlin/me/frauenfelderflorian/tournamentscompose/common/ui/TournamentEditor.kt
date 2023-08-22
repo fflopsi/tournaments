@@ -47,12 +47,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
 import dev.icerock.moko.resources.compose.stringResource
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,7 +64,6 @@ import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.players
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +91,6 @@ fun TournamentEditor(
     var firstPoints by rememberSaveable { mutableStateOf(tournament?.t?.firstPoints) }
     var uuid: UUID? by remember { mutableStateOf(null) }
 
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val hostState = remember { SnackbarHostState() }
     val scrollBehavior =
@@ -116,13 +114,13 @@ fun TournamentEditor(
         }
     }
 
+    val atLeastTwoPlayers = stringResource(MR.strings.at_least_two_players)
+    val enterNumberFirstPoints = stringResource(MR.strings.enter_number_first_points)
     fun save() {
         val t: Tournament
         if (current == null) {
             if (!useDefaults && players.size < 2 || useDefaults && prefs.players.size < 2) {
-                scope.launch {
-                    hostState.showSnackbar(MR.strings.at_least_two_players.getString(context))
-                }
+                scope.launch { hostState.showSnackbar(atLeastTwoPlayers) }
                 return
             }
             if (useDefaults) {
@@ -152,29 +150,30 @@ fun TournamentEditor(
                     firstPoints = firstPoints!!.toInt(),
                 ).apply { this.players = players }
             } else {
-                scope.launch {
-                    hostState.showSnackbar(MR.strings.enter_number_first_points.getString(context))
-                }
+                scope.launch { hostState.showSnackbar(enterNumberFirstPoints) }
                 return
             }
             uuid = t.id
         } else {
             if (adaptivePoints) {
-                t = tournament!!.t.copy(
-                    name = name.trim(), start = start, end = end, useAdaptivePoints = true
-                )
+                t = Tournament(
+                    id = tournament!!.t.id,
+                    name = name.trim(),
+                    start = start,
+                    end = end,
+                    useAdaptivePoints = true,
+                ).apply { this.players = tournament.t.players }
             } else if (firstPoints != null) {
-                t = tournament!!.t.copy(
+                t = Tournament(
+                    id = tournament!!.t.id,
                     name = name.trim(),
                     start = start,
                     end = end,
                     useAdaptivePoints = false,
-                    firstPoints = firstPoints!!.toInt()
-                )
+                    firstPoints = firstPoints!!.toInt(),
+                ).apply { this.players = tournament.t.players }
             } else {
-                scope.launch {
-                    hostState.showSnackbar(MR.strings.enter_number_first_points.getString(context))
-                }
+                scope.launch { hostState.showSnackbar(enterNumberFirstPoints) }
                 return
             }
             navigator.pop()
@@ -276,6 +275,7 @@ fun TournamentEditor(
                     enter = expandVertically(expandFrom = Alignment.Top),
                     exit = shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
+                    val invalidNumber = stringResource(MR.strings.invalid_number)
                     PointSystemSettings(
                         adaptivePoints = adaptivePoints,
                         onClickAdaptivePoints = { adaptivePoints = !adaptivePoints },
@@ -285,11 +285,7 @@ fun TournamentEditor(
                                 if (it != "") it.toInt()
                                 firstPoints = it.toIntOrNull()
                             } catch (e: NumberFormatException) {
-                                scope.launch {
-                                    hostState.showSnackbar(
-                                        MR.strings.invalid_number.getString(context)
-                                    )
-                                }
+                                scope.launch { hostState.showSnackbar(invalidNumber) }
                             }
                         },
                     )
