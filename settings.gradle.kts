@@ -17,7 +17,7 @@ pluginManagement {
         id("com.android.application") version agpVersion
         id("com.android.library") version agpVersion
 
-        id("org.jetbrains.compose") version "1.5.0-rc01"
+        id("org.jetbrains.compose") version "1.5.0-rc02"
 
         id("dev.icerock.mobile.multiplatform-resources") version "0.23.0"
     }
