@@ -1,8 +1,6 @@
 package me.frauenfelderflorian.tournamentscompose.common.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +24,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.FlagCircle
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
@@ -298,31 +297,32 @@ fun GameEditor(
                     LazyColumn(Modifier.fillMaxSize()) {
                         items(tournament.t.players) {
                             var expanded by remember { mutableStateOf(false) }
-                            Box(
-                                modifier = Modifier.clickable { expanded = !expanded }
-                                    .padding(normalPadding),
-                            ) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.border(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.outline,
-                                        shape = RoundedCornerShape(4.dp),
-                                    ).padding(normalPadding)
+                            Box(Modifier.padding(normalPadding)) {
+                                OutlinedButton(
+                                    onClick = { expanded = !expanded },
+                                    shape = RoundedCornerShape(4.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    ),
                                 ) {
-                                    Text(
-                                        text = selectedPlayers[tournament.t.players.indexOf(it)],
-                                        modifier = Modifier.weight(2f),
-                                    )
-                                    Icon(
-                                        imageVector = if (expanded) {
-                                            Icons.Default.ArrowDropUp
-                                        } else {
-                                            Icons.Default.ArrowDropDown
-                                        },
-                                        contentDescription = null,
-                                    )
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(normalDp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(normalDp / 2),
+                                    ) {
+                                        Text(
+                                            text = selectedPlayers[tournament.t.players.indexOf(it)],
+                                            modifier = Modifier.weight(2f),
+                                        )
+                                        Icon(
+                                            imageVector = if (expanded) {
+                                                Icons.Default.ArrowDropUp
+                                            } else {
+                                                Icons.Default.ArrowDropDown
+                                            },
+                                            contentDescription = null,
+                                        )
+                                    }
                                 }
                                 DropdownMenu(
                                     expanded = expanded,
