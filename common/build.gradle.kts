@@ -30,7 +30,6 @@ kotlin {
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
-        @Suppress("UNUSED_VARIABLE")
         val androidMain by getting {
             dependencies {
                 val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
@@ -56,8 +55,6 @@ kotlin {
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
-
-        @Suppress("UNUSED_VARIABLE")
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.common)
