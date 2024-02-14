@@ -40,18 +40,22 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.players
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalResourceApi::class
+)
 @Composable
 actual fun TournamentViewer(
     navigator: StackNavigation<Screen>,
@@ -73,13 +77,15 @@ actual fun TournamentViewer(
     val hostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val exportToFile = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument(stringResource(MR.strings.file_mime))
+        ActivityResultContracts.CreateDocument(stringResource(Res.string.file_mime))
     ) {
-        exportToUri(
-            uri = it,
-            context = context,
-            content = setOf(tournament),
-        )
+        scope.launch {
+            exportToUri(
+                uri = it,
+                context = context,
+                content = setOf(tournament),
+            )
+        }
     }
 
     Scaffold(
@@ -87,25 +93,22 @@ actual fun TournamentViewer(
             LargeTopAppBar(
                 title = {
                     TopAppBarTitle(
-                        text = stringResource(MR.strings.tournament_title, tournament.t.name),
+                        text = stringResource(Res.string.tournament_title, tournament.t.name),
                         scrollBehavior = scrollBehavior,
                     )
                 },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ navigator.push(Screen.TournamentEditor) }) {
-                        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
+                        Icon(Icons.Default.Edit, stringResource(Res.string.edit_tournament))
                     }
+                    val fileEndingTournament = stringResource(Res.string.file_ending_tournament)
                     IconButton({
-                        exportToFile.launch(
-                            "${tournament.t.name}${
-                                MR.strings.file_ending_tournament.getString(context)
-                            }"
-                        )
+                        exportToFile.launch("${tournament.t.name}${fileEndingTournament}")
                     }) {
                         Icon(
                             Icons.Default.ArrowUpward,
-                            stringResource(MR.strings.export_tournament_to_file)
+                            stringResource(Res.string.export_tournament_to_file)
                         )
                     }
                     SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
@@ -120,9 +123,9 @@ actual fun TournamentViewer(
                     Text(
                         stringResource(
                             if (pagerState.currentPage == 0) {
-                                MR.strings.new_game
+                                Res.string.new_game
                             } else {
-                                MR.strings.add_new_player
+                                Res.string.add_new_player
                             }
                         )
                     )
@@ -160,11 +163,11 @@ actual fun TournamentViewer(
             AlertDialog(
                 onDismissRequest = { showNewPlayerDialog = false },
                 icon = { Icon(Icons.Default.Add, null) },
-                title = { Text(stringResource(MR.strings.add_new_player)) },
+                title = { Text(stringResource(Res.string.add_new_player)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(normalDp)) {
-                        Text(stringResource(MR.strings.add_new_player_info))
-                        val invalidName = stringResource(MR.strings.invalid_name)
+                        Text(stringResource(Res.string.add_new_player_info))
+                        val invalidName = stringResource(Res.string.invalid_name)
                         OutlinedTextField(
                             value = newName,
                             onValueChange = { value ->
@@ -175,8 +178,8 @@ actual fun TournamentViewer(
                                 }
                             },
                             singleLine = true,
-                            label = { Text(stringResource(MR.strings.name)) },
-                            placeholder = { Text(stringResource(MR.strings.name_unique)) },
+                            label = { Text(stringResource(Res.string.name)) },
+                            placeholder = { Text(stringResource(Res.string.name_unique)) },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     }
@@ -202,12 +205,12 @@ actual fun TournamentViewer(
                         },
                         enabled = newName.isNotBlank() && !tournament.t.players.contains(newName),
                     ) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ showNewPlayerDialog = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             )
@@ -217,9 +220,9 @@ actual fun TournamentViewer(
             AlertDialog(
                 onDismissRequest = { showRenamePlayerDialog.value = false },
                 icon = { Icon(Icons.Default.Edit, null) },
-                title = { Text("${stringResource(MR.strings.rename_player)} ${playerToBeRenamed.value}") },
+                title = { Text("${stringResource(Res.string.rename_player)} ${playerToBeRenamed.value}") },
                 text = {
-                    val invalidName = stringResource(MR.strings.invalid_name)
+                    val invalidName = stringResource(Res.string.invalid_name)
                     OutlinedTextField(
                         value = newName,
                         onValueChange = { value ->
@@ -230,8 +233,8 @@ actual fun TournamentViewer(
                             }
                         },
                         singleLine = true,
-                        label = { Text(stringResource(MR.strings.name)) },
-                        placeholder = { Text(stringResource(MR.strings.name_unique)) },
+                        label = { Text(stringResource(Res.string.name)) },
+                        placeholder = { Text(stringResource(Res.string.name_unique)) },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 },
@@ -259,12 +262,12 @@ actual fun TournamentViewer(
                         },
                         enabled = newName.isNotBlank() && !tournament.t.players.contains(newName),
                     ) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ showRenamePlayerDialog.value = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             )
@@ -274,9 +277,9 @@ actual fun TournamentViewer(
                 onDismissRequest = { showDeletePlayerDialog.value = false },
                 icon = { Icon(Icons.Default.Delete, null) },
                 title = {
-                    Text("${stringResource(MR.strings.delete_player)} ${playerToBeDeleted.value}?")
+                    Text("${stringResource(Res.string.delete_player)} ${playerToBeDeleted.value}?")
                 },
-                text = { Text(stringResource(MR.strings.delete_player_hint)) },
+                text = { Text(stringResource(Res.string.delete_player_hint)) },
                 confirmButton = {
                     TextButton({
                         showDeletePlayerDialog.value = false
@@ -296,12 +299,12 @@ actual fun TournamentViewer(
                             }
                         }
                     }) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ showDeletePlayerDialog.value = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             )

@@ -2,17 +2,16 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
     id("com.android.library")
-    id("dev.icerock.mobile.multiplatform-resources")
     id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
 kotlin {
     jvmToolchain((property("tournamentscompose.versions.java") as String).toInt())
-    android()
+    androidTarget()
     jvm()
     sourceSets {
-        val decomposeVersion = "2.0.1"
+        val decomposeVersion = "2.2.2"
         commonMain {
             dependencies {
                 implementation(compose.runtime)
@@ -22,9 +21,6 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class) implementation(
                     compose.components.resources
                 )
-                val resourcesVersion = "0.23.0"
-                implementation("dev.icerock.moko:resources:$resourcesVersion")
-                implementation("dev.icerock.moko:resources-compose:$resourcesVersion")
                 implementation("com.google.code.gson:gson:2.10.1")
                 implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
                 implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
@@ -32,27 +28,26 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
-                implementation(composeBom)
+                implementation(project.dependencies.platform("androidx.compose:compose-bom:2024.02.00"))
                 implementation("androidx.compose.ui:ui")
                 //implementation("androidx.compose.ui:ui-tooling-preview")
                 implementation("androidx.compose.runtime:runtime-livedata")
                 implementation("androidx.compose.material3:material3")
 
                 implementation("androidx.datastore:datastore-preferences:1.0.0")
-                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-                implementation("androidx.navigation:navigation-compose:2.7.0")
+                implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+                implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+                implementation("androidx.navigation:navigation-compose:2.7.7")
 
-                val roomVersion = "2.5.2"
+                val roomVersion = "2.6.1"
                 implementation("androidx.room:room-runtime:$roomVersion")
                 implementation("androidx.room:room-ktx:$roomVersion")
                 //annotationProcessor("androidx.room:room-compiler:$roomVersion")
                 configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
+//                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
         val jvmMain by getting {
@@ -63,14 +58,16 @@ kotlin {
                 val multiplatformSettingsVersion = "1.0.0"
                 implementation("com.russhwolf:multiplatform-settings:$multiplatformSettingsVersion")
                 implementation("com.russhwolf:multiplatform-settings-coroutines:$multiplatformSettingsVersion")
+//                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
+//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
     }
 }
 
-multiplatformResources {
-    multiplatformResourcesPackage = "me.frauenfelderflorian.tournamentscompose.common"
-}
+//multiplatformResources {
+//    multiplatformResourcesPackage = "me.frauenfelderflorian.tournamentscompose.common"
+//}
 
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose.common"

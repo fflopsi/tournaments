@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
@@ -64,20 +65,23 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popWhile
-import dev.icerock.moko.resources.compose.stringResource
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.players
 import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalResourceApi::class
+)
 @Composable
 fun GameEditor(
     navigator: StackNavigation<Screen>,
@@ -120,25 +124,25 @@ fun GameEditor(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val showInfo = remember { mutableStateOf(false) }
     var deleteDialogOpen by remember { mutableStateOf(false) }
-    val invalidNumber = stringResource(MR.strings.invalid_number)
+    val invalidNumber = stringResource(Res.string.invalid_number)
 
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(MR.strings.edit_game), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(Res.string.edit_game), scrollBehavior) },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
                     if (tournament.current != null) {
                         IconButton({ deleteDialogOpen = true }) {
-                            Icon(Icons.Default.Delete, stringResource(MR.strings.delete_game))
+                            Icon(Icons.Default.Delete, stringResource(Res.string.delete_game))
                         }
                     }
-                    val numberHoopsTooSmall = stringResource(MR.strings.number_hoops_too_small)
+                    val numberHoopsTooSmall = stringResource(Res.string.number_hoops_too_small)
                     val numberHoopReachedTooSmall =
-                        stringResource(MR.strings.number_hoop_reached_too_small)
+                        stringResource(Res.string.number_hoop_reached_too_small)
                     val numberHoopReachedTooBig =
-                        stringResource(MR.strings.number_hoop_reached_too_big)
-                    val rankingInvalid = stringResource(MR.strings.ranking_invalid)
+                        stringResource(Res.string.number_hoop_reached_too_big)
+                    val rankingInvalid = stringResource(Res.string.ranking_invalid)
                     IconButton({
                         try {
                             if (hoopsString.toInt() < 1) {
@@ -181,7 +185,7 @@ fun GameEditor(
                             scope.launch { hostState.showSnackbar(invalidNumber) }
                         }
                     }) {
-                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(Res.string.save_and_exit))
                     }
                     SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
@@ -203,12 +207,12 @@ fun GameEditor(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(MR.strings.details)) },
+                    text = { Text(stringResource(Res.string.details)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(MR.strings.ranking)) },
+                    text = { Text(stringResource(Res.string.ranking)) },
                 )
             }
             HorizontalPager(state = pagerState) { page ->
@@ -226,7 +230,7 @@ fun GameEditor(
                                     modifier = Modifier.fillMaxWidth(),
                                 ) {
                                     Text(
-                                        text = "${stringResource(MR.strings.date)}: ${
+                                        text = "${stringResource(Res.string.date)}: ${
                                             formatDate(date)
                                         }",
                                         textAlign = TextAlign.Center,
@@ -251,8 +255,8 @@ fun GameEditor(
                                         }
                                     },
                                     singleLine = true,
-                                    label = { Text(stringResource(MR.strings.hoops)) },
-                                    supportingText = { Text(stringResource(MR.strings.hoops_desc)) },
+                                    label = { Text(stringResource(Res.string.hoops)) },
+                                    supportingText = { Text(stringResource(Res.string.hoops_desc)) },
                                     leadingIcon = { Icon(Icons.Default.Flag, null) },
                                     keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Number
@@ -270,9 +274,9 @@ fun GameEditor(
                                         }
                                     },
                                     singleLine = true,
-                                    label = { Text(stringResource(MR.strings.hoop_reached)) },
+                                    label = { Text(stringResource(Res.string.hoop_reached)) },
                                     supportingText = {
-                                        Text(stringResource(MR.strings.hoop_reached_desc))
+                                        Text(stringResource(Res.string.hoop_reached_desc))
                                     },
                                     trailingIcon = { Icon(Icons.Default.FlagCircle, null) },
                                     keyboardOptions = KeyboardOptions(
@@ -287,8 +291,8 @@ fun GameEditor(
                                 value = difficulty,
                                 onValueChange = { if (it.length < 100) difficulty = it },
                                 singleLine = true,
-                                label = { Text(stringResource(MR.strings.difficulty)) },
-                                placeholder = { Text(stringResource(MR.strings.difficulty_placeholder)) },
+                                label = { Text(stringResource(Res.string.difficulty)) },
+                                placeholder = { Text(stringResource(Res.string.difficulty_placeholder)) },
                                 modifier = Modifier.fillMaxWidth().padding(normalPadding),
                             )
                         }
@@ -370,7 +374,13 @@ fun GameEditor(
             }
         }
         if (dateDialogOpen) {
-            val datePickerState = rememberDatePickerState(date)
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = date,
+                selectableDates = object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                        utcTimeMillis in tournament.t.start..tournament.t.end
+                },
+            )
             val confirmEnabled by remember {
                 derivedStateOf { datePickerState.selectedDateMillis != null }
             }
@@ -384,19 +394,16 @@ fun GameEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ dateDialogOpen = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             ) {
-                DatePicker(
-                    state = datePickerState,
-                    dateValidator = { it in tournament.t.start..tournament.t.end },
-                )
+                DatePicker(state = datePickerState)
             }
         }
         if (deleteDialogOpen) {
@@ -410,17 +417,17 @@ fun GameEditor(
                         }
                         navigator.popWhile { top: Screen -> top !is Screen.TournamentViewer }
                     }) {
-                        Text(stringResource(MR.strings.delete_game))
+                        Text(stringResource(Res.string.delete_game))
                     }
                 },
                 dismissButton = {
                     TextButton({ deleteDialogOpen = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
                 icon = { Icon(Icons.Default.Delete, null) },
-                title = { Text("${stringResource(MR.strings.delete_game)}?") },
-                text = { Text(stringResource(MR.strings.delete_game_hint)) },
+                title = { Text("${stringResource(Res.string.delete_game)}?") },
+                text = { Text(stringResource(Res.string.delete_game_hint)) },
             )
         }
         InfoDialog(showInfo)

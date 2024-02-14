@@ -37,12 +37,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun PlayersEditor(
     navigator: StackNavigation<Screen>,
@@ -61,11 +62,11 @@ fun PlayersEditor(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(MR.strings.edit_players), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(Res.string.edit_players), scrollBehavior) },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
-                    val noNamelessPlayers = stringResource(MR.strings.no_nameless_players)
-                    val noSameNamePlayers = stringResource(MR.strings.no_same_name_players)
+                    val noNamelessPlayers = stringResource(Res.string.no_nameless_players)
+                    val noSameNamePlayers = stringResource(Res.string.no_same_name_players)
                     IconButton({
                         for (player1 in players) {
                             if (player1.value.isBlank()) {
@@ -88,7 +89,7 @@ fun PlayersEditor(
                         playersModel.edited = true
                         navigator.pop()
                     }) {
-                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(Res.string.save_and_exit))
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -97,7 +98,7 @@ fun PlayersEditor(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 icon = { Icon(Icons.Default.Add, null) },
-                text = { Text(stringResource(MR.strings.add_new_player)) },
+                text = { Text(stringResource(Res.string.add_new_player)) },
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = { players[playersIdCounter++] = "" },
             )
@@ -113,7 +114,7 @@ fun PlayersEditor(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(normalPadding),
                 ) {
-                    val invalidName = stringResource(MR.strings.invalid_name)
+                    val invalidName = stringResource(Res.string.invalid_name)
                     OutlinedTextField(
                         value = it.second,
                         onValueChange = { value ->
@@ -126,16 +127,19 @@ fun PlayersEditor(
                         singleLine = true,
                         label = {
                             Text(
-                                "${stringResource(MR.strings.name)} ${
+                                "${stringResource(Res.string.name)} ${
                                     players.toList().indexOf(it) + 1
                                 }"
                             )
                         },
-                        placeholder = { Text(stringResource(MR.strings.name_unique)) },
+                        placeholder = { Text(stringResource(Res.string.name_unique)) },
                         modifier = Modifier.fillMaxWidth().weight(2f),
                     )
                     IconButton({ players.remove(it.first) }) {
-                        Icon(Icons.Default.Delete, stringResource(MR.strings.delete_player))
+                        Icon(
+                            Icons.Default.Delete,
+                            stringResource(Res.string.delete_player)
+                        )
                     }
                 }
             }

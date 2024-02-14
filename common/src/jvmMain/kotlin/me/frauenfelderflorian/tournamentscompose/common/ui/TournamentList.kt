@@ -30,14 +30,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
 import java.util.UUID
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 actual fun TournamentList(
     navigator: StackNavigation<Screen>,
@@ -53,30 +54,30 @@ actual fun TournamentList(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(MR.strings.app_title), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(Res.string.app_title), scrollBehavior) },
                 actions = {
                     IconButton({ navigator.push(Screen.AppSettings) }) {
-                        Icon(Icons.Default.Settings, stringResource(MR.strings.settings))
+                        Icon(Icons.Default.Settings, stringResource(Res.string.settings))
                     }
                     IconButton({ showInfo.value = true }) {
-                        Icon(Icons.Outlined.Info, stringResource(MR.strings.about))
+                        Icon(Icons.Outlined.Info, stringResource(Res.string.about))
                     }
                     Box {
                         var expanded by remember { mutableStateOf(false) }
                         IconButton({ expanded = true }) {
-                            Icon(Icons.Default.MoreVert, stringResource(MR.strings.more_actions))
+                            Icon(Icons.Default.MoreVert, stringResource(Res.string.more_actions))
                         }
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                             DropdownMenuItem(
                                 text = {
-                                    Text(stringResource(MR.strings.export_tournaments_to_file))
+                                    Text(stringResource(Res.string.export_tournaments_to_file))
                                 },
                                 onClick = { /*TODO*/ },
                                 leadingIcon = { Icon(Icons.Default.ArrowUpward, null) },
                                 enabled = false,
                             )
                             DropdownMenuItem(
-                                text = { Text(stringResource(MR.strings.import_from_file)) },
+                                text = { Text(stringResource(Res.string.import_from_file)) },
                                 onClick = { /*TODO*/ },
                                 leadingIcon = { Icon(Icons.Default.ArrowDownward, null) },
                                 enabled = false,
@@ -90,7 +91,7 @@ actual fun TournamentList(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 icon = { Icon(Icons.Default.Add, null) },
-                text = { Text(stringResource(MR.strings.new_tournament)) },
+                text = { Text(stringResource(Res.string.new_tournament)) },
                 expanded = scrollBehavior.state.collapsedFraction < 0.5f,
                 onClick = {
                     setCurrent(null)

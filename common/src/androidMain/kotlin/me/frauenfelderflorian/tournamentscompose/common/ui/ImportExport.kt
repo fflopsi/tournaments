@@ -9,16 +9,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
+import tournamentscompose.common.generated.resources.Res
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
 
-fun exportToUri(
+@OptIn(ExperimentalResourceApi::class)
+suspend fun exportToUri(
     uri: Uri?,
     context: Context,
     content: Any,
@@ -31,22 +34,23 @@ fun exportToUri(
             }
         } else {
             Toast.makeText(
-                context, MR.strings.exception_file.getString(context), Toast.LENGTH_SHORT
+                context, getString(Res.string.exception_file), Toast.LENGTH_SHORT
             ).show()
         }
     } catch (e: java.lang.Exception) {
         Toast.makeText(
             context, when (e) {
-                is FileNotFoundException -> MR.strings.exception_file.getString(context)
-                is IOException -> MR.strings.exception_io.getString(context)
-                else -> MR.strings.exception.getString(context)
+                is FileNotFoundException -> getString(Res.string.exception_file)
+                is IOException -> getString(Res.string.exception_io)
+                else -> getString(Res.string.exception)
             }, Toast.LENGTH_SHORT
         ).show()
     }
 
 }
 
-fun importFromUri(
+@OptIn(ExperimentalResourceApi::class)
+suspend fun importFromUri(
     uri: Uri?,
     context: Context,
     scope: CoroutineScope,
@@ -71,16 +75,16 @@ fun importFromUri(
             }
         } else {
             Toast.makeText(
-                context, MR.strings.exception_file.getString(context), Toast.LENGTH_SHORT
+                context, getString(Res.string.exception_file), Toast.LENGTH_SHORT
             ).show()
         }
     } catch (e: java.lang.Exception) {
         Toast.makeText(
             context, when (e) {
-                is FileNotFoundException -> MR.strings.exception_file.getString(context)
-                is JsonSyntaxException -> MR.strings.exception_json.getString(context)
-                is IOException -> MR.strings.exception_io.getString(context)
-                else -> MR.strings.exception.getString(context)
+                is FileNotFoundException -> getString(Res.string.exception_file)
+                is JsonSyntaxException -> getString(Res.string.exception_json)
+                is IOException -> getString(Res.string.exception_io)
+                else -> getString(Res.string.exception)
             }, Toast.LENGTH_SHORT
         ).show()
     }

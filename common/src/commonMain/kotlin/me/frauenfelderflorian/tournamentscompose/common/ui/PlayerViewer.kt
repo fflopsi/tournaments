@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,13 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
-import dev.icerock.moko.resources.compose.stringResource
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun PlayerViewer(
     navigator: StackNavigation<Screen>,
@@ -43,7 +44,7 @@ fun PlayerViewer(
             LargeTopAppBar(
                 title = {
                     TopAppBarTitle(
-                        "${stringResource(MR.strings.game_overview_for)} $player", scrollBehavior
+                        "${stringResource(Res.string.game_overview_for)} $player", scrollBehavior
                     )
                 },
                 navigationIcon = { BackButton(navigator) },
@@ -68,19 +69,25 @@ fun PlayerViewer(
                     Text(formatDate(it.date))
                     Text(
                         text = if (it.ranking[player] == 0) {
-                            stringResource(MR.strings.absent)
+                            stringResource(Res.string.absent)
                         } else {
                             stringResource(
-                                MR.strings.rank_of,
+                                Res.string.rank_of,
                                 it.ranking[player]!!,
                                 it.playersByRank.size,
                             )
                         },
                         style = titleStyle,
                     )
-                    Divider()
+                    HorizontalDivider()
                     Text(it.difficulty)
-                    Text(stringResource(MR.strings.hoop_of_reached, it.hoopReached, it.hoops))
+                    Text(
+                        stringResource(
+                            Res.string.hoop_of_reached,
+                            it.hoopReached,
+                            it.hoops
+                        )
+                    )
                 }
             }
         }

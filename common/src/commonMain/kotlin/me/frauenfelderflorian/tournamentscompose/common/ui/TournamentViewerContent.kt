@@ -39,15 +39,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.getPoints
 import me.frauenfelderflorian.tournamentscompose.common.data.playersByPoints
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
 @Composable
 fun TournamentViewerContent(
     navigator: StackNavigation<Screen>,
@@ -65,12 +66,12 @@ fun TournamentViewerContent(
             Tab(
                 selected = pagerState.currentPage == 0,
                 onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                text = { Text(stringResource(MR.strings.details)) },
+                text = { Text(stringResource(Res.string.details)) },
             )
             Tab(
                 selected = pagerState.currentPage == 1,
                 onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                text = { Text(stringResource(MR.strings.ranking)) },
+                text = { Text(stringResource(Res.string.ranking)) },
             )
         }
         HorizontalPager(state = pagerState) { page ->
@@ -89,13 +90,13 @@ fun TournamentViewerContent(
                                 Column(Modifier.weight(2f)) {
                                     Text(
                                         text = stringResource(
-                                            MR.strings.game_title, formatDate(it.date)
+                                            Res.string.game_title, formatDate(it.date)
                                         ),
                                         style = titleStyle,
                                     )
                                     Text(
                                         text = stringResource(
-                                            MR.strings.game_details,
+                                            Res.string.game_details,
                                             it.hoopReached,
                                             it.hoops,
                                             it.difficulty,
@@ -108,7 +109,7 @@ fun TournamentViewerContent(
                                     navigator.push(Screen.GameEditor)
                                 }) {
                                     Icon(
-                                        Icons.Default.Edit, stringResource(MR.strings.edit_game)
+                                        Icons.Default.Edit, stringResource(Res.string.edit_game)
                                     )
                                 }
                             }
@@ -117,7 +118,7 @@ fun TournamentViewerContent(
                     } else {
                         item {
                             Text(
-                                text = stringResource(MR.strings.add_first_game_hint),
+                                text = stringResource(Res.string.add_first_game_hint),
                                 fontStyle = FontStyle.Italic,
                                 fontWeight = FontWeight.ExtraLight,
                                 modifier = Modifier.padding(normalPadding),
@@ -150,7 +151,7 @@ fun TournamentViewerContent(
                                     onDismissRequest = { menuExpanded = false },
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text(stringResource(MR.strings.rename_player)) },
+                                        text = { Text(stringResource(Res.string.rename_player)) },
                                         onClick = {
                                             playerToBeRenamed.value = it
                                             showRenamePlayerDialog.value = true
@@ -159,7 +160,7 @@ fun TournamentViewerContent(
                                         leadingIcon = { Icon(Icons.Default.Edit, null) },
                                     )
                                     DropdownMenuItem(
-                                        text = { Text(stringResource(MR.strings.delete_player)) },
+                                        text = { Text(stringResource(Res.string.delete_player)) },
                                         onClick = {
                                             playerToBeDeleted.value = it
                                             showDeletePlayerDialog.value = true

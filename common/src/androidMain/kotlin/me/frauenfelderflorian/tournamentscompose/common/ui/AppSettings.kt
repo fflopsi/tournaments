@@ -21,10 +21,10 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -52,13 +52,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalResourceApi::class
+)
 @Composable
 actual fun AppSettings(
     navigator: StackNavigation<Screen>,
@@ -85,11 +89,11 @@ actual fun AppSettings(
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                title = { TopAppBarTitle(stringResource(MR.strings.settings), scrollBehavior) },
+                title = { TopAppBarTitle(stringResource(Res.string.settings), scrollBehavior) },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ showInfo.value = true }) {
-                        Icon(Icons.Outlined.Info, stringResource(MR.strings.about))
+                        Icon(Icons.Outlined.Info, stringResource(Res.string.about))
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -105,12 +109,12 @@ actual fun AppSettings(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(MR.strings.app)) },
+                    text = { Text(stringResource(Res.string.app)) },
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(MR.strings.new_tournaments)) },
+                    text = { Text(stringResource(Res.string.new_tournaments)) },
                 )
             }
             HorizontalPager(state = pagerState) { page ->
@@ -126,15 +130,15 @@ actual fun AppSettings(
                             ) {
                                 Column(Modifier.weight(2f)) {
                                     Text(
-                                        text = stringResource(MR.strings.choose_theme),
+                                        text = stringResource(Res.string.choose_theme),
                                         style = titleStyle
                                     )
                                     Text(
                                         text = stringResource(
                                             when (prefs.theme) {
-                                                1 -> MR.strings.light
-                                                2 -> MR.strings.dark
-                                                else -> MR.strings.auto
+                                                1 -> Res.string.light
+                                                2 -> Res.string.dark
+                                                else -> Res.string.auto
                                             }
                                         ),
                                         style = detailsStyle,
@@ -147,7 +151,7 @@ actual fun AppSettings(
                                         onDismissRequest = { themeSelectorExpanded = false },
                                     ) {
                                         DropdownMenuItem(
-                                            text = { Text(stringResource(MR.strings.auto)) },
+                                            text = { Text(stringResource(Res.string.auto)) },
                                             onClick = { prefs.theme = 0 },
                                             leadingIcon = {
                                                 Icon(
@@ -158,34 +162,34 @@ actual fun AppSettings(
                                                 if (prefs.theme == 0) {
                                                     Icon(
                                                         Icons.Default.Check,
-                                                        stringResource(MR.strings.active)
+                                                        stringResource(Res.string.active)
                                                     )
                                                 }
                                             },
                                         )
-                                        Divider()
+                                        HorizontalDivider()
                                         DropdownMenuItem(
-                                            text = { Text(stringResource(MR.strings.light)) },
+                                            text = { Text(stringResource(Res.string.light)) },
                                             onClick = { prefs.theme = 1 },
                                             leadingIcon = { Icon(Icons.Default.LightMode, null) },
                                             trailingIcon = {
                                                 if (prefs.theme == 1) {
                                                     Icon(
                                                         Icons.Default.Check,
-                                                        stringResource(MR.strings.active)
+                                                        stringResource(Res.string.active)
                                                     )
                                                 }
                                             },
                                         )
                                         DropdownMenuItem(
-                                            text = { Text(stringResource(MR.strings.dark)) },
+                                            text = { Text(stringResource(Res.string.dark)) },
                                             onClick = { prefs.theme = 2 },
                                             leadingIcon = { Icon(Icons.Default.DarkMode, null) },
                                             trailingIcon = {
                                                 if (prefs.theme == 2) {
                                                     Icon(
                                                         Icons.Default.Check,
-                                                        stringResource(MR.strings.active)
+                                                        stringResource(Res.string.active)
                                                     )
                                                 }
                                             },
@@ -205,15 +209,15 @@ actual fun AppSettings(
                                 ) {
                                     Column(Modifier.weight(2f)) {
                                         Text(
-                                            text = stringResource(MR.strings.use_dynamic_color),
+                                            text = stringResource(Res.string.use_dynamic_color),
                                             style = titleStyle
                                         )
                                         Text(
                                             text = stringResource(
                                                 if (prefs.dynamicColor) {
-                                                    MR.strings.dynamic_color_on_desc
+                                                    Res.string.dynamic_color_on_desc
                                                 } else {
-                                                    MR.strings.dynamic_color_off_desc
+                                                    Res.string.dynamic_color_off_desc
                                                 }
                                             ),
                                             style = detailsStyle,
@@ -223,7 +227,7 @@ actual fun AppSettings(
                                 }
                             }
                         }
-                        item { Divider() }
+                        item { HorizontalDivider() }
                         item {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(normalDp),
@@ -234,18 +238,18 @@ actual fun AppSettings(
                             ) {
                                 Column(Modifier.weight(2f)) {
                                     Text(
-                                        text = stringResource(MR.strings.experimental_features),
+                                        text = stringResource(Res.string.experimental_features),
                                         style = titleStyle,
                                     )
                                     Text(
-                                        text = stringResource(MR.strings.experimental_features_desc),
+                                        text = stringResource(Res.string.experimental_features_desc),
                                         style = detailsStyle,
                                     )
                                 }
                                 Switch(checked = prefs.experimentalFeatures, onCheckedChange = null)
                             }
                         }
-                        item { Divider() }
+                        item { HorizontalDivider() }
                         item {
                             Column(Modifier.clickable {
                                 context.startActivity(
@@ -257,9 +261,9 @@ actual fun AppSettings(
                                 )
                                 Runtime.getRuntime().exit(0)
                             }.fillMaxWidth().padding(normalPadding)) {
-                                Text(text = stringResource(MR.strings.restart), style = titleStyle)
+                                Text(text = stringResource(Res.string.restart), style = titleStyle)
                                 Text(
-                                    text = stringResource(MR.strings.restart_desc),
+                                    text = stringResource(Res.string.restart_desc),
                                     style = detailsStyle,
                                 )
                             }
@@ -269,13 +273,13 @@ actual fun AppSettings(
                     LazyColumn(Modifier.fillMaxSize()) {
                         item {
                             Text(
-                                text = stringResource(MR.strings.default_tournament_settings),
+                                text = stringResource(Res.string.default_tournament_settings),
                                 fontStyle = FontStyle.Italic,
                                 modifier = Modifier.padding(normalPadding),
                             )
                         }
                         item {
-                            val player = stringResource(MR.plurals.players, 1)
+                            val player = stringResource(Res.string.player)
                             PlayersSetting(prefs.players) {
                                 playersModel.players.clear()
                                 playersModel.players.addAll(prefs.players.ifEmpty {
@@ -299,7 +303,7 @@ actual fun AppSettings(
                                     } catch (e: NumberFormatException) {
                                         scope.launch {
                                             hostState.showSnackbar(
-                                                MR.strings.invalid_number.getString(context)
+                                                getString(Res.string.invalid_number)
                                             )
                                         }
                                     }

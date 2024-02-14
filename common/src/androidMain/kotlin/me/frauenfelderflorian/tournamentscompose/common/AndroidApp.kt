@@ -29,7 +29,7 @@ import androidx.room.Room
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
@@ -39,6 +39,9 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentConte
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
 fun androidApp(activity: ComponentActivity) {
     WindowCompat.setDecorFitsSystemWindows(activity.window, false)
@@ -48,6 +51,7 @@ fun androidApp(activity: ComponentActivity) {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AndroidAppContent(intent: Intent) {
     val context = LocalContext.current
@@ -97,21 +101,23 @@ fun AndroidAppContent(intent: Intent) {
                     showedImport = true
                 },
                 icon = { Icon(Icons.Default.ArrowDownward, null) },
-                title = { Text(stringResource(MR.strings.import_)) },
-                text = { Text(stringResource(MR.strings.import_info)) },
+                title = { Text(stringResource(Res.string.import)) },
+                text = { Text(stringResource(Res.string.import_info)) },
                 confirmButton = {
                     TextButton({
                         showImport = false
-                        importFromUri(
-                            uri = intent.data,
-                            context = context,
-                            scope = scope,
-                            tournamentDao = tournamentDao,
-                            gameDao = gameDao,
-                        )
+                        scope.launch {
+                            importFromUri(
+                                uri = intent.data,
+                                context = context,
+                                scope = scope,
+                                tournamentDao = tournamentDao,
+                                gameDao = gameDao,
+                            )
+                        }
                         showedImport = true
                     }) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
@@ -119,7 +125,7 @@ fun AndroidAppContent(intent: Intent) {
                         showImport = false
                         showedImport = true
                     }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             )

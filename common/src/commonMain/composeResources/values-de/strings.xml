@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="about">Über</string>
+    <string name="game">Spiel</string>
+    <string name="games">Spiele</string>
+    <string name="player">Spieler</string>
+    <string name="players">Spieler</string>
     <string name="absent">Abwesend</string>
     <string name="absent_players">Abwesende Spieler</string>
     <string name="active">Aktiv</string>
@@ -54,7 +57,7 @@
     <string name="hoop_reached_desc">Tor erreicht vom besten Spieler</string>
     <string name="hoops">Tore</string>
     <string name="hoops_desc">Gesamtzahl aller Tore</string>
-    <string name="import_">Importieren</string>
+    <string name="import">Importieren</string>
     <string name="import_from_file">Aus einer Datei importieren</string>
     <string name="import_info">Willst du den Inhalt dieser Datei in die App importieren?</string>
     <string name="input_first_points">Punkte für ersten Platz eingeben</string>
@@ -92,7 +95,7 @@
     <string name="settings">Einstellungen</string>
     <string name="share">Alle Turniere teilen</string>
     <string name="start_date">Startdatum</string>
-    <string name="to_">bis</string>
+    <string name="to">bis</string>
     <string name="tournament_title">Turnier "%1$s"</string>
     <string name="use_defaults">Standardeinstellungen verwenden</string>
     <string name="use_defaults_desc">Standardeinstellungen können in den Einstellungen unter "Neue Turniere" angepasst werden</string>

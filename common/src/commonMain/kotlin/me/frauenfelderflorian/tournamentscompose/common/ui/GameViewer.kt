@@ -11,8 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -31,14 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
 import me.frauenfelderflorian.tournamentscompose.common.data.absentPlayers
 import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun GameViewer(
     navigator: StackNavigation<Screen>,
@@ -53,14 +54,14 @@ fun GameViewer(
             LargeTopAppBar(
                 title = {
                     TopAppBarTitle(
-                        text = stringResource(MR.strings.game_title, formatDate(game.date)),
+                        text = stringResource(Res.string.game_title, formatDate(game.date)),
                         scrollBehavior = scrollBehavior,
                     )
                 },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
                     IconButton({ navigator.push(Screen.GameEditor) }) {
-                        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_game))
+                        Icon(Icons.Default.Edit, stringResource(Res.string.edit_game))
                     }
                     SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
@@ -73,11 +74,11 @@ fun GameViewer(
         Column(Modifier.padding(paddingValues)) {
             Text(
                 text = stringResource(
-                    MR.strings.game_details, game.hoopReached, game.hoops, game.difficulty
+                    Res.string.game_details, game.hoopReached, game.hoops, game.difficulty
                 ),
                 modifier = Modifier.padding(normalPadding),
             )
-            Divider()
+            HorizontalDivider()
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(normalDp),
                 horizontalAlignment = Alignment.Start,
@@ -116,8 +117,8 @@ fun GameViewer(
                         )
                     }
                 }
-                item { Divider() }
-                item { Text(stringResource(MR.strings.absent_players)) }
+                item { HorizontalDivider() }
+                item { Text(stringResource(Res.string.absent_players)) }
                 items(game.absentPlayers.toList()) {
                     Text(text = it, fontWeight = FontWeight.ExtraLight)
                 }

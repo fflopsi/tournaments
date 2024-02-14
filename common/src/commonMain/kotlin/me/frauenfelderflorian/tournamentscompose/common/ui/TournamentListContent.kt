@@ -22,11 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 import java.util.UUID
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun TournamentListContent(
     tournaments: Map<UUID, TournamentWithGames>,
@@ -48,10 +50,12 @@ fun TournamentListContent(
                     Column(Modifier.weight(2f)) {
                         Text(text = it.t.name, style = titleStyle)
                         Text(
-                            text = "${formatDate(it.t.start)} ${stringResource(MR.strings.to_)} ${
+                            text = "${formatDate(it.t.start)} ${stringResource(Res.string.to)} ${
                                 formatDate(it.t.end)
                             }, ${it.games.size} ${
-                                stringResource(MR.plurals.games, it.games.size)
+                                stringResource(
+                                    if (it.games.size == 1) Res.string.game else Res.string.games
+                                )
                             }",
                             style = detailsStyle,
                         )
@@ -60,7 +64,7 @@ fun TournamentListContent(
                         setCurrent(it.t.id)
                         navigator.push(Screen.TournamentEditor)
                     }) {
-                        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_tournament))
+                        Icon(Icons.Default.Edit, stringResource(Res.string.edit_tournament))
                     }
                 }
             }
@@ -68,7 +72,7 @@ fun TournamentListContent(
         } else {
             item {
                 Text(
-                    text = stringResource(MR.strings.add_first_tournament_hint),
+                    text = stringResource(Res.string.add_first_tournament_hint),
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Light,
                     modifier = Modifier.padding(normalPadding),

@@ -25,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
@@ -51,12 +52,9 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popTo
 import com.arkivanov.decompose.router.stack.push
-import dev.icerock.moko.resources.compose.stringResource
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.frauenfelderflorian.tournamentscompose.common.MR
 import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
@@ -64,8 +62,12 @@ import me.frauenfelderflorian.tournamentscompose.common.data.Tournament
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.players
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
+import java.util.UUID
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun TournamentEditor(
     navigator: StackNavigation<Screen>,
@@ -114,8 +116,8 @@ fun TournamentEditor(
         }
     }
 
-    val atLeastTwoPlayers = stringResource(MR.strings.at_least_two_players)
-    val enterNumberFirstPoints = stringResource(MR.strings.enter_number_first_points)
+    val atLeastTwoPlayers = stringResource(Res.string.at_least_two_players)
+    val enterNumberFirstPoints = stringResource(Res.string.enter_number_first_points)
     fun save() {
         val t: Tournament
         if (current == null) {
@@ -185,17 +187,17 @@ fun TournamentEditor(
         topBar = {
             LargeTopAppBar(
                 title = {
-                    TopAppBarTitle(stringResource(MR.strings.edit_tournament), scrollBehavior)
+                    TopAppBarTitle(stringResource(Res.string.edit_tournament), scrollBehavior)
                 },
                 navigationIcon = { BackButton(navigator) },
                 actions = {
                     if (current != null) {
                         IconButton({ deleteDialogOpen = true }) {
-                            Icon(Icons.Default.Delete, stringResource(MR.strings.delete_tournament))
+                            Icon(Icons.Default.Delete, stringResource(Res.string.delete_tournament))
                         }
                     }
                     IconButton(::save) {
-                        Icon(Icons.Default.Check, stringResource(MR.strings.save_and_exit))
+                        Icon(Icons.Default.Check, stringResource(Res.string.save_and_exit))
                     }
                     SettingsInfoMenu(navigator = navigator, showInfoDialog = showInfo)
                 },
@@ -216,8 +218,8 @@ fun TournamentEditor(
                     value = name,
                     onValueChange = { if (it.length < 100) name = it },
                     singleLine = true,
-                    label = { Text(stringResource(MR.strings.name)) },
-                    placeholder = { Text(stringResource(MR.strings.give_meaningful_name)) },
+                    label = { Text(stringResource(Res.string.name)) },
+                    placeholder = { Text(stringResource(Res.string.give_meaningful_name)) },
                     trailingIcon = { Icon(Icons.Default.Edit, null) },
                     modifier = Modifier.fillMaxWidth().padding(normalPadding),
                 )
@@ -230,13 +232,13 @@ fun TournamentEditor(
                         onClick = { startDialogOpen = true },
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text("${stringResource(MR.strings.start_date)}: ${formatDate(start)}")
+                        Text("${stringResource(Res.string.start_date)}: ${formatDate(start)}")
                     }
                     OutlinedButton(
                         onClick = { endDialogOpen = true },
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text("${stringResource(MR.strings.end_date)}: ${formatDate(end)}")
+                        Text("${stringResource(Res.string.end_date)}: ${formatDate(end)}")
                     }
                 }
                 if (current == null) {
@@ -247,9 +249,9 @@ fun TournamentEditor(
                             .padding(normalPadding),
                     ) {
                         Column(Modifier.weight(2f)) {
-                            Text(text = stringResource(MR.strings.use_defaults), style = titleStyle)
+                            Text(text = stringResource(Res.string.use_defaults), style = titleStyle)
                             Text(
-                                text = stringResource(MR.strings.use_defaults_desc),
+                                text = stringResource(Res.string.use_defaults_desc),
                                 style = detailsStyle,
                             )
                         }
@@ -260,7 +262,7 @@ fun TournamentEditor(
                         enter = expandVertically(expandFrom = Alignment.Top),
                         exit = shrinkVertically(shrinkTowards = Alignment.Top),
                     ) {
-                        val player = stringResource(MR.plurals.players, 1)
+                        val player = stringResource(Res.string.player)
                         PlayersSetting(players) {
                             playersModel.players.clear()
                             playersModel.players.addAll(players.ifEmpty {
@@ -275,7 +277,7 @@ fun TournamentEditor(
                     enter = expandVertically(expandFrom = Alignment.Top),
                     exit = shrinkVertically(shrinkTowards = Alignment.Top),
                 ) {
-                    val invalidNumber = stringResource(MR.strings.invalid_number)
+                    val invalidNumber = stringResource(Res.string.invalid_number)
                     PointSystemSettings(
                         adaptivePoints = adaptivePoints,
                         onClickAdaptivePoints = { adaptivePoints = !adaptivePoints },
@@ -296,12 +298,18 @@ fun TournamentEditor(
                     onClick = ::save,
                     modifier = Modifier.padding(normalPadding).fillMaxWidth(),
                 ) {
-                    Text(stringResource(MR.strings.create_tournament))
+                    Text(stringResource(Res.string.create_tournament))
                 }
             }
         }
         if (startDialogOpen) {
-            val datePickerState = rememberDatePickerState(start)
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = start,
+                selectableDates = object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                        utcTimeMillis < end
+                },
+            )
             val confirmEnabled by remember {
                 derivedStateOf { datePickerState.selectedDateMillis != null }
             }
@@ -315,20 +323,26 @@ fun TournamentEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ startDialogOpen = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             ) {
-                DatePicker(state = datePickerState, dateValidator = { it < end })
+                DatePicker(state = datePickerState)
             }
         }
         if (endDialogOpen) {
-            val datePickerState = rememberDatePickerState(end)
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = end,
+                selectableDates = object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                        utcTimeMillis > start
+                },
+            )
             val confirmEnabled by remember {
                 derivedStateOf { datePickerState.selectedDateMillis != null }
             }
@@ -342,16 +356,16 @@ fun TournamentEditor(
                         },
                         enabled = confirmEnabled,
                     ) {
-                        Text(stringResource(MR.strings.ok))
+                        Text(stringResource(Res.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton({ endDialogOpen = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
             ) {
-                DatePicker(state = datePickerState, dateValidator = { it > start })
+                DatePicker(state = datePickerState)
             }
         }
         if (deleteDialogOpen) {
@@ -368,17 +382,17 @@ fun TournamentEditor(
                         }
                         navigator.popTo(0)
                     }) {
-                        Text(stringResource(MR.strings.delete_tournament))
+                        Text(stringResource(Res.string.delete_tournament))
                     }
                 },
                 dismissButton = {
                     TextButton({ deleteDialogOpen = false }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(Res.string.cancel))
                     }
                 },
                 icon = { Icon(Icons.Default.Delete, null) },
-                title = { Text("${stringResource(MR.strings.delete_tournament)}?") },
-                text = { Text(stringResource(MR.strings.delete_tournament_hint)) },
+                title = { Text("${stringResource(Res.string.delete_tournament)}?") },
+                text = { Text(stringResource(Res.string.delete_tournament_hint)) },
             )
         }
         InfoDialog(showInfo)

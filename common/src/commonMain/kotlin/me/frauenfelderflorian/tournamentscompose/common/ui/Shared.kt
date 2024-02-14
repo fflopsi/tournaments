@@ -16,17 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,9 +64,10 @@ import com.arkivanov.decompose.router.stack.push
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
-import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import tournamentscompose.common.generated.resources.Res
 import java.text.DateFormat
-import me.frauenfelderflorian.tournamentscompose.common.MR
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge
 val detailsStyle @Composable get() = MaterialTheme.typography.bodyMedium
@@ -92,11 +93,13 @@ fun TopAppBarTitle(text: String, scrollBehavior: TopAppBarScrollBehavior) {
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun BackButton(navigator: StackNavigation<Screen>) {
-    IconButton(navigator::pop) { Icon(Icons.Default.ArrowBack, stringResource(MR.strings.back)) }
+    IconButton(navigator::pop) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(Res.string.back)) }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun InfoDialog(showDialog: MutableState<Boolean>) {
     if (showDialog.value) {
@@ -104,14 +107,14 @@ fun InfoDialog(showDialog: MutableState<Boolean>) {
             onDismissRequest = { showDialog.value = false },
             icon = { Icon(Icons.Default.Info, null) },
             title = {
-                Text("${stringResource(MR.strings.about)} ${stringResource(MR.strings.app_title)}")
+                Text("${stringResource(Res.string.about)} ${stringResource(Res.string.app_title)}")
             },
             text = {
                 Column {
-                    Text(stringResource(MR.strings.built_by_info))
-                    val tag = stringResource(MR.strings.github_link_tag)
+                    Text(stringResource(Res.string.built_by_info))
+                    val tag = stringResource(Res.string.github_link_tag)
                     val linkString = buildAnnotatedString {
-                        val string = stringResource(MR.strings.link_to_github)
+                        val string = stringResource(Res.string.link_to_github)
                         append(string)
                         addStyle(
                             style = SpanStyle(
@@ -123,7 +126,7 @@ fun InfoDialog(showDialog: MutableState<Boolean>) {
                         )
                         addStringAnnotation(
                             tag = tag,
-                            annotation = stringResource(MR.strings.github_link),
+                            annotation = stringResource(Res.string.github_link),
                             start = 0,
                             end = string.length,
                         )
@@ -139,31 +142,32 @@ fun InfoDialog(showDialog: MutableState<Boolean>) {
                 }
             },
             confirmButton = {
-                TextButton({ showDialog.value = false }) { Text(stringResource(MR.strings.ok)) }
+                TextButton({ showDialog.value = false }) { Text(stringResource(Res.string.ok)) }
             },
         )
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SettingsInfoMenu(navigator: StackNavigation<Screen>, showInfoDialog: MutableState<Boolean>) {
     Box {
         var expanded by remember { mutableStateOf(false) }
         IconButton({ expanded = true }) {
-            Icon(Icons.Default.MoreVert, stringResource(MR.strings.more_actions))
+            Icon(Icons.Default.MoreVert, stringResource(Res.string.more_actions))
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             DropdownMenuItem(
-                text = { Text(stringResource(MR.strings.settings)) },
+                text = { Text(stringResource(Res.string.settings)) },
                 onClick = {
                     expanded = false
                     navigator.push(Screen.AppSettings)
                 },
                 leadingIcon = { Icon(Icons.Default.Settings, null) },
             )
-            Divider()
+            HorizontalDivider()
             DropdownMenuItem(
-                text = { Text(stringResource(MR.strings.about)) },
+                text = { Text(stringResource(Res.string.about)) },
                 onClick = {
                     expanded = false
                     showInfoDialog.value = true
@@ -174,6 +178,7 @@ fun SettingsInfoMenu(navigator: StackNavigation<Screen>, showInfoDialog: Mutable
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun PlayersSetting(players: List<String>, onClick: () -> Unit) {
     Row(
@@ -183,23 +188,24 @@ fun PlayersSetting(players: List<String>, onClick: () -> Unit) {
     ) {
         Column(Modifier.weight(2f)) {
             Text(
-                text = stringResource(MR.plurals.players, 2),
+                text = stringResource(Res.string.players),
                 style = titleStyle,
             )
             Text(
                 text = if (players.isNotEmpty()) {
                     players.joinToString(", ")
                 } else {
-                    stringResource(MR.strings.no_players)
+                    stringResource(Res.string.no_players)
                 },
                 style = detailsStyle,
                 fontStyle = if (players.isNotEmpty()) FontStyle.Normal else FontStyle.Italic,
             )
         }
-        Icon(Icons.Default.Edit, stringResource(MR.strings.edit_players))
+        Icon(Icons.Default.Edit, stringResource(Res.string.edit_players))
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun PointSystemSettings(
     adaptivePoints: Boolean,
@@ -214,13 +220,13 @@ fun PointSystemSettings(
             modifier = Modifier.clickable(onClick = onClickAdaptivePoints).padding(normalPadding),
         ) {
             Column(Modifier.weight(2f)) {
-                Text(text = stringResource(MR.strings.adaptive_point_system), style = titleStyle)
+                Text(text = stringResource(Res.string.adaptive_point_system), style = titleStyle)
                 Text(
                     text = stringResource(
                         if (adaptivePoints) {
-                            MR.strings.point_system_adaptive_desc
+                            Res.string.point_system_adaptive_desc
                         } else {
-                            MR.strings.point_system_classic_desc
+                            Res.string.point_system_classic_desc
                         }
                     ),
                     style = detailsStyle,
@@ -237,7 +243,7 @@ fun PointSystemSettings(
                 value = firstPoints?.toString() ?: "",
                 onValueChange = onChangeFirstPoints,
                 singleLine = true,
-                label = { Text(stringResource(MR.strings.first_points)) },
+                label = { Text(stringResource(Res.string.first_points)) },
                 trailingIcon = { Icon(Icons.Default.Edit, null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth().padding(normalPadding),
@@ -246,9 +252,9 @@ fun PointSystemSettings(
         Text(
             text = stringResource(
                 if (adaptivePoints) {
-                    MR.strings.point_system_adaptive_info
+                    Res.string.point_system_adaptive_info
                 } else {
-                    MR.strings.point_system_classic_info
+                    Res.string.point_system_classic_info
                 }
             ),
             fontStyle = FontStyle.Italic,
@@ -258,9 +264,9 @@ fun PointSystemSettings(
         Text(
             text = stringResource(
                 if (adaptivePoints) {
-                    MR.strings.point_system_adaptive_expl
+                    Res.string.point_system_adaptive_expl
                 } else {
-                    MR.strings.point_system_classic_expl
+                    Res.string.point_system_classic_expl
                 }
             ),
             fontStyle = FontStyle.Italic,
