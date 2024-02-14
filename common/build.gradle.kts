@@ -2,8 +2,8 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
     id("com.android.library")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("androidx.room")
 }
 
 kotlin {
@@ -43,7 +43,7 @@ kotlin {
                 implementation("androidx.room:room-runtime:$roomVersion")
                 implementation("androidx.room:room-ktx:$roomVersion")
                 //annotationProcessor("androidx.room:room-compiler:$roomVersion")
-                configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
+                //configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 //                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
@@ -82,9 +82,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kapt {
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
+    room {
+        schemaDirectory("$projectDir/schemas/")
     }
 }
