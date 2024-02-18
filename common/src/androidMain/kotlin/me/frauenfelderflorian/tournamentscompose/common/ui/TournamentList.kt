@@ -42,7 +42,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)

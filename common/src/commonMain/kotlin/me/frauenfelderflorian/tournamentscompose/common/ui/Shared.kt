@@ -66,7 +66,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.ToNumberPolicy
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 import java.text.DateFormat
 
 val titleStyle @Composable get() = MaterialTheme.typography.titleLarge

@@ -14,7 +14,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.IOException

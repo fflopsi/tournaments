@@ -65,7 +65,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popWhile
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,7 +76,8 @@ import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
 import me.frauenfelderflorian.tournamentscompose.common.data.ranking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalResourceApi::class

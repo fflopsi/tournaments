@@ -58,7 +58,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalResourceApi::class

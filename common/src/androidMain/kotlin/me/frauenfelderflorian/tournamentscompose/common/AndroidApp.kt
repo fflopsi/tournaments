@@ -41,7 +41,7 @@ import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 
 fun androidApp(activity: ComponentActivity) {
     WindowCompat.setDecorFitsSystemWindows(activity.window, false)

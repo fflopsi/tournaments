@@ -30,6 +30,7 @@ fun TournamentStack(
 ) {
     ChildStack(
         source = navigator,
+        serializer = Screen.serializer(),
         initialStack = { listOf(Screen.TournamentList) },
         handleBackButton = true,
     ) {

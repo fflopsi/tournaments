@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("kotlin-parcelize")
     id("androidx.room")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -11,7 +12,7 @@ kotlin {
     androidTarget()
     jvm()
     sourceSets {
-        val decomposeVersion = "2.2.2"
+        val decomposeVersion = "3.0.0-alpha06"
         commonMain {
             dependencies {
                 implementation(compose.runtime)
@@ -23,10 +24,10 @@ kotlin {
                 )
                 implementation("com.google.code.gson:gson:2.10.1")
                 implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
+                implementation("com.arkivanov.decompose:extensions-compose:$decomposeVersion")
             }
         }
-        val androidMain by getting {
+        androidMain {
             dependencies {
                 implementation(project.dependencies.platform("androidx.compose:compose-bom:2024.02.00"))
                 implementation("androidx.compose.ui:ui")
@@ -46,28 +47,19 @@ kotlin {
                 //configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
 
                 implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-//                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(compose.desktop.common)
-                implementation(compose.foundation)
                 implementation(compose.desktop.currentOs)
                 val multiplatformSettingsVersion = "1.0.0"
                 implementation("com.russhwolf:multiplatform-settings:$multiplatformSettingsVersion")
                 implementation("com.russhwolf:multiplatform-settings-coroutines:$multiplatformSettingsVersion")
-//                implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
-//                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:$decomposeVersion")
             }
         }
     }
 }
-
-//multiplatformResources {
-//    multiplatformResourcesPackage = "me.frauenfelderflorian.tournamentscompose.common"
-//}
 
 android {
     namespace = "me.frauenfelderflorian.tournamentscompose.common"

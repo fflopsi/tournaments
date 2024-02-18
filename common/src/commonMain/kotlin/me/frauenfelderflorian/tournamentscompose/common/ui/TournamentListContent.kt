@@ -25,7 +25,7 @@ import com.arkivanov.decompose.router.stack.push
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import tournamentscompose.common.generated.resources.Res
+import tournamentscompose.common.generated.resources.*
 import java.util.UUID
 
 @OptIn(ExperimentalResourceApi::class)

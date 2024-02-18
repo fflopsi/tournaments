@@ -7,37 +7,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.StackAnimation
-import com.arkivanov.decompose.router.stack.StackNavigationSource
+import com.arkivanov.decompose.extensions.compose.stack.Children
+import com.arkivanov.decompose.extensions.compose.stack.animation.StackAnimation
+import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.essenty.parcelable.Parcelable
-import com.arkivanov.essenty.parcelable.Parcelize
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 
-sealed class Screen : Parcelable {
-    @Parcelize
-    object TournamentList : Screen()
+@Serializable
+sealed class Screen {
+    @Serializable
+    data object TournamentList : Screen()
 
-    @Parcelize
-    object TournamentEditor : Screen()
+    @Serializable
+    data object TournamentEditor : Screen()
 
-    @Parcelize
-    object TournamentViewer : Screen()
+    @Serializable
+    data object TournamentViewer : Screen()
 
-    @Parcelize
+    @Serializable
     data class PlayerViewer(val player: String) : Screen()
 
-    @Parcelize
-    object GameEditor : Screen()
+    @Serializable
+    data object GameEditor : Screen()
 
-    @Parcelize
-    object GameViewer : Screen()
+    @Serializable
+    data object GameViewer : Screen()
 
-    @Parcelize
-    object PlayersEditor : Screen()
+    @Serializable
+    data object PlayersEditor : Screen()
 
-    @Parcelize
-    object AppSettings : Screen()
+    @Serializable
+    data object AppSettings : Screen()
 }
 
 val LocalComponentContext: ProvidableCompositionLocal<ComponentContext> =
@@ -49,8 +50,9 @@ fun ProvideComponentContext(componentContext: ComponentContext, content: @Compos
 }
 
 @Composable
-inline fun <reified C : Parcelable> ChildStack(
-    source: StackNavigationSource<C>,
+inline fun <reified C : Any> ChildStack(
+    source: StackNavigation<C>,
+    serializer: KSerializer<C>,
     noinline initialStack: () -> List<C>,
     modifier: Modifier = Modifier,
     handleBackButton: Boolean = false,
@@ -60,10 +62,13 @@ inline fun <reified C : Parcelable> ChildStack(
     val componentContext = LocalComponentContext.current
     Children(
         stack = remember {
-            componentContext.childStack(source = source,
+            componentContext.childStack(
+                source = source,
+                serializer = serializer,
                 initialStack = initialStack,
                 handleBackButton = handleBackButton,
-                childFactory = { _, childComponentContext -> childComponentContext })
+                childFactory = { _, childComponentContext -> childComponentContext },
+            )
         },
         modifier = modifier,
         animation = animation,
