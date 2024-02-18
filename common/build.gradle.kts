@@ -45,15 +45,13 @@ kotlin {
                 implementation("androidx.room:room-ktx:$roomVersion")
                 //annotationProcessor("androidx.room:room-compiler:$roomVersion")
                 //configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
-
-                implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
             }
         }
         jvmMain {
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
-                val multiplatformSettingsVersion = "1.0.0"
+                val multiplatformSettingsVersion = "1.1.1"
                 implementation("com.russhwolf:multiplatform-settings:$multiplatformSettingsVersion")
                 implementation("com.russhwolf:multiplatform-settings-coroutines:$multiplatformSettingsVersion")
             }

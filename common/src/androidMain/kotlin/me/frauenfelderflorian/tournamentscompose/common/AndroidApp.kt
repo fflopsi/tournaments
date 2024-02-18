@@ -3,6 +3,7 @@ package me.frauenfelderflorian.tournamentscompose.common
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
@@ -11,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
@@ -28,7 +27,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
@@ -46,6 +44,7 @@ import tournamentscompose.common.generated.resources.*
 fun androidApp(activity: ComponentActivity) {
     WindowCompat.setDecorFitsSystemWindows(activity.window, false)
     val rootComponentContext = activity.defaultComponentContext()
+    activity.enableEdgeToEdge()
     activity.setContent {
         ProvideComponentContext(rootComponentContext) { AndroidAppContent(activity.intent) }
     }
@@ -64,19 +63,6 @@ fun AndroidAppContent(intent: Intent) {
         .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
     val playersModel: PlayersModel = viewModel()
     val navigator = remember { StackNavigation<Screen>() }
-    val systemUiController = rememberSystemUiController()
-    val darkIcons = !isSystemInDarkTheme()
-    DisposableEffect(systemUiController, prefs.theme) {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = when (prefs.theme) {
-                1 -> true
-                2 -> false
-                else -> darkIcons
-            },
-        )
-        onDispose {}
-    }
 
     TournamentsTheme(
         darkTheme = when (prefs.theme) {
