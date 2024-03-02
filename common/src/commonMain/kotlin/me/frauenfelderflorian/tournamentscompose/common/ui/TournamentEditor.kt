@@ -13,19 +13,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
@@ -33,7 +33,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberDateRangePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -208,8 +209,7 @@ fun TournamentEditor(
         contentWindowInsets = insets,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
-        var startDialogOpen by remember { mutableStateOf(false) }
-        var endDialogOpen by remember { mutableStateOf(false) }
+        var datesDialogOpen by remember { mutableStateOf(false) }
         Column(Modifier.padding(paddingValues)) {
             Column(
                 modifier = Modifier.weight(2f).verticalScroll(rememberScrollState()),
@@ -229,16 +229,10 @@ fun TournamentEditor(
                     modifier = Modifier.padding(normalPadding),
                 ) {
                     OutlinedButton(
-                        onClick = { startDialogOpen = true },
+                        onClick = { datesDialogOpen = true },
                         modifier = Modifier.weight(1f),
                     ) {
-                        Text("${stringResource(Res.string.start_date)}: ${formatDate(start)}")
-                    }
-                    OutlinedButton(
-                        onClick = { endDialogOpen = true },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text("${stringResource(Res.string.end_date)}: ${formatDate(end)}")
+                        Text("${stringResource(Res.string.start_date)}: ${formatDate(start)}; ${stringResource(Res.string.end_date)}: ${formatDate(end)}")
                     }
                 }
                 if (current == null) {
@@ -302,70 +296,56 @@ fun TournamentEditor(
                 }
             }
         }
-        if (startDialogOpen) {
-            val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = start,
-                selectableDates = object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
-                        utcTimeMillis < end
-                },
+        if (datesDialogOpen) {
+            val dateRangePickerState = rememberDateRangePickerState(
+                initialSelectedStartDateMillis = start,
+                initialSelectedEndDateMillis = end,
             )
+            val datesDialogSheetState = rememberModalBottomSheetState(true)
             val confirmEnabled by remember {
-                derivedStateOf { datePickerState.selectedDateMillis != null }
+                derivedStateOf {
+                    dateRangePickerState.selectedStartDateMillis != null
+                            && dateRangePickerState.selectedEndDateMillis != null
+                }
             }
-            DatePickerDialog(
-                onDismissRequest = { startDialogOpen = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            startDialogOpen = false
-                            start = datePickerState.selectedDateMillis!!
-                        },
-                        enabled = confirmEnabled,
-                    ) {
-                        Text(stringResource(Res.string.ok))
-                    }
-                },
-                dismissButton = {
-                    TextButton({ startDialogOpen = false }) {
-                        Text(stringResource(Res.string.cancel))
-                    }
-                },
+            ModalBottomSheet(
+                onDismissRequest = { datesDialogOpen = false },
+                sheetState = datesDialogSheetState,
             ) {
-                DatePicker(state = datePickerState)
-            }
-        }
-        if (endDialogOpen) {
-            val datePickerState = rememberDatePickerState(
-                initialSelectedDateMillis = end,
-                selectableDates = object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long): Boolean =
-                        utcTimeMillis > start
-                },
-            )
-            val confirmEnabled by remember {
-                derivedStateOf { datePickerState.selectedDateMillis != null }
-            }
-            DatePickerDialog(
-                onDismissRequest = { endDialogOpen = false },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            endDialogOpen = false
-                            end = datePickerState.selectedDateMillis!!
-                        },
-                        enabled = confirmEnabled,
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(normalPadding),
                     ) {
-                        Text(stringResource(Res.string.ok))
+                        IconButton(
+                            onClick = {
+                                scope.launch { datesDialogSheetState.hide() }.invokeOnCompletion {
+                                    if (!datesDialogSheetState.isVisible) {
+                                        datesDialogOpen = false
+                                    }
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.Close, stringResource(Res.string.cancel))
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch { datesDialogSheetState.hide() }.invokeOnCompletion {
+                                    if (!datesDialogSheetState.isVisible) {
+                                        datesDialogOpen = false
+                                    }
+                                }
+                                start = dateRangePickerState.selectedStartDateMillis!!
+                                end = dateRangePickerState.selectedEndDateMillis!!
+                            },
+                            enabled = confirmEnabled,
+                        ) {
+                            Text(stringResource(Res.string.save_and_exit))
+                        }
                     }
-                },
-                dismissButton = {
-                    TextButton({ endDialogOpen = false }) {
-                        Text(stringResource(Res.string.cancel))
-                    }
-                },
-            ) {
-                DatePicker(state = datePickerState)
+                    DateRangePicker(dateRangePickerState)
+                }
             }
         }
         if (deleteDialogOpen) {
