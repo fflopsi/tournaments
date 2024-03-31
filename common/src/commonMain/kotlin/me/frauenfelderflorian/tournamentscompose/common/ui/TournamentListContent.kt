@@ -40,7 +40,7 @@ fun TournamentListContent(
         if (tournaments.isNotEmpty()) {
             items(tournaments.values.sortedByDescending { it.t.start }) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(normalDp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
                         setCurrent(it.t.id)
