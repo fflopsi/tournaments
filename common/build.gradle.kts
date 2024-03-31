@@ -4,7 +4,9 @@ plugins {
     id("com.android.library")
     id("kotlin-parcelize")
     id("androidx.room")
+    id("app.cash.sqldelight")
     id("org.jetbrains.kotlin.plugin.serialization")
+    kotlin("kapt")
 }
 
 kotlin {
@@ -25,6 +27,8 @@ kotlin {
                 implementation("com.google.code.gson:gson:2.10.1")
                 implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
                 implementation("com.arkivanov.decompose:extensions-compose:$decomposeVersion")
+
+                implementation("app.cash.sqldelight:coroutines-extensions:2.0.1")
             }
         }
         androidMain {
@@ -40,11 +44,7 @@ kotlin {
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
                 implementation("androidx.navigation:navigation-compose:2.7.7")
 
-                val roomVersion = "2.6.1"
-                implementation("androidx.room:room-runtime:$roomVersion")
-                implementation("androidx.room:room-ktx:$roomVersion")
-                //annotationProcessor("androidx.room:room-compiler:$roomVersion")
-                //configurations["kapt"].dependencies.add(project.dependencies.create("androidx.room:room-compiler:$roomVersion"))
+                implementation("app.cash.sqldelight:android-driver:2.0.1")
             }
         }
         jvmMain {
@@ -54,6 +54,8 @@ kotlin {
                 val multiplatformSettingsVersion = "1.1.1"
                 implementation("com.russhwolf:multiplatform-settings:$multiplatformSettingsVersion")
                 implementation("com.russhwolf:multiplatform-settings-coroutines:$multiplatformSettingsVersion")
+
+                implementation("app.cash.sqldelight:sqlite-driver:2.0.1")
             }
         }
     }
@@ -74,5 +76,13 @@ android {
     }
     room {
         schemaDirectory("$projectDir/schemas/")
+    }
+}
+
+sqldelight {
+    databases {
+        create("TournamentsDB") {
+            packageName.set("me.frauenfelderflorian.tournamentscompose")
+        }
     }
 }

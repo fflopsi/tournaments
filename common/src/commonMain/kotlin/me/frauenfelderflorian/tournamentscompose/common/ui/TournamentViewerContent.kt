@@ -42,8 +42,6 @@ import com.arkivanov.decompose.router.stack.push
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
-import me.frauenfelderflorian.tournamentscompose.common.data.getPoints
-import me.frauenfelderflorian.tournamentscompose.common.data.playersByPoints
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import tournamentscompose.common.generated.resources.*

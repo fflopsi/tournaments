@@ -1,0 +1,25 @@
+CREATE TABLE Tournament (
+    id BLOB PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    start INTEGER NOT NULL,
+    end INTEGER NOT NULL,
+    useAdaptivePoints INTEGER NOT NULL,
+    firstPoints INTEGER NOT NULL,
+    playersString TEXT NOT NULL
+);
+
+getTournaments:
+SELECT * FROM Tournament;
+
+upsert {
+    UPDATE Tournament SET name = :name, start = :start, end = :end,
+    useAdaptivePoints = :useAdaptivePoints, firstPoints = :firstPoints,
+    playersString = :playersString WHERE id = :id;
+
+    INSERT OR IGNORE INTO Tournament
+    (id, name, start, end, useAdaptivePoints, firstPoints, playersString)
+    VALUES(:id, :name, :start, :end, :useAdaptivePoints, :firstPoints, :playersString);
+}
+
+delete:
+DELETE FROM Tournament WHERE id = :id;

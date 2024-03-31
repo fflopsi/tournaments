@@ -1,0 +1,24 @@
+CREATE TABLE Game (
+    id BLOB PRIMARY KEY NOT NULL,
+    tournamentId BLOB NOT NULL,
+    date INTEGER NOT NULL,
+    hoops INTEGER NOT NULL,
+    hoopReached INTEGER NOT NULL,
+    difficulty TEXT NOT NULL,
+    rankingString TEXT NOT NULL
+);
+
+getTournamentGames:
+SELECT * FROM Game WHERE tournamentId = :tournamentId;
+
+upsert {
+    UPDATE Game SET date = :date, hoops = :hoops, hoopReached = :hoopReached,
+    difficulty = :difficulty, rankingString = :rankingString WHERE id = :id;
+
+    INSERT OR IGNORE INTO Game
+    (id, tournamentId, date, hoops, hoopReached, difficulty, rankingString)
+    VALUES(:id, :tournamentId, :date, :hoops, :hoopReached, :difficulty, :rankingString);
+}
+
+delete:
+DELETE FROM Game WHERE id = :id;

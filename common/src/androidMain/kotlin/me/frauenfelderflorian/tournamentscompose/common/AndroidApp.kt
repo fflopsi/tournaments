@@ -24,15 +24,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.Room
 import com.arkivanov.decompose.defaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import kotlinx.coroutines.launch
+import me.frauenfelderflorian.tournamentscompose.common.data.DriverFactory
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.PrefsFactory
-import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsDatabase
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
+import me.frauenfelderflorian.tournamentscompose.common.data.createDatabase
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.importFromUri
@@ -55,12 +58,19 @@ fun androidApp(activity: ComponentActivity) {
 fun AndroidAppContent(intent: Intent) {
     val context = LocalContext.current
     val prefs: Prefs = viewModel<Prefs>(factory = PrefsFactory(context)).apply { Initialize() }
-    val db = Room.databaseBuilder(context, TournamentsDatabase::class.java, "tournaments").build()
-    val tournamentDao = db.tournamentDao()
-    val gameDao = db.gameDao()
+    val database = createDatabase(DriverFactory(context))
+    val tournamentDao = TournamentDao(database.tournamentQueries)
+    val gameDao = GameDao(database.gameQueries)
     val model: TournamentsModel = viewModel()
-    model.tournaments = tournamentDao.getTournamentsWithGames().asLiveData()
-        .observeAsState(model.tournaments.values).value.associateBy { it.t.id }
+    tournamentDao.getTournaments().asLiveData().observeAsState(listOf()).value.associateBy(
+        keySelector = { it.id },
+        valueTransform = {
+            TournamentWithGames(
+                t = it,
+                games = gameDao.getGames(it.id).asLiveData().observeAsState(listOf()).value
+            )
+        },
+    ).also { model.tournaments = it }
     val playersModel: PlayersModel = viewModel()
     val navigator = remember { StackNavigation<Screen>() }
 

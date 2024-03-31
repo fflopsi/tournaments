@@ -32,9 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.push
 import me.frauenfelderflorian.tournamentscompose.common.data.Game
-import me.frauenfelderflorian.tournamentscompose.common.data.absentPlayers
-import me.frauenfelderflorian.tournamentscompose.common.data.playersByRank
-import me.frauenfelderflorian.tournamentscompose.common.data.ranking
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import tournamentscompose.common.generated.resources.*
