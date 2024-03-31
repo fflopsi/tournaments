@@ -14,11 +14,13 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import me.frauenfelderflorian.tournamentscompose.common.data.GameDaoTest
+import me.frauenfelderflorian.tournamentscompose.common.data.DriverFactory
+import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
-import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDaoTest
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
+import me.frauenfelderflorian.tournamentscompose.common.data.createDatabase
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
 import me.frauenfelderflorian.tournamentscompose.common.ui.Screen
 import me.frauenfelderflorian.tournamentscompose.common.ui.theme.TournamentsTheme
@@ -41,8 +43,9 @@ fun desktopApp() {
 @Composable
 fun DesktopAppContent() {
     val prefs = Prefs().apply { Initialize() }
-    val tournamentDao = TournamentDaoTest()
-    val gameDao = GameDaoTest()
+    val database = createDatabase(DriverFactory())
+    val tournamentDao = TournamentDao(database.tournamentQueries)
+    val gameDao = GameDao(database.gameQueries)
     val tournamentsModel = TournamentsModel()
     val playersModel = PlayersModel()
     val navigator = remember { StackNavigation<Screen>() }
