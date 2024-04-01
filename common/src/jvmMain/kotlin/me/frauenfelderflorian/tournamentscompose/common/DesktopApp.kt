@@ -5,6 +5,7 @@ import androidx.compose.foundation.defaultScrollbarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
@@ -19,6 +20,7 @@ import me.frauenfelderflorian.tournamentscompose.common.data.GameDao
 import me.frauenfelderflorian.tournamentscompose.common.data.PlayersModel
 import me.frauenfelderflorian.tournamentscompose.common.data.Prefs
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentDao
+import me.frauenfelderflorian.tournamentscompose.common.data.TournamentWithGames
 import me.frauenfelderflorian.tournamentscompose.common.data.TournamentsModel
 import me.frauenfelderflorian.tournamentscompose.common.data.createDatabase
 import me.frauenfelderflorian.tournamentscompose.common.ui.ProvideComponentContext
@@ -47,6 +49,14 @@ fun DesktopAppContent() {
     val tournamentDao = TournamentDao(database.tournamentQueries)
     val gameDao = GameDao(database.gameQueries)
     val tournamentsModel = TournamentsModel()
+    tournamentDao.getTournaments().collectAsState(listOf()).value.associateBy(
+        keySelector = { it.id },
+        valueTransform = {
+            TournamentWithGames(
+                t = it, games = gameDao.getGames(it.id).collectAsState(listOf()).value
+            )
+        },
+    ).also { tournamentsModel.tournaments = it }
     val playersModel = PlayersModel()
     val navigator = remember { StackNavigation<Screen>() }
     TournamentsTheme(
