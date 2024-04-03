@@ -11,7 +11,7 @@ kotlin {
         withJava()
     }
     sourceSets {
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":common"))

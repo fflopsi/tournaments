@@ -3,10 +3,8 @@ plugins {
     id("org.jetbrains.compose")
     id("com.android.library")
     id("kotlin-parcelize")
-    id("androidx.room")
     id("app.cash.sqldelight")
     id("org.jetbrains.kotlin.plugin.serialization")
-    kotlin("kapt")
 }
 
 kotlin {
@@ -19,12 +17,14 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
+                implementation(compose.animation)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.material3)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class) implementation(
                     compose.components.resources
                 )
                 implementation("com.google.code.gson:gson:2.10.1")
+
                 implementation("com.arkivanov.decompose:decompose:$decomposeVersion")
                 implementation("com.arkivanov.decompose:extensions-compose:$decomposeVersion")
 
@@ -73,9 +73,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    room {
-        schemaDirectory("$projectDir/schemas/")
     }
 }
 
